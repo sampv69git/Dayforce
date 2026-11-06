@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { CheckCheck, CornerDownRight, Loader2, ScanLine, Sparkles } from 'lucide-react'
+import { ArrowRight, CalendarX2, CheckCheck, CornerDownRight, Fingerprint, Loader2, Scale, ScanLine, Sparkles, TrendingUp, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { toast } from 'sonner'
@@ -10,9 +10,13 @@ import { ExceptionPanel } from '@/components/domain/ExceptionPanel'
 import { Avatar } from '@/components/fx'
 import { Button, EmptyState, ErrorState, Kbd, Pill, Segmented, Skeleton, Tip } from '@/components/ui/primitives'
 import { cn } from '@/lib/cn'
+import { LENSES, lensOf, type LensKey } from '@/lib/brief'
 import { day, money } from '@/lib/format'
 
 type Tab = 'all' | 'ready' | 'needs_you' | 'awaiting_employee' | 'escalated' | 'resolved'
+
+const OPEN = ['open', 'suggested', 'awaiting_employee', 'escalated']
+const LENS_ICON: Record<LensKey, typeof Fingerprint> = { punches: Fingerprint, overtime: TrendingUp, schedule: CalendarX2, policy: Scale }
 
 const inTab = (i: ExceptionSummary, tab: Tab) => {
   switch (tab) {
@@ -62,6 +66,8 @@ export function Queue({ site }: { site?: 'FRE' | 'AUS' | 'BLR' }) {
   const create = useCreateDraft()
   const [params, setParams] = useSearchParams()
   const [tab, setTab] = useState<Tab>('all')
+  const [lens, setLens] = useState<LensKey | null>(null)
+  const [briefOpen, setBriefOpen] = useState(() => sessionStorage.getItem('countersign.brief') !== 'closed')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [preparing, setPreparing] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
@@ -70,25 +76,45 @@ export function Queue({ site }: { site?: 'FRE' | 'AUS' | 'BLR' }) {
 
   // Root causes first, with their symptoms nested underneath.
   const rows = useMemo(() => {
-    const visible = items.filter((i) => inTab(i, tab))
+    const match = (i: ExceptionSummary) => inTab(i, tab) && (!lens || lensOf(i.family) === lens)
+    const visible = items.filter(match)
     const byId = new Map(items.map((i) => [i.id, i]))
     const out: { item: ExceptionSummary; symptom: boolean }[] = []
     const seen = new Set<string>()
     for (const i of visible) {
       if (seen.has(i.id)) continue
-      if (i.root_id && byId.get(i.root_id) && inTab(byId.get(i.root_id)!, tab) && tab !== 'resolved') continue
+      if (i.root_id && byId.get(i.root_id) && match(byId.get(i.root_id)!) && tab !== 'resolved') continue
       out.push({ item: i, symptom: false })
       seen.add(i.id)
       for (const sid of i.symptom_ids) {
         const s = byId.get(sid)
-        if (s && !seen.has(sid) && (inTab(s, tab) || tab === 'all')) {
+        if (s && !seen.has(sid) && (match(s) || (tab === 'all' && !lens))) {
           out.push({ item: s, symptom: true })
           seen.add(sid)
         }
       }
     }
     return out
-  }, [items, tab])
+  }, [items, tab, lens])
+
+  const lensCounts = useMemo(() => {
+    const c: Record<LensKey, number> = { punches: 0, overtime: 0, schedule: 0, policy: 0 }
+    for (const i of items) {
+      const k = lensOf(i.family)
+      if (k && OPEN.includes(i.status)) c[k]++
+    }
+    return c
+  }, [items])
+
+  const brief = useMemo(() => {
+    const open = items.filter((i) => OPEN.includes(i.status))
+    const ready = open.filter((i) => i.status === 'suggested' && i.route !== 'escalate')
+    const escalated = open.filter((i) => i.status === 'escalated').length
+    const otRisk = open.filter((i) => i.rule_id === 'F-OT-RISK').length
+    const conflicts = open.filter((i) => i.rule_id === 'F-SCHED-CONFLICT').length
+    const root = [...open].filter((i) => !i.root_id && i.status !== 'escalated').sort((a, b) => b.symptom_ids.length - a.symptom_ids.length || b.risk_score - a.risk_score)[0]
+    return { open: open.length, ready: ready.length, escalated, otRisk, conflicts, root }
+  }, [items])
 
   const actionable = rows.filter((r) => !r.symptom)
   const select = useCallback((id: string | null) => {
@@ -206,6 +232,56 @@ export function Queue({ site }: { site?: 'FRE' | 'AUS' | 'BLR' }) {
             />
           </div>
         </div>
+        <div className="grid grid-cols-4 gap-1.5 border-b border-line px-4 py-2.5" role="group" aria-label="Problem areas from the brief" data-tour="queue-lenses">
+          {LENSES.map((l) => {
+            const Icon = LENS_ICON[l.key]
+            const on = lens === l.key
+            return (
+              <Tip key={l.key} content={`${l.label}: ${l.rules}`}>
+                <button
+                  onClick={() => setLens(on ? null : l.key)}
+                  aria-pressed={on}
+                  className={cn(
+                    'group relative flex flex-col items-start gap-1 overflow-hidden rounded-lg border px-2 py-1.5 text-left transition-all',
+                    on ? 'border-accent bg-accent-soft shadow-glow' : 'border-line bg-surface hover:border-line-strong',
+                  )}
+                >
+                  <span className="flex w-full items-center justify-between">
+                    <span className={cn('grid size-5 place-items-center rounded-md bg-gradient-to-br text-white', l.tone)}><Icon size={11} /></span>
+                    <span className="tabular font-mono text-[13px] font-semibold text-ink">{lensCounts[l.key]}</span>
+                  </span>
+                  <span className={cn('text-[10.5px] leading-tight font-medium', on ? 'text-accent' : 'text-ink-2')}>{l.label}</span>
+                </button>
+              </Tip>
+            )
+          })}
+        </div>
+        <AnimatePresence initial={false}>
+          {briefOpen && brief.open > 0 && (
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-b border-line">
+              <div className="relative bg-gradient-to-br from-accent-soft/70 via-surface to-surface px-4 py-3" data-tour="briefing">
+                <button onClick={() => { setBriefOpen(false); sessionStorage.setItem('countersign.brief', 'closed') }} aria-label="Hide briefing" className="absolute top-2 right-2 grid size-6 place-items-center rounded-md text-ink-3 hover:bg-surface-2 hover:text-ink"><X size={12} /></button>
+                <div className="flex items-center gap-1.5 text-caption font-semibold text-accent"><Sparkles size={12} /> Cutoff briefing <span className="font-normal text-ink-3">computed from your queue</span></div>
+                <p className="mt-1 pr-5 text-small leading-relaxed text-ink-2">
+                  <b className="tabular font-semibold text-ink">{brief.ready}</b> verified draft{brief.ready === 1 ? '' : 's'} ready to countersign
+                  {brief.escalated > 0 && <>, <b className="tabular font-semibold text-crit">{brief.escalated}</b> escalated to payroll</>}
+                  {brief.otRisk > 0 && <>, <b className="tabular font-semibold text-ink">{brief.otRisk}</b> overtime risk{brief.otRisk === 1 ? '' : 's'}</>}
+                  {brief.conflicts > 0 && <>, <b className="tabular font-semibold text-ink">{brief.conflicts}</b> schedule conflict{brief.conflicts === 1 ? '' : 's'} to fix before the shift</>}.
+                  {brief.root && brief.root.symptom_ids.length > 0 && <> Start with {brief.root.employee_name.split(' ')[0]}: one fix clears {brief.root.symptom_ids.length + 1}.</>}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {brief.root && (
+                    <Button size="sm" variant="primary" onClick={() => select(brief.root!.id)}>
+                      Start with {brief.root.employee_name.split(' ')[0]} <ArrowRight size={12} />
+                    </Button>
+                  )}
+                  {brief.ready > 0 && <Button size="sm" variant="secondary" onClick={() => { setLens(null); setTab('ready') }}>Show ready</Button>}
+                  {brief.conflicts > 0 && <Button size="sm" variant="ghost" onClick={() => { setTab('all'); setLens('schedule') }}>Schedule conflicts</Button>}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <AnimatePresence>
           {selectedIds.size > 0 && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-b border-line bg-accent-soft/60">
@@ -225,7 +301,7 @@ export function Queue({ site }: { site?: 'FRE' | 'AUS' | 'BLR' }) {
           )}
           {q.isError && <ErrorState error={q.error} onRetry={() => q.refetch()} />}
           {!q.isLoading && rows.length === 0 && (
-            <EmptyState title={tab === 'all' ? 'All clear for this period' : 'Nothing here'} body={tab === 'all' ? `${counts?.resolved ?? 0} exceptions resolved. See Outcomes for the measured results.` : 'Try another filter.'} />
+            <EmptyState title={tab === 'all' && !lens ? 'All clear for this period' : 'Nothing here'} body={tab === 'all' && !lens ? `${counts?.resolved ?? 0} exceptions resolved. See Outcomes for the measured results.` : 'Try another filter.'} />
           )}
           <ul>
             <AnimatePresence initial={false}>
@@ -269,13 +345,9 @@ function Row({ item, symptom, active, checked, onSelect, onToggle }: { item: Exc
   return (
     <div
       data-id={item.id}
-      role={symptom ? undefined : 'button'}
-      tabIndex={symptom ? -1 : 0}
-      onClick={onSelect}
-      onKeyDown={(e) => e.key === 'Enter' && onSelect()}
       className={cn(
-        'group relative flex gap-3 border-b border-line/70 px-4 py-3 outline-none transition-colors',
-        symptom ? 'cursor-default bg-surface-2/40 py-2 pl-12' : 'cursor-pointer hover:bg-surface/80 focus-visible:bg-surface',
+        'group relative flex gap-3 border-b border-line/70 px-4 py-3 transition-colors',
+        symptom ? 'cursor-default bg-surface-2/40 py-2 pl-12' : 'cursor-pointer hover:bg-surface/80 has-[button:focus-visible]:bg-surface',
         active && 'bg-surface hover:bg-surface',
       )}
     >
@@ -283,15 +355,24 @@ function Row({ item, symptom, active, checked, onSelect, onToggle }: { item: Exc
       {active && !symptom && (
         <motion.span layoutId="queue-active" className="bg-brand absolute inset-y-2 left-0 w-[3px] rounded-r-full" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
       )}
+      {!symptom && (
+        <button
+          type="button"
+          onClick={onSelect}
+          aria-current={active ? 'true' : undefined}
+          aria-label={`${item.employee_name}, ${item.title}, ${day(item.work_date)}`}
+          className="absolute inset-0 z-0 outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+        />
+      )}
       {symptom ? (
         <CornerDownRight size={13} className="absolute top-2.5 left-6 text-ink-3" />
       ) : (
-        <div className="relative h-fit">
+        <div className="pointer-events-none relative h-fit">
           <Avatar name={item.employee_name} size={34} />
           <SeverityBar severity={item.severity} className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full ring-2 ring-surface" />
         </div>
       )}
-      <div className="relative min-w-0 flex-1">
+      <div className="pointer-events-none relative min-w-0 flex-1 [&_[data-state]]:pointer-events-auto">
         <div className="flex items-center gap-2">
           <span className={cn('truncate', symptom ? 'text-small font-medium text-ink-2' : 'text-body font-semibold text-ink')}>{symptom ? item.title : item.employee_name}</span>
           <span className="shrink-0 font-mono text-[11px] text-ink-3">{day(item.work_date)}</span>
@@ -322,7 +403,7 @@ function Row({ item, symptom, active, checked, onSelect, onToggle }: { item: Exc
           checked={checked}
           onClick={(e) => e.stopPropagation()}
           onChange={onToggle}
-          className="relative mt-1 size-4 shrink-0 accent-[var(--accent)]"
+          className="relative z-10 mt-1 size-4 shrink-0 accent-[var(--accent)]"
         />
       )}
     </div>

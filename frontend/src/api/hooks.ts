@@ -49,10 +49,11 @@ export const useException = (id: string | undefined) =>
 export const useProvider = (enabled = true) =>
   useQuery({ queryKey: keys.provider, queryFn: () => unwrap(api.GET('/api/v1/admin/provider')), enabled, refetchInterval: 30_000 })
 
-export const useForecast = (site?: Site) =>
+export const useForecast = (site?: Site, enabled = true) =>
   useQuery({
     queryKey: keys.forecast(site),
     queryFn: () => unwrap(api.GET('/api/v1/forecast/overtime', { params: { query: { site } } })),
+    enabled,
   })
 
 export const useTimecard = (id: string | undefined) =>

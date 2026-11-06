@@ -33,11 +33,12 @@ import { Skeleton } from '@/components/ui/primitives'
 import { cn } from '@/lib/cn'
 import { homeFor, useSession } from '@/lib/session'
 import { Bento } from './landing/Bento'
+import { BriefAnswered } from './landing/BriefAnswered'
 import { PipelineDemo } from './landing/PipelineDemo'
 import { Logo } from '@/components/brand'
 
 const STEPS = [
-  { icon: Cpu, title: 'Rules detect', body: '17 deterministic rules find missed punches, overtime risk, schedule conflicts, and policy breaches. Exact and auditable.', tone: 'from-[#3d4350] to-[#15171c]' },
+  { icon: Cpu, title: 'Rules detect', body: '18 deterministic rules find missed punches, overtime risks, schedule conflicts, and policy breaches. Exact and auditable.', tone: 'from-[#3d4350] to-[#15171c]' },
   { icon: Bot, title: 'Model drafts', body: 'An open-weight model explains and proposes a correction from retrieved policy and independent evidence.', tone: 'from-brand-2 to-[#d6457a]' },
   { icon: ShieldCheck, title: 'Harness verifies', body: 'Ten gates check schema, citations, verbatim quotes, evidence anchoring, re-simulation, and guardrails.', tone: 'from-ok to-brand-3' },
   { icon: UserCheck, title: 'You countersign', body: 'Nothing changes a timecard until a named person approves, edits, or rejects it. Every decision is hash-chained.', tone: 'from-brand-1 to-brand-2' },
@@ -82,6 +83,7 @@ function Nav({ onTour }: { onTour: () => void }) {
         </a>
         <div className="ml-4 hidden items-center gap-1 md:flex">
           {[
+            ['#brief', 'The brief'],
             ['#how', 'How it works'],
             ['#features', 'Features'],
             ['#harness', 'Harness'],
@@ -481,6 +483,7 @@ export function Landing() {
     { title: 'Welcome to Countersign', body: <>A timecard exception agent where <b className="text-ink">the model drafts, the rules verify, and a manager countersigns</b>. This tour takes about a minute.</> },
     { target: 'hero', title: 'The promise', body: 'Every AI suggestion is grounded in retrieved policy, anchored to independent evidence, checked by ten deterministic gates, and approved by a named person.' },
     { target: 'demo', title: 'Watch one exception flow through', body: 'A live walkthrough of a seeded case: two missed punches joined two shifts into a 32.5-hour span. Click any stage on the left to jump to it.' },
+    { target: 'brief', title: 'The brief, answered', body: 'Use Case 5 asks for an agent that detects missed punches, overtime risks, schedule conflicts, and policy breaches, then proposes compliant corrections. Each phrase maps to rules, a correction, and a screen.' },
     { target: 'how', title: 'From guesses to one decision', body: 'Root-cause grouping turns six unexplained items into one verified fix. Pay impact is computed by code before you approve.' },
     { target: 'features', title: 'What makes it different', body: 'Cascades, evidence anchoring, pay deltas, overtime forecasts with compliant swaps, employee confirmation, injection defence, and a hash-chained audit.' },
     { target: 'harness', title: 'The harness, made visible', body: 'Hover any gate to see what it checks. Fault replays in the app prove each gate catches the failure it was built for.' },
@@ -516,6 +519,7 @@ export function Landing() {
             ))}
           </Marquee>
         </section>
+        <BriefAnswered />
         <HowItWorks />
         <section id="features" className="relative mx-auto max-w-6xl px-6 py-20" data-tour="features">
           <Reveal className="mx-auto max-w-2xl text-center">

@@ -300,6 +300,8 @@ function useAppTourSteps(role: string | undefined): TourStep[] {
       { title: "Welcome to Maya's queue", body: 'Maya manages the Fremont distribution centre. This tour walks through clearing exceptions before the payroll cutoff.' },
       { target: 'cutoff', title: 'The clock that matters', body: 'A simulated clock and the payroll cutoff countdown. Every exception is evaluated as of this moment.' },
       { target: 'queue-progress', title: 'Progress to cutoff', body: 'Resolved so far, and how many verified drafts are ready to countersign.' },
+      { target: 'queue-lenses', title: 'The four problems from the brief', body: 'Missed punches, overtime risks, schedule conflicts, and policy breaches. Click one to filter the queue to it.' },
+      { target: 'briefing', title: 'Your cutoff briefing', body: 'What is ready, what is escalated, and which fix clears the most. Every number is computed from the queue, not written by the model.' },
       { target: 'queue-list', title: 'A queue ranked by risk', body: 'Root causes come first with their symptoms nested underneath. Badges show the route, the related fixes, untrusted notes, and pay impact.' },
       { target: 'prepare', title: 'Prepare drafts in bulk', body: 'Runs the governed pipeline for up to 12 undrafted exceptions: context, retrieval, sanitising, generation, ten gates, and routing.' },
       { target: 'detail-timeline', title: 'The shift ribbon', body: 'Recorded punches across the days involved, with badge and scanner evidence. Toggle between as recorded and with correction.' },
