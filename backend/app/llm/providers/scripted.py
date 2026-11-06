@@ -66,7 +66,12 @@ def apply_fault(good: str, fault: str, *, unretrieved: str, other_punch: str | N
         else:
             d["operations"] = [_op("add_punch", punch_type="OUT", at="2026-11-04T13:13")]
     elif fault == "does_not_fix":
-        d["operations"] = [_op("acknowledge")]
+        # An operation that leaves the problem in place. Acknowledge is a real fix for some rules,
+        # so use a different no-op for those.
+        current = {o.get("op") for o in d["operations"]}
+        d["operations"] = [
+            _op("approve_unscheduled" if "acknowledge" in current else "acknowledge")
+        ]
         d["needs_escalation"] = False
     elif fault == "reduces_paid_hours":
         d["operations"] = [_op("void_punch", punch_id=other_punch or "P-0001")]

@@ -162,6 +162,14 @@ def run_draft(
             sp.set(passed=final_report.passed, failed=[g.id for g in final_report.failures()])
         attempts.append(Attempt(final_raw, None, final, final_report))
         route = "escalate" if ctx.candidate.escalate else "manual"
+        if not final_report.passed and route == "manual":
+            # Even the deterministic template failed a gate: never show it as ready.
+            route = "escalate"
+            failed_ids = ", ".join(g.id for g in final_report.failures())
+            fallback_reason = (
+                f"The rule-based suggestion failed gate(s) {failed_ids}, so it is escalated to payroll "
+                "instead of being shown as ready."
+            )
         model_id, provider_id = "deterministic-templates-v1", "rule_based"
     else:
         provider_id, model_id = provider.id, provider.model_id
@@ -200,7 +208,9 @@ def run_draft(
                 route = "fallback"
 
     escalation_reason = None
-    if route == "escalate":
+    if route == "escalate" and fallback_reason and not ctx.candidate.escalate and provider is None:
+        escalation_reason = fallback_reason
+    elif route == "escalate":
         escalation_reason = (
             final.escalation_reason
             if final and final.escalation_reason

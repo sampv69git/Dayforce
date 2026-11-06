@@ -379,6 +379,8 @@ def run_gates(
             problems.append("break punch change without the employee's attestation (TA-5.4)")
         if o.op == "void_punch" and rule != "R-PUNCH-DUPLICATE":
             problems.append("voiding a recorded punch is only allowed for duplicates")
+        elif o.op == "void_punch" and o.punch_id not in env.target_punch_ids:
+            problems.append("only the identified duplicate punch may be voided")
         if o.op in {"record_premium", "approve_overtime"} and week.employee.exempt:
             problems.append("premiums and overtime do not apply to exempt employees (TA-1.3)")
         if (
