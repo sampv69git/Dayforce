@@ -48,11 +48,27 @@ def test_span_draft_reports_cascade_and_pay(seeded: str) -> None:
         assert run.evidence_strength["level"] == "high"
 
 
+def test_schedule_conflict_reassigns_and_clears_overtime_risk(seeded: str) -> None:
+    with session_scope() as s:
+        run = run_draft(
+            s, exc_id("F-SCHED-CONFLICT", "E-FRE-012"), ADMIN, provider_name="rule_based"
+        )
+        assert run.validations[-1]["passed"], run.validations[-1]
+        ops = run.resolution["operations"]
+        assert [o["op"] for o in ops] == ["reassign_shift"]
+        assert ops[0]["to_employee_id"] == "E-FRE-004"  # Marcus: only eligible picker
+        # The same Saturday shift also pushed her over 40 h, so one fix clears both.
+        assert exc_id("F-OT-RISK", "E-FRE-012") in run.clears
+        cited = {c["clause_id"] for c in run.resolution["citations"]}
+        assert {"TA-6.1", "TA-9.1"} <= cited
+
+
 CASES = [
     ("R-PUNCH-SPAN", "E-FRE-002"),
     ("R-PUNCH-MISSING-OUT", "E-FRE-007"),
     ("R-MEAL-MISSED", "E-FRE-003"),
     ("F-OT-RISK", "E-FRE-003"),
+    ("F-SCHED-CONFLICT", "E-FRE-012"),
 ]
 
 

@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format follows Keep a C
 ## [Unreleased]
 
 ### Added
+- F-SCHED-CONFLICT: upcoming published shifts that overlap or break minimum rest are detected before the shift and fixed by a swap that passes the eight checks for both employees; seeded case for Grace Liu; unit, pipeline, fault-matrix, and end-to-end (J6) tests.
+- Queue lenses named after the four problems in Use Case 5 (missed punches, overtime risks, schedule conflicts, policy breaches) and a cutoff briefing computed from the queue.
+- Landing section "The brief, answered", mapping each phrase of Use Case 5 to its rules, corrections, and screens.
+- Schedule conflicts listed on the overtime forecast page.
 - Landing page replacing the persona chooser: a replayable walkthrough of one seeded exception through detection, retrieval, drafting, the ten gates, and countersignature; a before-and-after section; an animated feature bento; an interactive harness panel; results from committed evaluation reports; persona cards.
 - Guided tours without a new dependency: a nine-step landing tour that starts on the first visit and can hand off to the app, and role-specific in-app tours for managers and payroll administrators. Tours never auto-start under browser automation.
 - Brand design system: gradients, glass surfaces, aurora backgrounds, light-beam borders on verified drafts, number tickers, radial gauges, avatars, page headers, a visual fault-injection matrix, site readiness rings, an audit-chain strip, and a countersign burst. All motion honours reduced-motion settings.
@@ -18,6 +22,8 @@ All notable changes to this project are documented here. Format follows Keep a C
 - README screenshots regenerated from the live app with gpt-oss-20b on Groq.
 
 ### Fixed
+- Reassignment drafts in the queue showed the colleague's employee ID instead of their name.
+- Queue rows nested the bulk-approval checkbox inside a row with a button role; rows now use a real button with the checkbox beside it.
 - Accessibility findings from an axe scan of every page in light and dark themes, including an older low-contrast previous-hash label in the audit table.
 - `--ink-3` darkened to #5F6470 to meet WCAG AA on tinted surfaces.
 - Dense retrieval on PostgreSQL uses an explicit pgvector `<=>` query (verified on an embedded PostgreSQL).

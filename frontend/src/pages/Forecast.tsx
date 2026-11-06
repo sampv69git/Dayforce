@@ -1,8 +1,8 @@
 import { motion } from 'motion/react'
-import { CalendarClock, Check, ChevronDown, TrendingUp, X } from 'lucide-react'
+import { CalendarClock, CalendarX2, Check, ChevronDown, TrendingUp, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useForecast } from '@/api/hooks'
-import type { ForecastRisk, OvertimeForecast } from '@/api/types'
+import { useForecast, useQueue } from '@/api/hooks'
+import type { ExceptionSummary, ForecastRisk, OvertimeForecast } from '@/api/types'
 import { StatusPill } from '@/components/domain/badges'
 import { ExceptionPanel } from '@/components/domain/ExceptionPanel'
 import { Avatar, PageHeader } from '@/components/fx'
@@ -61,6 +61,7 @@ export default function Forecast() {
       <div className="space-y-4">
         {f?.risks.map((r) => <RiskCard key={r.exception_id} risk={r} names={names} threshold={f.threshold_hours} />)}
       </div>
+      <Conflicts site={site} names={names} />
     </div>
   )
 }
@@ -215,6 +216,50 @@ function RiskCard({ risk, names, threshold }: { risk: ForecastRisk; names: Recor
       {open && (
         <div className="border-t border-line bg-canvas/60">
           <ExceptionPanel id={risk.exception_id} names={names} />
+        </div>
+      )}
+    </Card>
+  )
+}
+
+function Conflicts({ site, names }: { site: Site; names: Record<string, string> }) {
+  const q = useQueue(site)
+  const items = (q.data?.items ?? []).filter((i) => i.rule_id === 'F-SCHED-CONFLICT')
+  if (!items.length) return null
+  return (
+    <section className="space-y-3" aria-label="Schedule conflicts">
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <div className="eyebrow">Fix before the shift</div>
+          <h2 className="flex items-center gap-2 text-heading font-semibold text-ink"><CalendarX2 size={16} className="text-brand-3" /> Schedule conflicts in the published schedule</h2>
+          <p className="text-small text-ink-2">Upcoming shifts that overlap another shift or leave less than the minimum rest. The fix reuses the same eight swap checks.</p>
+        </div>
+      </div>
+      {items.map((i) => <ConflictCard key={i.id} item={i} names={names} />)}
+    </section>
+  )
+}
+
+function ConflictCard({ item, names }: { item: ExceptionSummary; names: Record<string, string> }) {
+  const [open, setOpen] = useState(false)
+  const resolved = item.status === 'resolved' || item.status === 'superseded'
+  return (
+    <Card className={cn('overflow-hidden', resolved && 'opacity-80')}>
+      <div aria-hidden className="h-1 bg-gradient-to-r from-brand-3 via-brand-1 to-brand-2" />
+      <CardHeader
+        eyebrow={`Conflict · ${item.id}`}
+        title={<span className="flex items-center gap-2.5"><Avatar name={item.employee_name} size={30} /> {item.employee_name}: {item.title.toLowerCase()}</span>}
+        actions={<StatusPill status={item.status} />}
+      />
+      <div className="px-4 pb-4">
+        <p className="text-small text-ink-2">{item.summary}</p>
+        <Button className="mt-3" variant={open ? 'secondary' : 'model'} onClick={() => setOpen((v) => !v)}>
+          <ChevronDown size={14} className={cn('transition-transform', open && 'rotate-180')} /> {open ? 'Hide review' : resolved ? 'View decision' : 'Review drafted resolution'}
+        </Button>
+      </div>
+      {open && (
+        <div className="border-t border-line bg-canvas/60">
+          <ExceptionPanel id={item.id} names={names} />
         </div>
       )}
     </Card>

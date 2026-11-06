@@ -63,7 +63,7 @@ Priority rule when time is short: protect, in order, (1) the end-to-end J1 journ
 **Objectives:** exact, explainable detection and the deterministic machinery the harness relies on.
 
 **Tasks**
-- `engine/pairing.py` (UTC pairing, overnight, DST), `engine/rules/*.py` (17 rules), `engine/detect.py` (runs rules, fingerprints), `engine/pay.py` (regular, OT, DT, premiums, cost), `engine/constraints.py` (envelope, plausible window, evidence items), `engine/candidates.py` (deterministic corrections and template text), `engine/simulate.py` (apply operations in memory), `engine/cascade.py` (counterfactual linker), `engine/forecast.py` (projection and swap candidates), `engine/confidence.py` (evidence strength).
+- `engine/pairing.py` (UTC pairing, overnight, DST), `engine/rules/*.py` (18 rules), `engine/detect.py` (runs rules, fingerprints), `engine/pay.py` (regular, OT, DT, premiums, cost), `engine/constraints.py` (envelope, plausible window, evidence items), `engine/candidates.py` (deterministic corrections and template text), `engine/simulate.py` (apply operations in memory), `engine/cascade.py` (counterfactual linker), `engine/forecast.py` (projection and swap candidates), `engine/confidence.py` (evidence strength).
 - Detection service writes exceptions idempotently.
 
 **Dependencies:** step 2.

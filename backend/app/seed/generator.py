@@ -379,6 +379,7 @@ def build(seed: int = 20261106) -> Dataset:
         ("E-FRE-003", date(2026, 11, 4)): ("07:00", "13:30"),  # Priya short Wednesday
         ("E-FRE-014", date(2026, 11, 3)): ("14:30", "23:00"),  # Nadia evening Tuesday (clopening)
         ("E-BLR-005", date(2026, 11, 3)): ("14:00", "23:00"),  # Sneha evening Tuesday
+        ("E-FRE-012", date(2026, 11, 6)): ("14:30", "23:00"),  # Grace closes Friday
     }
 
     shifts: dict[tuple[str, date], Shift] = {}
@@ -533,6 +534,10 @@ def build(seed: int = 20261106) -> Dataset:
     # Duplicate IN for Omar on Monday (double tap at the terminal).
     om = sh("E-FRE-011", 11, 2)
     om.start = at("E-FRE-011", 11, 2, "07:01")
+
+    # Grace: published to open Saturday at 06:00 after closing Friday at 23:00 (7 h rest, a
+    # schedule conflict found before the shift is worked). Schedule only; no rng draws.
+    b.schedule("E-FRE-012", at("E-FRE-012", 11, 7, "06:00"), at("E-FRE-012", 11, 7, "14:30"), 30)
 
     # ---- Emit punches and evidence -----------------------------------------------------
     for (emp, _d), s in sorted(shifts.items(), key=lambda kv: (kv[0][0], kv[1].start)):

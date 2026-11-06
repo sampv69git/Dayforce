@@ -179,6 +179,8 @@ Enforced by `--gate` in the `evaluation` job: detection precision and recall at 
 
 ## 5. Limitations
 
+- The labelled set evaluates completed timecards, so the two forward-looking rules (F-OT-RISK and F-SCHED-CONFLICT) are not in it. They are covered by unit tests (rest shortfall, overlap, jurisdiction minimums, shifts already under way), a pipeline test that checks the verified swap and its cascade, all twelve injected faults, and end-to-end journey J6. Adding F-SCHED-CONFLICT did not change any evaluation result (re-run on 2026-11-06: detection 1.000/1.000, hybrid hit@5 1.000, MRR 0.770, correction accuracy 1.000, 144 of 144 faults caught).
+
 - Synthetic data cannot capture every real-world punch pattern, device failure, or local pay practice.
 - Labels and rules share authors (see section 2).
 - The injection set has 8 hand-written variants; it shows the controls work on known patterns, not that injection is impossible.

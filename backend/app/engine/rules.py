@@ -349,6 +349,54 @@ def r_rest(week: EmployeeWeek, shifts: list[Shift], p: PolicyParams) -> list[Fin
     return out
 
 
+def r_schedule_conflict(week: EmployeeWeek, shifts: list[Shift], p: PolicyParams) -> list[Finding]:
+    """Upcoming published shifts that overlap another shift or leave less than the minimum rest.
+
+    Unlike R-REST-MIN, which reviews rest that was already short, this looks ahead at the
+    published schedule so the conflict can be fixed before anyone works it.
+    """
+    out: list[Finding] = []
+    worked = [(s.start.at, s.end.at) for s in shifts if s.start is not None and s.end is not None]
+    for sc in sorted(week.schedules, key=lambda x: x.start):
+        if sc.start <= week.now or not week.in_week(week.local_date(sc.start)):
+            continue
+        before = [(o.start, o.end) for o in week.schedules if o.id != sc.id and o.start < sc.start]
+        before += [(a, b) for a, b in worked if a < sc.start]
+        if not before:
+            continue
+        prev_end = max(b for _, b in before)
+        gap = (sc.start - prev_end).total_seconds() / 3600
+        if gap >= p.rest_min_hours:
+            continue
+        overlap = gap < 0
+        when = f"{_day(week.local_date(sc.start))} {hhmm(week, sc.start)}"
+        summary = (
+            f"The {when} shift overlaps a shift that ends at {hhmm(week, prev_end)}."
+            if overlap
+            else f"The {when} shift starts {gap:.1f} h after the previous shift ends at "
+            f"{hhmm(week, prev_end)} (minimum {p.rest_min_hours:.0f} h rest)."
+        )
+        out.append(
+            Finding(
+                "F-SCHED-CONFLICT",
+                week.local_date(sc.start),
+                sc.id,
+                {
+                    "shift_id": sc.id,
+                    "shift_start": fmt_local(week, sc.start),
+                    "shift_end": fmt_local(week, sc.end),
+                    "shift_hours": round(sc.planned_hours, 2),
+                    "previous_end": fmt_local(week, prev_end),
+                    "rest_hours": round(max(gap, 0.0), 2),
+                    "minimum_hours": p.rest_min_hours,
+                    "conflict": "overlap" if overlap else "rest_shortfall",
+                },
+                summary,
+            )
+        )
+    return out
+
+
 def r_overtime(week: EmployeeWeek, shifts: list[Shift], p: PolicyParams) -> list[Finding]:
     if week.employee.exempt:
         return []

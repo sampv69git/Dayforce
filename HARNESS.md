@@ -121,6 +121,7 @@ Fictional policy pack `Kestrel Logistics Time and Attendance Policy v2026.2`. Th
 | R-DAYS-CONSECUTIVE | overtime | Seventh consecutive day worked (CA) or more than 6 (handbook) | medium | approve_overtime, record_premium, escalate | CA-2.3 / TA-4.4 |
 | R-HOLIDAY-WORK | policy | Shift on a company holiday | low | record_premium | BLR-4.1 / TA-7.1 |
 | F-OT-RISK | forecast | Worked + scheduled remaining over weekly threshold, or a scheduled shift over the daily threshold | medium | reassign_shift, approve_overtime, escalate | TA-4.2 |
+| F-SCHED-CONFLICT | schedule | A future published shift that overlaps another shift or starts less than the minimum rest (10 h, 11 h Bengaluru) after the previous one ends | medium | reassign_shift, escalate | TA-6.1 / BLR-3.3, TA-9.1 |
 
 Exempt employees are excluded from overtime and meal premium rules (TA-1.3).
 

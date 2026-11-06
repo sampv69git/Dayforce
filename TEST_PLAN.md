@@ -5,7 +5,7 @@ Each test case traces to a requirement in PROJECT.md (FR, NFR, AC) or a gate in 
 | ID | Requirement | Test | Type |
 |---|---|---|---|
 | T-01 | FR1 | Generator with same seed produces identical dataset hash | unit |
-| T-02 | FR2 | Each of 17 rules: positive, negative, boundary cases | unit |
+| T-02 | FR2 | Each of 18 rules: positive, negative, boundary cases | unit |
 | T-03 | FR2 | Overnight shift pairing; DST fall-back shift counts 1 extra hour | unit |
 | T-04 | FR3 | Re-running detection creates no duplicate open exceptions | integration |
 | T-05 | FR4 | Diego span cascade links 4 symptoms; approving root resolves them | unit + integration |

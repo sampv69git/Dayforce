@@ -28,6 +28,8 @@ EXPECTED = {
     ("E-FRE-011", "R-SCHED-TARDY"),
     ("E-FRE-012", "R-SCHED-UNSCHEDULED"),
     ("E-FRE-012", "R-SCHED-TARDY"),
+    ("E-FRE-012", "F-SCHED-CONFLICT"),
+    ("E-FRE-012", "F-OT-RISK"),
     ("E-FRE-014", "R-REST-MIN"),
     ("E-FRE-015", "R-OT-DAILY"),
     ("E-FRE-015", "F-OT-RISK"),

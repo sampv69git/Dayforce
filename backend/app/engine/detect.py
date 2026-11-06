@@ -26,6 +26,7 @@ RESOLVED_BY: dict[str, set[str]] = {
     "R-DAYS-CONSECUTIVE": {"acknowledged", "seventh_day_premium"},
     "R-HOLIDAY-WORK": {"holiday_premium"},
     "F-OT-RISK": {"ot_approval"},
+    "F-SCHED-CONFLICT": set(),  # cleared only by changing the schedule
 }
 
 
@@ -68,6 +69,7 @@ def detect(week: EmployeeWeek) -> Detection:
     found += rules.r_consecutive(week, shifts, p)
     found += rules.r_holiday(week, shifts, p)
     found += rules.r_forecast(week, shifts, p)
+    found += rules.r_schedule_conflict(week, shifts, p)
     kept = [f for f in found if f.rule_id in RULES and not _resolved(week, f)]
     kept.sort(key=lambda f: (f.work_date, f.rule_id, f.discriminator))
     return Detection(week=week, params=p, shifts=shifts, findings=kept)

@@ -1,7 +1,7 @@
 import { ArrowUpRight, Banknote, Fingerprint, GitBranch, Microscope, RefreshCw, ShieldCheck, Sparkles, Waypoints } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { useCreateDraft, useException, useProvider } from '@/api/hooks'
+import { useCreateDraft, useException, useForecast, useProvider } from '@/api/hooks'
 import type { Draft } from '@/api/types'
 import { Avatar, Ring } from '@/components/fx'
 import { Button, Card, CardHeader, ErrorState, Pill, Segmented, Skeleton, Tip } from '@/components/ui/primitives'
@@ -39,7 +39,13 @@ export function ExceptionPanel({ id, onDecided, full = false, names: nameMap }: 
   }, [draft?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const anchors = useMemo(() => draft?.resolution?.operations.flatMap((o) => o.evidence_ids) ?? [], [draft])
-  const names = useMemo(() => nameMap ?? ({} as Record<string, string>), [nameMap])
+  // Reassignments name a colleague; resolve names from the site roster when the caller has none.
+  const needsNames = !nameMap && !!draft?.resolution?.operations.some((o) => o.op === 'reassign_shift')
+  const roster = useForecast(detail?.site as 'FRE' | 'AUS' | 'BLR' | undefined, needsNames && !!detail)
+  const names = useMemo(
+    () => nameMap ?? Object.fromEntries(roster.data?.rows.map((r) => [r.employee.id, r.employee.name]) ?? []),
+    [nameMap, roster.data],
+  )
 
   if (q.isLoading) return <PanelSkeleton />
   if (q.isError) return <ErrorState error={q.error} onRetry={() => q.refetch()} />

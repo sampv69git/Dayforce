@@ -13,6 +13,10 @@ def rules(week_builder: W) -> list[str]:
     return [f.rule_id for f in detect(week_builder.build()).findings]
 
 
+def run(week_builder: W) -> list:
+    return list(detect(week_builder.build()).findings)
+
+
 def test_clean_ca_shift_has_no_exceptions() -> None:
     w = W().shift("2026-11-03", "07:00", "15:30")
     assert rules(w) == []
@@ -150,6 +154,38 @@ def test_rest_between_shifts() -> None:
         .shift("2026-11-04", "04:30", "13:00", meal=("08:30", "09:00"))
     )
     assert "R-REST-MIN" in rules(blr)  # 10.5 h < 11 h in Bengaluru
+
+
+def test_schedule_conflict_looks_ahead_at_published_shifts() -> None:
+    w = W(now="2026-11-06 11:00")
+    w.sched("2026-11-06 14:30", "2026-11-06 23:00")
+    assert "F-SCHED-CONFLICT" not in rules(w)
+    w.sched("2026-11-07 06:00", "2026-11-07 14:30")  # 7 h after the close
+    found = [f for f in run(w) if f.rule_id == "F-SCHED-CONFLICT"]
+    assert len(found) == 1
+    assert found[0].evidence["conflict"] == "rest_shortfall"
+    assert found[0].evidence["rest_hours"] == 7.0
+    assert "R-REST-MIN" not in rules(w)  # nothing has been worked yet
+
+
+def test_schedule_conflict_overlap_and_jurisdiction_minimum() -> None:
+    w = W(now="2026-11-06 11:00")
+    w.sched("2026-11-07 07:00", "2026-11-07 15:30").sched("2026-11-07 14:00", "2026-11-07 22:00")
+    found = [f for f in run(w) if f.rule_id == "F-SCHED-CONFLICT"]
+    assert [f.evidence["conflict"] for f in found] == ["overlap"]
+    # 10.5 h rest is enough in California (10 h) but not in Bengaluru (11 h).
+    ca = W(now="2026-11-06 11:00").sched("2026-11-06 12:00", "2026-11-06 20:30")
+    ca.sched("2026-11-07 07:00", "2026-11-07 15:30")
+    assert "F-SCHED-CONFLICT" not in rules(ca)
+    blr = W("IN-KA", now="2026-11-06 11:00").sched("2026-11-06 12:00", "2026-11-06 20:30")
+    blr.sched("2026-11-07 07:00", "2026-11-07 15:30")
+    assert "F-SCHED-CONFLICT" in rules(blr)
+
+
+def test_schedule_conflict_ignores_shifts_already_started() -> None:
+    w = W(now="2026-11-06 11:00").sched("2026-11-05 14:30", "2026-11-05 23:00")
+    w.sched("2026-11-06 06:00", "2026-11-06 14:30")  # already under way at 11:00
+    assert "F-SCHED-CONFLICT" not in rules(w)
 
 
 def test_daily_overtime_ca_and_blr_not_tx() -> None:

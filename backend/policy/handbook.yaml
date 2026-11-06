@@ -180,7 +180,7 @@ clauses:
   - id: TA-6.1
     section: "6. Rest between shifts"
     title: Minimum rest between shifts
-    rules: [R-REST-MIN]
+    rules: [R-REST-MIN, F-SCHED-CONFLICT]
     text: >-
       Employees should have at least 10 consecutive hours off between the end of one shift and the start
       of the next.
@@ -207,7 +207,7 @@ clauses:
   - id: TA-9.1
     section: "9. Shift reassignment"
     title: Reassigning future shifts
-    rules: [F-OT-RISK]
+    rules: [F-OT-RISK, F-SCHED-CONFLICT]
     text: >-
       A future shift may be reassigned to a colleague in the same role and site if the reassignment does
       not create overtime, a rest shortfall, or a seventh consecutive workday for either employee. Both
