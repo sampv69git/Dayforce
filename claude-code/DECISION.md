@@ -177,3 +177,10 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 ## D-031 Make the brief visible without adding pages (2026-11-06)
 - **Decision:** queue lenses use the brief's own words, a cutoff briefing summarises the queue with numbers computed by code (never model text), and the landing page maps each phrase of Use Case 5 to rules, corrections, and screens. We chose these over new features to avoid a demo that looks like a feature list.
 
+## D-032 Email and password sign-in alongside persona sign-in (2026-11-07)
+- **Context:** the owner asked for a real login and authentication without breaking the working demo.
+- **Alternatives:** an external identity provider (Auth0, Keycloak) now; a password library such as argon2-cffi or bcrypt; replacing persona sign-in.
+- **Trade-offs:** an identity provider adds a service and network dependency to a one-command demo. scrypt is in the Python standard library and is a memory-hard KDF accepted by OWASP, so no new dependency. Replacing persona sign-in would break the guided demo and the end-to-end tests.
+- **Decision:** credentials in a separate `user_credentials` table (the persona model is unchanged), scrypt hashes, generic failures with equal timing, per-account lockout, JWTs with a required `jti` checked against a revocation table, and password changes that end earlier sessions. Persona sign-in stays on by default behind `DEMO_LOGIN_ENABLED`. Session-ending endpoints are excluded from the contract fuzzer (it would revoke its own token) and covered by integration tests.
+- **Revisit when:** deploying for real users: OIDC or SAML with MFA, edge rate limiting, HTTP-only cookie sessions.
+

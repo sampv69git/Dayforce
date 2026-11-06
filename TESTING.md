@@ -23,7 +23,8 @@
 | Coverage of `app/engine` and `app/harness` | 95% |
 | Evaluation with `--gate` | All gates passed (see `EVALUATION.md`) |
 | Vitest | 13 passed |
-| Playwright journeys with axe | 7 passed |
+| Backend pytest | 165 passed, 36 Schemathesis subtests, coverage 95.7% (engine and harness) |
+| Playwright journeys with axe | 9 passed (J1 to J7, landing page, guided tour) |
 | Manual axe sweep | Every page in light and dark themes: no serious or critical violations |
 
 ## Commands

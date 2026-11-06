@@ -77,6 +77,7 @@ The queue groups work under these same four headings, and the landing page maps 
 | **Keyboard-first triage** | `J`/`K` to move, `A` approve, `E` edit (re-validated live), `R` reject, `Ctrl K` command palette, guarded bulk approve |
 | **Hash-chained audit** | Every draft, decision, revision, and setting change is appended with a SHA-256 link to the one before |
 | **Degraded mode** | With no model available, deterministic templates pass the same gates and the workflow keeps running |
+| **Secure sign-in** | Email and password with scrypt hashing, account lockout, revocable sessions, password change, and role-based access on every route; one-click persona sign-in for the demo can be switched off |
 
 ## Demo walkthrough
 
@@ -151,7 +152,7 @@ flowchart LR
 | Layer | Responsibility | Location |
 |---|---|---|
 | Web app | Queue, exception detail, forecast, inspector, outcomes, evaluation, policies, payroll, audit, employee screen, landing page, tours | `frontend/src` |
-| API | REST under `/api/v1`, demo JWT auth with RBAC, RFC 9457 problem details, OpenAPI 3.1 | `backend/app/api` |
+| API | REST under `/api/v1`, password and persona sign-in, revocable JWT sessions, RBAC, RFC 9457 problem details, OpenAPI 3.1 | `backend/app/api`, `backend/app/auth` |
 | Services | Week assembly, detection runs, views, decisions, insights | `backend/app/services` |
 | Rules engine | Pairing, rules, pay, constraints envelope, candidates, simulation, cascade, forecast, evidence strength | `backend/app/engine` |
 | Harness | Context building, sanitising, gates, repair, routing, fallback | `backend/app/harness` |
@@ -269,7 +270,16 @@ On Linux and macOS, `make dev` starts both. Set `VITE_API_PROXY` to point the de
 ### Using the demo
 
 - The landing page opens with a guided tour on the first visit; replay it from **Take the tour**.
-- Sign in as **Maya Chen** (manager), **Arjun Rao** (payroll admin), or **Diego Alvarez** (employee). Each role has its own in-app tour from the header.
+- Pick a persona for one-click access, or choose **Sign in** and use a synthetic account:
+
+  | Account | Email | Role |
+  |---|---|---|
+  | Maya Chen | `maya.chen@kestrel.example` | Manager, Fremont |
+  | Arjun Rao | `arjun.rao@kestrel.example` | Payroll admin, all sites |
+  | Diego Alvarez | `diego.alvarez@kestrel.example` | Employee |
+  | Ananya Iyer, Jordan Reyes | `ananya.iyer@kestrel.example`, `jordan.reyes@kestrel.example` | Managers, Bengaluru and Austin |
+
+  The password for every synthetic account is `Countersign2026` (set `SEED_USER_PASSWORD` to change it). Each role has its own in-app tour from the header, and the account menu offers **Change password** and **Sign out**.
 - Arjun can switch the LLM provider (Groq, Ollama, rule-based), reset demo data, and replay injected faults in the inspector.
 - The clock is simulated (Fri 6 Nov 2026, 11:00 PT) so the payroll cutoff and forecasts are reproducible.
 
@@ -294,7 +304,10 @@ All settings are environment variables, read from `.env` at the repository root.
 | `LLM_TIMEOUT_S` / `LLM_MAX_OUTPUT_TOKENS` | `30` / `2048` | Provider timeout and completion budget |
 | `DATABASE_URL` | SQLite in `backend/` | For example `postgresql+psycopg://user:pass@host:5432/countersign` |
 | `JWT_SECRET` | development value | Signing key for demo tokens; use 32 or more random characters |
-| `JWT_TTL_HOURS` | `8` | Token lifetime |
+| `JWT_TTL_HOURS` | `8` | Session lifetime |
+| `DEMO_LOGIN_ENABLED` | `true` | One-click persona sign-in; set to `false` to allow only email and password |
+| `LOGIN_MAX_ATTEMPTS` / `LOGIN_LOCKOUT_MINUTES` | `5` / `15` | Failed attempts before an account locks, and for how long |
+| `SEED_USER_PASSWORD` | `Countersign2026` | Password given to the seeded synthetic accounts |
 | `CORS_ORIGINS` | local dev origins | JSON list of allowed web origins |
 | `EMBEDDINGS_ENABLED` | `true` | Set to `false` to rank with BM25 only (faster tests) |
 | `EMBEDDING_MODEL` / `EMBEDDING_CACHE_DIR` | `BAAI/bge-small-en-v1.5` / `backend/.fastembed_cache` | Embedding model and on-disk cache |
@@ -310,7 +323,8 @@ Secrets belong in `.env` or your platform's secret store, never in Git. CI scans
 .
 ├── backend/
 │   ├── app/
-│   │   ├── api/            REST routes, auth, RBAC, problem details
+│   │   ├── api/            REST routes, sessions, RBAC, problem details
+│   │   ├── auth/           password hashing and policy
 │   │   ├── engine/         pure rules engine: pairing, rules, pay, simulate, cascade, forecast
 │   │   ├── harness/        context, sanitiser, gates G1 to G10, pipeline, fallback
 │   │   ├── retrieval/      policy corpus, embeddings, hybrid ranking
@@ -327,7 +341,7 @@ Secrets belong in `.env` or your platform's secret store, never in Git. CI scans
 │   └── tests/              unit, integration, contract
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/          landing, queue, forecast, inspector, outcomes, evaluation, policies, payroll, audit, timecard, employee
+│   │   ├── pages/          landing, sign-in, queue, forecast, inspector, outcomes, evaluation, policies, payroll, audit, timecard, employee
 │   │   ├── components/     domain widgets, app shell, guided tour, effects, UI primitives
 │   │   ├── api/            generated OpenAPI types, typed client, hooks, Zod schemas
 │   │   └── lib/            session, formatting, brief mapping, tour state
@@ -345,7 +359,7 @@ The contract lives in `openapi.yaml` (OpenAPI 3.1), generated from the FastAPI a
 
 | Group | Endpoints |
 |---|---|
-| System and auth | `GET /health`, `GET /health/ready`, `GET /auth/personas`, `POST /auth/demo-login`, `GET /me` |
+| System and auth | `GET /health`, `GET /health/ready`, `GET /auth/config`, `POST /auth/login`, `POST /auth/logout`, `POST /auth/password`, `GET /auth/personas`, `POST /auth/demo-login`, `GET /me` |
 | Exceptions | `GET /pay-period/current`, `GET /exceptions`, `GET /exceptions/{id}`, `POST /exceptions/{id}/drafts`, `POST /exceptions/{id}/attestation-requests` |
 | Drafts and decisions | `GET /drafts/{id}`, `POST /drafts/{id}/validate-edit`, `POST /drafts/{id}/decision`, `POST /drafts/bulk-approve` |
 | Workforce | `GET /timecards/{employee_id}`, `POST /simulate`, `GET /forecast/overtime`, `GET /me/actions`, `POST /attestations` |
@@ -363,12 +377,12 @@ make openapi
 
 | Check | Command | Covers |
 |---|---|---|
-| Backend tests | `cd backend && uv run pytest -q` | Unit, integration, API contract (Schemathesis and OpenAPI drift); 152 tests, coverage gated at 85% in CI |
+| Backend tests | `cd backend && uv run pytest -q` | Unit, integration, API contract (Schemathesis and OpenAPI drift); 165 tests, coverage gated at 85% in CI |
 | Lint and types | `make lint` and `make typecheck` | ruff, mypy (strict on engine, harness, contracts, retrieval), oxlint, tsc |
 | Deterministic evaluation | `cd backend && uv run python -m eval.run --providers scripted,rule_based --gate` | Detection, retrieval, corrections, 12-fault matrix, CI quality gates |
 | Real-model evaluation | `cd backend && uv run python -m eval.run --providers groq --limit 40` | gpt-oss-20b on a stratified subset (needs `GROQ_API_KEY`) |
 | Frontend unit | `cd frontend && npm test` | Components, formatters, boundary validation, guided tour |
-| End to end | `cd frontend && npx playwright test` | Eight journeys with WCAG 2 A/AA axe checks, on their own ports and database |
+| End to end | `cd frontend && npx playwright test` | Nine journeys, including password sign-in, with WCAG 2 A/AA axe checks, on their own ports and database |
 | Everything | `make check` | All of the above except the real-model evaluation and end to end |
 
 CI (GitHub Actions) runs backend, evaluation, frontend, and secret-scan jobs on every push and pull request. Strategy and thresholds: `TESTING.md`, `TEST_PLAN.md`, `QUALITY_GATES.md`.
@@ -377,13 +391,13 @@ CI (GitHub Actions) runs backend, evaluation, frontend, and secret-scan jobs on 
 
 The prototype runs as one API instance with demo sign-in and a simulated clock. Its design keeps the path to production short:
 
-- **Stateless API.** Authentication is a signed JWT and all state lives in the database, so API replicas can run behind any load balancer. Build from the provided Dockerfiles and point every replica at the same `DATABASE_URL`.
+- **Stateless API.** Sessions are signed JWTs checked against a revocation table in the shared database, so API replicas can run behind any load balancer. Build from the provided Dockerfiles and point every replica at the same `DATABASE_URL`.
 - **One database for data and vectors.** PostgreSQL 16 with pgvector holds timecards, drafts, the audit chain, and clause embeddings. Run migrations once per release with `uv run alembic upgrade head`.
 - **Pluggable models.** Providers sit behind one interface and are chosen by configuration. Use a hosted endpoint for throughput, self-host the open weights for data residency, or run rule-based mode during an outage.
 - **Static web app.** The frontend builds to static files served by nginx, which proxies `/api`; it can move to any CDN.
 - **Evidence by design.** Trace spans, structured logs with request IDs, and the hash-chained audit trail are produced on every run and ready for a log pipeline.
 
-Before a real deployment, replace demo sign-in with your identity provider (OIDC or SAML), connect real time-clock, badge, and scheduling feeds in place of the simulated ones, load your approved policy pack, move secrets into a secret manager, and review `SECURITY.md` and `PRIVACY.md`.
+Before a real deployment, set `DEMO_LOGIN_ENABLED=false`, connect your identity provider (OIDC or SAML) with MFA, connect real time-clock, badge, and scheduling feeds in place of the simulated ones, load your approved policy pack, move secrets into a secret manager, and review `SECURITY.md` and `PRIVACY.md`.
 
 ## Key technical decisions
 
