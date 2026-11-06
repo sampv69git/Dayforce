@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | Challenge window | Thu 5 Nov 19:00 IST to Sat 7 Nov 19:00 IST (48 h) |
-| Used for research and specification | Thu 19:00 to Fri about 16:00 IST |
-| Build window (this plan) | Fri 6 Nov 16:00 to Sat 7 Nov 17:00 IST = **25 h** |
+| Used for research and specification | Fri 6 Nov 12:55 to 13:30 IST (owner prepared earlier) |
+| Build window (this plan) | Fri 6 Nov 13:30 to Sat 7 Nov 17:00 IST = **27.5 h** (windows below include 2.5 h of slack, held before step 9) |
 | Buffer to hard deadline | Sat 17:00 to 19:00 IST (submission only, no new features) |
 
 Team model: one owner builds end to end with a coding assistant. "Parallel" notes show which work could be split if teammates help (for example, slides and recording rehearsal).
@@ -15,15 +15,15 @@ Priority rule when time is short: protect, in order, (1) the end-to-end J1 journ
 
 | # | Step | Budget | Window (IST) |
 |---|---|---|---|
-| 1 | Scaffold, tooling, CI skeleton, database | 1.5 h | Fri 16:00 to 17:30 |
-| 2 | Policy pack and synthetic data | 2.0 h | Fri 17:30 to 19:30 |
-| 3 | Rules engine, pay, cascade, forecast | 3.0 h | Fri 19:30 to 22:30 |
-| 4 | Retrieval | 1.5 h | Fri 22:30 to Sat 00:00 |
-| 5 | LLM providers and harness | 3.0 h | Sat 00:00 to 03:00 |
-| 6 | API, RBAC, audit, OpenAPI contract | 2.0 h | Sat 03:00 to 05:00 |
-| 7 | Frontend foundation, queue, detail | 4.0 h | Sat 05:00 to 09:00 |
-| 8 | Frontend: forecast, inspector, payroll, employee, outcomes, policies, audit, evaluation | 3.5 h | Sat 09:00 to 12:30 |
-| 9 | Evaluation runs, Docker Compose, end-to-end tests, hardening, docs sync | 2.5 h | Sat 12:30 to 15:00 |
+| 1 | Scaffold, tooling, CI skeleton, database | 1.5 h | Fri 13:30 to 15:00 |
+| 2 | Policy pack and synthetic data | 2.0 h | Fri 15:00 to 17:00 |
+| 3 | Rules engine, pay, cascade, forecast | 3.0 h | Fri 17:00 to 20:00 |
+| 4 | Retrieval | 1.5 h | Fri 20:00 to 21:30 |
+| 5 | LLM providers and harness | 3.0 h | Fri 21:30 to Sat 00:30 |
+| 6 | API, RBAC, audit, OpenAPI contract | 2.0 h | Sat 00:30 to 02:30 |
+| 7 | Frontend foundation, queue, detail | 4.0 h | Sat 02:30 to 06:30 |
+| 8 | Frontend: forecast, inspector, payroll, employee, outcomes, policies, audit, evaluation | 3.5 h | Sat 06:30 to 10:00 |
+| 9 | Evaluation runs, Docker Compose, end-to-end tests, hardening, docs sync | 2.5 h | Sat 10:00 to 15:00 (incl. slack) |
 | 10 | Demo recording, slides, README, release | 2.0 h | Sat 15:00 to 17:00 |
 
 ---

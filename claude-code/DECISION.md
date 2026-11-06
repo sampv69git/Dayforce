@@ -90,7 +90,7 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 - **Alternatives:** Next.js; plain CSS; MUI or Ant Design.
 - **Evidence:** SPA is sufficient (no SEO, no SSR need); Tailwind v4 plus shadcn/ui (Radix, accessible primitives, MIT) gives full control over a distinctive design system; TanStack Query for server state; Motion for state-change animation; Recharts for charts.
 - **Decision:** React 19, Vite, TypeScript, Tailwind v4, shadcn/ui, TanStack Query 5, React Router, Recharts 3, Motion, cmdk, sonner, lucide, Geist fonts, openapi-typescript and openapi-fetch, Zod.
-- **Note:** npm reports TypeScript 7.0 as latest (native compiler). We will pin the TypeScript major that the Vite and typescript-eslint templates support at scaffold time and record it in HANDOFF.
+- **Update (step 1):** the Vite template ships TypeScript 7.0 and oxlint. `openapi-typescript` 7.13 requires TypeScript 5.x (peer dependency), so we pinned **TypeScript 5.9.3** and kept **oxlint** as the linter (fast, zero config, catches React hook misuse). The `geist` npm package targets Next.js and does not export CSS, so fonts come from **@fontsource-variable/geist** and **@fontsource-variable/geist-mono** (same Geist fonts, SIL OFL 1.1).
 - **Revisit when:** a template incompatibility blocks the build.
 
 ## D-014 OpenAPI: code-first with committed snapshot and drift check (2026-11-06)
@@ -114,9 +114,17 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 - **Evidence:** owner chose light plus dark; light themes record more legibly on video.
 - **Decision:** tokens in PROTOTYPE.md section 2; violet reserved for model output; cobalt for human actions.
 
-## D-018 Cloud deployment: not included (2026-11-06, pending owner decision)
-- **Options if wanted later:** Render or Railway (API and Postgres) plus Vercel or Netlify (web); about 1 h.
-- **Decision:** local Docker Compose only unless the owner approves a cloud option.
+## D-018 Cloud deployment: only if time allows (2026-11-06)
+- **Options:** Render (API and Postgres) plus Vercel (web), free tiers; about 1 h.
+- **Decision:** owner approved a cloud deployment **only if ahead of schedule** at the end of step 9. Local Docker Compose remains the primary run path.
 
 ## D-019 MCP server: stretch (2026-11-06)
 - **Decision:** read-only MCP server only if ahead of schedule. Not on the critical path; the JD values MCP but the product does not need it to work.
+
+## D-020 Demo video hosting and length (2026-11-06)
+- **Decision:** YouTube, unlisted, linked from README.
+- **Length:** the owner indicated 5 minutes would be acceptable; the brief specifies a "10-minute demonstration". We keep the 10-minute script as the primary plan (the demo is 15% of the score) and also prepare a 5-minute cut. The owner makes the final call at recording time.
+
+## D-021 Task runner (2026-11-06)
+- **Context:** `make` is not available on the owner's Windows machine.
+- **Decision:** keep a `Makefile` for CI, Linux, macOS, and WSL, and document the equivalent direct `uv` and `npm` commands in README for Windows.

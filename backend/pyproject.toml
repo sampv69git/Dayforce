@@ -1,0 +1,59 @@
+[project]
+name = "countersign"
+version = "0.1.0"
+description = "Governed timecard exception resolution agent (Dayforce AI Innovation Challenge, Use Case 5)"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi>=0.162",
+  "uvicorn[standard]>=0.54",
+  "pydantic>=2.14",
+  "pydantic-settings>=2.6",
+  "sqlalchemy>=2.1",
+  "alembic>=1.20",
+  "psycopg[binary]>=3.3",
+  "pgvector>=0.5",
+  "structlog>=26.1",
+  "pyjwt>=2.10",
+  "httpx>=0.28",
+  "openai>=3.40",
+  "fastembed>=0.9",
+  "rank-bm25>=0.2.2",
+  "numpy>=2.1",
+  "pyyaml>=6.0",
+  "tzdata>=2025.1",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=9.2",
+  "pytest-cov>=6.0",
+  "pytest-asyncio>=1.0",
+  "ruff>=0.17",
+  "mypy>=2.4",
+  "schemathesis>=4.33",
+  "types-pyyaml",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+files = ["app/engine", "app/harness", "app/contracts", "app/retrieval"]

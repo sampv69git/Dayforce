@@ -1,0 +1,169 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens: see claude-code/PROTOTYPE.md section 2 */
+:root {
+  --canvas: #f6f6f3;
+  --surface: #ffffff;
+  --surface-2: #f0f0ec;
+  --surface-3: #e9e9e3;
+  --line: #e3e3dd;
+  --line-strong: #c9c9c1;
+  --ink: #15171c;
+  --ink-2: #4a4f5a;
+  --ink-3: #6b707c;
+  --accent: #2849d6;
+  --accent-hover: #1f3bb8;
+  --accent-soft: #e9edfc;
+  --accent-ink: #ffffff;
+  --model: #6d3fd1;
+  --model-soft: #f3eefd;
+  --model-line: #cdbdf3;
+  --ok: #127a52;
+  --ok-soft: #e7f5ee;
+  --warn: #9a5b00;
+  --warn-soft: #fdf3e1;
+  --warn-line: #f0d6a6;
+  --crit: #b42318;
+  --crit-soft: #fcecea;
+  --rule: #3d4350;
+  --shadow-overlay: 0 12px 32px -12px rgb(16 24 40 / 0.22), 0 2px 6px -2px rgb(16 24 40 / 0.08);
+  --hatch: repeating-linear-gradient(135deg, transparent 0 4px, rgb(21 23 28 / 0.07) 4px 5px);
+}
+
+.dark {
+  --canvas: #0d0f12;
+  --surface: #14171c;
+  --surface-2: #1b1f26;
+  --surface-3: #222731;
+  --line: #272c35;
+  --line-strong: #3a404b;
+  --ink: #eceef2;
+  --ink-2: #b4bac5;
+  --ink-3: #8f96a3;
+  --accent: #7d96ff;
+  --accent-hover: #9aaeff;
+  --accent-soft: #1b2448;
+  --accent-ink: #0d0f12;
+  --model: #b49bff;
+  --model-soft: #231a3d;
+  --model-line: #4a3a7a;
+  --ok: #4cc38a;
+  --ok-soft: #12271e;
+  --warn: #f0b44c;
+  --warn-soft: #2b2112;
+  --warn-line: #5a4320;
+  --crit: #ff7a70;
+  --crit-soft: #2e1614;
+  --rule: #a9b0bc;
+  --shadow-overlay: 0 16px 40px -12px rgb(0 0 0 / 0.6);
+  --hatch: repeating-linear-gradient(135deg, transparent 0 4px, rgb(255 255 255 / 0.08) 4px 5px);
+}
+
+@theme inline {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-model: var(--model);
+  --color-model-soft: var(--model-soft);
+  --color-model-line: var(--model-line);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-warn-line: var(--warn-line);
+  --color-crit: var(--crit);
+  --color-crit-soft: var(--crit-soft);
+  --color-rule: var(--rule);
+
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-dialog: 14px;
+  --shadow-overlay: var(--shadow-overlay);
+
+  --text-display: 28px;
+  --text-display--line-height: 34px;
+  --text-title: 20px;
+  --text-title--line-height: 28px;
+  --text-heading: 16px;
+  --text-heading--line-height: 24px;
+  --text-body: 14px;
+  --text-body--line-height: 22px;
+  --text-small: 13px;
+  --text-small--line-height: 20px;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 22px;
+    background: var(--canvas);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+  body {
+    min-height: 100dvh;
+  }
+  ::selection {
+    background: var(--accent-soft);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .eyebrow {
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .bg-hatch {
+    background-image: var(--hatch);
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+}
