@@ -79,6 +79,8 @@ class User(Model):
     role: Role
     site_scope: list[str]
     employee_id: str | None
+    email: str | None = None
+    auth_method: Literal["password", "demo"] | None = None
 
 
 class DemoLoginRequest(Input):
@@ -88,7 +90,29 @@ class DemoLoginRequest(Input):
 class TokenResponse(Model):
     access_token: str
     token_type: Literal["bearer"] = "bearer"
+    expires_in: int = Field(description="Seconds until the token expires")
     user: User
+
+
+class LoginRequest(Input):
+    email: str = Field(min_length=3, max_length=254, examples=["maya.chen@kestrel.example"])
+    password: str = Field(min_length=1, max_length=128)
+
+
+class ChangePasswordRequest(Input):
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=1, max_length=128)
+
+
+class AuthConfig(Model):
+    password_login: bool = True
+    demo_login: bool
+    min_password_length: int
+    lockout_after_attempts: int
+
+
+class SignedOut(Model):
+    status: Literal["signed_out"] = "signed_out"
 
 
 # ---- shared -----------------------------------------------------------------------------

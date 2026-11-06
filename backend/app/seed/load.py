@@ -59,12 +59,39 @@ def load_policy(session: Session) -> int:
     return len(clauses)
 
 
+def seed_email(display_name: str) -> str:
+    """Synthetic sign-in address on the reserved .example domain."""
+    return f"{display_name.lower().replace(' ', '.')}@kestrel.example"
+
+
+def _load_credentials(session: Session, ds: Dataset) -> None:
+    from datetime import UTC, datetime
+
+    from app.auth.passwords import hash_password
+    from app.config import get_settings
+
+    now = datetime.now(UTC).replace(tzinfo=None)
+    password = get_settings().seed_user_password
+    session.add_all(
+        m.UserCredential(
+            user_id=u.id,
+            email=seed_email(u.display_name),
+            password_hash=hash_password(password),
+            failed_attempts=0,
+            password_changed_at=now,
+        )
+        for u in ds.users
+    )
+    session.flush()
+
+
 def load_dataset(session: Session, ds: Dataset) -> None:
     session.add_all(m.Site(**vars(s)) for s in ds.sites)
     session.flush()
     session.add_all(m.Employee(**vars(e)) for e in ds.employees)
     session.add_all(m.User(**vars(u)) for u in ds.users)
     session.flush()
+    _load_credentials(session, ds)
     session.add_all(
         m.ShiftSchedule(
             id=s.id,

@@ -43,6 +43,15 @@ class Conflict(DomainError):
     title = "Conflict"
 
 
+class TooManyAttempts(DomainError):
+    status = 429
+    title = "Too many attempts"
+
+    def __init__(self, detail: str, retry_after_s: int) -> None:
+        super().__init__(detail)
+        self.retry_after_s = retry_after_s
+
+
 class Unprocessable(DomainError):
     status = 422
     title = "Unprocessable request"
@@ -97,6 +106,10 @@ def documented_methods(app: FastAPI, path: str) -> list[str]:
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(DomainError)
     async def _domain(_: Request, exc: DomainError) -> JSONResponse:
+        if isinstance(exc, TooManyAttempts):
+            return problem(
+                exc.status, exc.title, exc.detail, headers={"Retry-After": str(exc.retry_after_s)}
+            )
         return problem(exc.status, exc.title, exc.detail)
 
     @app.exception_handler(RequestValidationError)
