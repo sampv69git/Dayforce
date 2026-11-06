@@ -2,18 +2,19 @@
 
 Project-level handoff for reviewers and teammates. The detailed working log is `claude-code/HANDOFF.md`.
 
-## Current state (2026-11-06)
+## Current state (Fri 6 Nov 2026, afternoon IST)
 
-- Research and specification complete; awaiting owner approval before implementation.
-- No application code yet.
+- The product is implemented end to end: rules engine, retrieval, harness, API, web app, evaluation suite, and tests. See README for the journey, screenshots, and how to run it.
+- Without a Groq key the app runs in rule-based mode, which is fully usable and verified by the same gates.
+- Remaining: real-model evaluation, the demo recording, the slide deck, and two CI jobs that need a token with `workflow` scope.
 
 ## How to continue
 
-1. Read `README.md`, `PROJECT.md`, `HARNESS.md`, and `claude-code/CLAUDE.md`.
-2. Follow `claude-code/STEPS.md` from step 1.
-3. Record progress, test results, and decisions in `claude-code/HANDOFF.md` and `claude-code/DECISION.md`.
+1. Read `README.md`, `HARNESS.md`, and `claude-code/CLAUDE.md`.
+2. Run the app (README, "Run it") and walk through `DEMO_SCRIPT.md`.
+3. Record progress in `claude-code/HANDOFF.md` and decisions in `claude-code/DECISION.md`.
 
-## Contacts and access
+## Access
 
 - Repository: https://github.com/sampv69git/Dayforce
-- Secrets: owner's local `.env` only (Groq API key, JWT secret).
+- Secrets live only in local `.env` files (Groq key, JWT secret) and are never committed.
