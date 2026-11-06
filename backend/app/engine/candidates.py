@@ -71,6 +71,14 @@ def _hm(item: EvidenceItem) -> str:
     return item.at[-5:]
 
 
+def _day(local: str) -> str:
+    """'2026-11-03T15:29' -> 'Tue 3 Nov'."""
+    from datetime import date as _date
+
+    d = _date.fromisoformat(local[:10])
+    return f"{d.strftime('%a')} {d.day} {d.strftime('%b')}"
+
+
 def _describe(item: EvidenceItem) -> str:
     label = {
         "badge_exit": "badge exit",
@@ -137,7 +145,7 @@ def build_candidate(
             )
             anchors.append(anchor)
         parts = [
-            f"{op.punch_type} at {a.at[-5:]} on {a.at[:10]} from the {_describe(a)}"
+            f"{op.punch_type} at {a.at[-5:]} on {_day(a.at)} from the {_describe(a)}"
             for op, a in zip(ops, anchors, strict=True)
         ]
         if f.rule_id == "R-PUNCH-SPAN":
