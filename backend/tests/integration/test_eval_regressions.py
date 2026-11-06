@@ -51,3 +51,23 @@ def test_does_not_fix_fault_is_caught_for_acknowledge_rules(seeded: str) -> None
             if g["status"] == "fail"
         }
         assert "G8" in failed
+
+
+def test_degraded_mode_escalates_when_template_fails_a_gate(seeded: str) -> None:
+    from datetime import date
+
+    exc = _exc("R-PUNCH-MISSING-OUT", "E-FRE-007")
+    with (
+        session_scope() as s
+    ):  # remove Kai's Wednesday meal punches so the template would add overtime
+        for p in s.scalars(
+            select(m.Punch).where(
+                m.Punch.employee_id == "E-FRE-007", m.Punch.type.in_(["MEAL_START", "MEAL_END"])
+            )
+        ):
+            if p.at_utc.date() in {date(2026, 11, 4)}:
+                s.delete(p)
+    with session_scope() as s:
+        run = run_draft(s, exc, Actor("u-arjun", "payroll_admin"), provider_name="rule_based")
+        assert run.route == "escalate"
+        assert run.fallback_reason and "escalated to payroll" in run.fallback_reason

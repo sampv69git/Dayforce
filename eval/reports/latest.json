@@ -1,0 +1,239 @@
+{
+  "run_at": "2026-11-06T09:46:02+00:00",
+  "commit": "748fd3890f570fd1716079b2ee566197989e4ead",
+  "seed": 777,
+  "dataset_size": 128,
+  "templates": {
+    "missing_out": 15,
+    "missing_in": 12,
+    "duplicate": 9,
+    "tardy": 9,
+    "unscheduled": 6,
+    "meal_missed": 9,
+    "meal_late": 3,
+    "meal_short": 3,
+    "span": 4,
+    "ot_daily": 6,
+    "rest": 6,
+    "ot_weekly": 3,
+    "consecutive": 2,
+    "holiday": 2,
+    "clean_boundary": 12,
+    "clean_5h": 3,
+    "clean_exempt": 3,
+    "overnight_clean": 3,
+    "overnight_missing_out": 1,
+    "tz_clean": 2,
+    "conflicting_evidence": 4,
+    "schedule_only": 3,
+    "injection": 8
+  },
+  "detection": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 116,
+    "fp": 0,
+    "fn": 0,
+    "false_positives": [],
+    "false_negatives": [],
+    "per_rule": {
+      "R-DAYS-CONSECUTIVE": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-HOLIDAY-WORK": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-MEAL-LATE": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-MEAL-MISSED": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-MEAL-SHORT": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-OT-DAILY": {
+        "tp": 10,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-OT-WEEKLY": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-DUPLICATE": {
+        "tp": 9,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-MISSING-IN": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-MISSING-OUT": {
+        "tp": 31,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-SPAN": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-REST-MIN": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-SCHED-TARDY": {
+        "tp": 9,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-SCHED-UNSCHEDULED": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0
+      }
+    }
+  },
+  "retrieval": {
+    "bm25": {
+      "required_hit_at_5": 0.9741,
+      "gold_recall_at_5": 0.5474,
+      "mrr": 0.7586,
+      "queries": 116
+    },
+    "dense": {
+      "required_hit_at_5": 1.0,
+      "gold_recall_at_5": 0.6056,
+      "mrr": 0.7606,
+      "queries": 116
+    },
+    "hybrid": {
+      "required_hit_at_5": 1.0,
+      "gold_recall_at_5": 0.6343,
+      "mrr": 0.7701,
+      "queries": 116
+    }
+  },
+  "fault_matrix": {
+    "malformed_json": {
+      "expected_gate": "G1",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "hallucinated_clause": {
+      "expected_gate": "G3",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "unretrieved_clause": {
+      "expected_gate": "G4",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "fabricated_quote": {
+      "expected_gate": "G5",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "disallowed_action": {
+      "expected_gate": "G6",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "unanchored_time": {
+      "expected_gate": "G7",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "does_not_fix": {
+      "expected_gate": "G8",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "reduces_paid_hours": {
+      "expected_gate": "G9",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "wrong_numbers": {
+      "expected_gate": "G10",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "injection_echo": {
+      "expected_gate": "G10",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "timeout": {
+      "expected_gate": "provider",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    },
+    "bad_then_good": {
+      "expected_gate": "G1",
+      "cases": 12,
+      "caught": 12,
+      "unsafe": 0
+    }
+  },
+  "duration_s": 29.0,
+  "runs": [
+    {
+      "provider": "rule_based",
+      "model_id": "deterministic-templates-v1",
+      "cases": 105,
+      "metrics": {
+        "schema_valid_first_pass": 1.0,
+        "citation_accuracy": 1.0,
+        "quote_grounding": 1.0,
+        "recheck_pass": 1.0,
+        "first_pass_verified": 1.0,
+        "verified_rate": 0.9619,
+        "repaired_rate": 0.0,
+        "fallback_rate": 0.0,
+        "escalation_rate": 0.0381,
+        "correction_accuracy": 1.0,
+        "unsafe_reached": 0,
+        "raw_unsafe_rate": 0.0,
+        "injection_resistance": 1.0,
+        "injection_cases": 8,
+        "latency_p50_ms": 35,
+        "latency_p95_ms": 47,
+        "tokens_total": 0,
+        "routes": {
+          "manual": 101,
+          "escalate": 4
+        }
+      },
+      "failures": []
+    }
+  ]
+}
