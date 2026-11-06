@@ -3,6 +3,8 @@ import type { components } from './schema'
 type S = components['schemas']
 export type Persona = S['Persona']
 export type User = S['User']
+export type TokenResponse = S['TokenResponse']
+export type AuthConfig = S['AuthConfig']
 export type Money = S['Money']
 export type PaySnapshot = S['PaySnapshot']
 export type EvidenceItem = S['EvidenceItem']

@@ -141,12 +141,325 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+  /api/v1/auth/config:
+    get:
+      tags:
+      - auth
+      summary: Auth Config
+      description: Which sign-in methods are available, for the sign-in screen.
+      operationId: auth_config_api_v1_auth_config_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthConfig'
+        '400':
+          description: Malformed request body
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Outside your role or site scope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with the current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /api/v1/auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login
+      description: Sign in with email and password. Failures are generic; repeated failures lock the account.
+      operationId: login_api_v1_auth_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Malformed request body
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Outside your role or site scope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with the current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Too many failed attempts; try again later
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /api/v1/auth/logout:
+    post:
+      tags:
+      - auth
+      summary: Logout
+      description: 'End this session: the token is refused from now until it would have expired.'
+      operationId: logout_api_v1_auth_logout_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignedOut'
+        '400':
+          description: Malformed request body
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Outside your role or site scope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with the current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /api/v1/auth/password:
+    post:
+      tags:
+      - auth
+      summary: Change Password
+      description: Change your password. Every other session ends; this one continues with a fresh token.
+      operationId: change_password_api_v1_auth_password_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Malformed request body
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Outside your role or site scope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with the current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
   /api/v1/auth/personas:
     get:
       tags:
       - auth
       summary: Personas
-      description: Seeded demo personas with a one-line status for the sign-in screen.
+      description: 'Seeded demo personas with a one-line status for the sign-in screen (empty when persona
+
+        sign-in is disabled).'
       operationId: personas_api_v1_auth_personas_get
       responses:
         '200':
@@ -217,7 +530,7 @@ paths:
       tags:
       - auth
       summary: Demo Login
-      description: Issue a signed token for a seeded persona.
+      description: Issue a signed token for a seeded persona (demo only; disable with DEMO_LOGIN_ENABLED).
       operationId: demo_login_api_v1_auth_demo_login_post
       requestBody:
         content:
@@ -2779,6 +3092,27 @@ components:
       - events_checked
       - first_broken_seq
       title: AuditVerification
+    AuthConfig:
+      properties:
+        password_login:
+          type: boolean
+          title: Password Login
+          default: true
+        demo_login:
+          type: boolean
+          title: Demo Login
+        min_password_length:
+          type: integer
+          title: Min Password Length
+        lockout_after_attempts:
+          type: integer
+          title: Lockout After Attempts
+      type: object
+      required:
+      - demo_login
+      - min_password_length
+      - lockout_after_attempts
+      title: AuthConfig
     BulkApproveRequest:
       properties:
         draft_ids:
@@ -2823,6 +3157,24 @@ components:
       - draft_id
       - reason
       title: BulkSkip
+    ChangePasswordRequest:
+      properties:
+        current_password:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: Current Password
+        new_password:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: New Password
+      additionalProperties: false
+      type: object
+      required:
+      - current_password
+      - new_password
+      title: ChangePasswordRequest
     Citation:
       properties:
         clause_id:
@@ -3862,6 +4214,26 @@ components:
       required:
       - status
       title: Health
+    LoginRequest:
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          minLength: 3
+          title: Email
+          examples:
+          - maya.chen@kestrel.example
+        password:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: Password
+      additionalProperties: false
+      type: object
+      required:
+      - email
+      - password
+      title: LoginRequest
     Money:
       properties:
         amount:
@@ -4588,6 +4960,15 @@ components:
       - created_at
       - decided
       title: RunSummary
+    SignedOut:
+      properties:
+        status:
+          type: string
+          const: signed_out
+          title: Status
+          default: signed_out
+      type: object
+      title: SignedOut
     SimulateRequest:
       properties:
         exception_id:
@@ -4858,11 +5239,16 @@ components:
           const: bearer
           title: Token Type
           default: bearer
+        expires_in:
+          type: integer
+          title: Expires In
+          description: Seconds until the token expires
         user:
           $ref: '#/components/schemas/User'
       type: object
       required:
       - access_token
+      - expires_in
       - user
       title: TokenResponse
     Trace:
@@ -4957,6 +5343,19 @@ components:
           - type: string
           - type: 'null'
           title: Employee Id
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        auth_method:
+          anyOf:
+          - type: string
+            enum:
+            - password
+            - demo
+          - type: 'null'
+          title: Auth Method
       type: object
       required:
       - user_id

@@ -24,7 +24,7 @@ import {
   X,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { usePersonas } from '@/api/hooks'
 import { Aurora, Avatar, Marquee, NumberTicker, Reveal, Spotlight } from '@/components/fx'
 import { Tour, type TourStep } from '@/components/tour/Tour'
@@ -98,6 +98,9 @@ function Nav({ onTour }: { onTour: () => void }) {
           <button onClick={toggleTheme} aria-label="Toggle theme" data-tour="theme" className="grid size-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
+          <Link to="/login" className="hidden h-9 items-center gap-1.5 rounded-lg px-3 text-small font-medium text-ink-2 hover:bg-surface-2 hover:text-ink sm:inline-flex">
+            <KeyRound size={14} /> Sign in
+          </Link>
           <button onClick={onTour} data-tour="tour-button" className="hidden h-9 items-center gap-1.5 rounded-lg border border-line bg-surface px-3 text-small font-medium text-ink shadow-card hover:border-line-strong sm:inline-flex">
             <Compass size={14} className="text-accent" /> Take the tour
           </button>
@@ -402,10 +405,21 @@ function Personas({ go, busy }: { go: (id: string) => void; busy: string | null 
         <h2 className="mt-2 text-[clamp(28px,3.6vw,42px)] leading-tight font-semibold tracking-[-0.03em] text-ink">
           Pick a seat at <span className="font-display text-gradient italic">Kestrel Logistics</span>
         </h2>
-        <p className="mt-3 text-body text-ink-2">A fictional company with three sites. Demo sign-in, no password. Every person and number is synthetic.</p>
+        <p className="mt-3 text-body text-ink-2">
+          A fictional company with three sites. Pick a persona for one-click access, or{' '}
+          <Link to="/login" className="font-medium text-accent hover:underline">sign in with email and password</Link>. Every person and number is synthetic.
+        </p>
       </Reveal>
       <div className="mt-10 grid gap-4 md:grid-cols-3">
         {q.isLoading && [0, 1, 2].map((i) => <Skeleton key={i} className="h-80 rounded-[20px]" />)}
+        {!q.isLoading && main.length === 0 && (
+          <div className="rounded-[20px] border border-line bg-surface p-6 text-center shadow-card md:col-span-3">
+            <p className="text-body text-ink-2">Persona sign-in is turned off on this server.</p>
+            <Link to="/login" className="bg-brand mt-3 inline-flex h-10 items-center gap-2 rounded-xl px-4 text-small font-semibold text-white shadow-glow">
+              <KeyRound size={15} /> Sign in with email
+            </Link>
+          </div>
+        )}
         {main.map((p, i) => {
           const copy = PERSONA_COPY[p.user_id]!
           return (

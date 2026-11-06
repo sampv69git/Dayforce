@@ -39,9 +39,10 @@ schema = schemathesis.pytest.from_fixture("contract_schema")
 @pytest.fixture(scope="module")
 def contract_schema(app_and_token):  # type: ignore[no-untyped-def]
     app, _ = app_and_token
-    # Destructive admin operations (reset, detect, replay) are covered by integration tests instead.
+    # Destructive admin operations (reset, detect, replay) and session-ending calls (logout,
+    # password change would revoke the fuzzer's own token) are covered by integration tests instead.
     return schemathesis.openapi.from_asgi("/api/v1/openapi.json", app).exclude(
-        path_regex=r"/admin/(reset|detect|replay)$"
+        path_regex=r"/(admin/(reset|detect|replay)|auth/(logout|password))$"
     )
 
 

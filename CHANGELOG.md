@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format follows Keep a C
 ## [Unreleased]
 
 ### Added
+- Email and password sign-in: scrypt password hashing, generic failures with equal timing, account lockout with `Retry-After`, revocable sessions (`jti` and sign-out), password change that ends other sessions, sign-in audit events, and a switch to turn persona sign-in off. New endpoints `/auth/config`, `/auth/login`, `/auth/logout`, `/auth/password`; migration 0002; credentials backfilled for existing seeded users.
+- Sign-in page with demo-account fill-in, show password, Caps Lock warning, and lockout messages; protected routes redirect to sign-in and return afterwards; change-password dialog; sign-out revokes the session on the server.
+- Tests: password hashing and policy, ten sign-in integration tests, and end-to-end journey J7.
 - F-SCHED-CONFLICT: upcoming published shifts that overlap or break minimum rest are detected before the shift and fixed by a swap that passes the eight checks for both employees; seeded case for Grace Liu; unit, pipeline, fault-matrix, and end-to-end (J6) tests.
 - Queue lenses named after the four problems in Use Case 5 (missed punches, overtime risks, schedule conflicts, policy breaches) and a cutoff briefing computed from the queue.
 - Landing section "The brief, answered", mapping each phrase of Use Case 5 to its rules, corrections, and screens.

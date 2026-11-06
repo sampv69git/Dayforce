@@ -59,6 +59,32 @@ class User(Base):
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
 
+class UserCredential(Base):
+    """Email and password sign-in for a user. Kept apart from `users` so the persona model is
+    unchanged and credentials can be removed or rotated on their own."""
+
+    __tablename__ = "user_credentials"
+
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    email: Mapped[str] = mapped_column(String(254), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    failed_attempts: Mapped[int] = mapped_column(Integer, default=0)
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    password_changed_at: Mapped[datetime] = mapped_column(DateTime)
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class RevokedToken(Base):
+    """Signed-out sessions. Tokens carry a unique `jti`; a revoked one is refused until expiry."""
+
+    __tablename__ = "revoked_tokens"
+
+    jti: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(String(32), index=True)
+    revoked_at: Mapped[datetime] = mapped_column(DateTime)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+
+
 class ShiftSchedule(Base):
     __tablename__ = "shift_schedules"
 

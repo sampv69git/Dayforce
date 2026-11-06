@@ -21,6 +21,36 @@ def run_migrations(database_url: str | None = None) -> None:
     command.upgrade(cfg, "head")
 
 
+def backfill_credentials() -> int:
+    """Give seeded users created before password sign-in existed their synthetic credentials."""
+    from datetime import UTC, datetime
+
+    from app.auth.passwords import hash_password
+    from app.db import session_scope
+    from app.domain.models import User, UserCredential
+    from app.seed.load import seed_email
+
+    added = 0
+    with session_scope() as s:
+        have = set(s.scalars(select(UserCredential.user_id)))
+        for u in s.scalars(select(User)):
+            if u.id in have:
+                continue
+            s.add(
+                UserCredential(
+                    user_id=u.id,
+                    email=seed_email(u.display_name),
+                    password_hash=hash_password(get_settings().seed_user_password),
+                    failed_attempts=0,
+                    password_changed_at=datetime.now(UTC).replace(tzinfo=None),
+                )
+            )
+            added += 1
+    if added:
+        log.info("credentials_backfilled", users=added)
+    return added
+
+
 def bootstrap() -> None:
     run_migrations()
     from app.db import session_scope
@@ -33,6 +63,8 @@ def bootstrap() -> None:
 
         log.info("auto_seed_start")
         seed(reset=True)
+    elif get_settings().auto_seed:
+        backfill_credentials()
     from app.retrieval.hybrid import get_index
 
     get_index()  # warm the retrieval index and embedding model

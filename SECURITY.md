@@ -44,7 +44,24 @@ Limit: no defence fully prevents injection influencing model text. The controls 
 | Read audit, verify chain | No | No | Yes |
 | Admin: re-run detection, reset, switch provider, replay with fault | No | No | Yes |
 
-Enforced by FastAPI dependencies on every route (deny by default), with tests for each 403 path. Authentication is demo sign-in issuing an HS256 JWT (8 h expiry) signed with `JWT_SECRET` from the environment. Not suitable for production.
+Enforced by FastAPI dependencies on every route (deny by default), with tests for each 403 path. Authentication is described in section 4a.
+
+## 4a. Authentication
+
+| Control | Implementation |
+|---|---|
+| Password sign-in | `POST /api/v1/auth/login` with email and password. Emails are matched case-insensitively. |
+| Password storage | scrypt from the Python standard library (N=2^14, r=8, p=1, 16-byte random salt, 32-byte key); parameters are stored with each hash so they can be raised later. Verification is constant time. |
+| Generic failures | Wrong password and unknown email return the same 401 detail ("Email or password is incorrect"); an unknown email still runs a full hash check so timing does not reveal which accounts exist. |
+| Brute-force protection | After `LOGIN_MAX_ATTEMPTS` (default 5) consecutive failures the account is locked for `LOGIN_LOCKOUT_MINUTES` (default 15); the API answers 429 with `Retry-After`, even for the correct password. A successful sign-in resets the counter. |
+| Sessions | HS256 JWT signed with `JWT_SECRET`, `JWT_TTL_HOURS` lifetime (default 8). Each token has a unique `jti`, and `sub`, `exp`, `iat`, and `jti` are required. |
+| Sign-out | `POST /api/v1/auth/logout` records the `jti` as revoked; the token is refused until it would have expired. Expired revocations are pruned. |
+| Password change | `POST /api/v1/auth/password` requires the current password and a new one that meets the policy (at least 10 characters, a letter and a number, not based on the email). Every session issued before the change is refused; the caller receives a fresh token. |
+| Persona sign-in | `POST /api/v1/auth/demo-login` stays available for the demo and can be turned off with `DEMO_LOGIN_ENABLED=false`, which also empties the persona list. |
+| Audit | Successful sign-ins, failures (unknown emails stored only as a truncated SHA-256), lockouts, sign-outs, and password changes are appended to the hash-chained audit log. |
+| Frontend | Protected routes redirect to `/login?next=...` (same-site paths only). Any 401 ends the local session and explains why. |
+
+Seeded synthetic accounts share the password in `SEED_USER_PASSWORD` (default documented in README) so the demo is usable; change it, and disable persona sign-in, anywhere real. Remaining production work: per-IP rate limiting at the edge, single sign-on (OIDC or SAML) with MFA, refresh-token rotation, and storing the token in an HTTP-only cookie instead of local storage.
 
 ## 5. Audit-log integrity
 
@@ -55,7 +72,7 @@ Enforced by FastAPI dependencies on every route (deny by default), with tests fo
 
 ## 6. Secrets handling
 
-- `.env` (git-ignored) holds `GROQ_API_KEY`, `JWT_SECRET`, `DATABASE_URL`. `.env.example` has placeholders only.
+- `.env` (git-ignored) holds `GROQ_API_KEY`, `JWT_SECRET`, `DATABASE_URL`, and optionally `SEED_USER_PASSWORD`. `.env.example` has placeholders only.
 - CI uses GitHub Actions secrets only for the optional real-model eval job.
 - Logs never include API keys or authorisation headers.
 - Pre-commit check (`gitleaks` style pattern scan in CI) for accidental secrets.

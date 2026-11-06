@@ -3,6 +3,9 @@ import type { paths } from './schema'
 
 const TOKEN_KEY = 'countersign.token'
 
+/** Fired on any 401 so the session can end cleanly (expired, revoked, or password changed). */
+export const UNAUTHORIZED_EVENT = 'countersign:unauthorized'
+
 export const tokenStore = {
   get: () => localStorage.getItem(TOKEN_KEY),
   set: (t: string) => localStorage.setItem(TOKEN_KEY, t),
@@ -35,7 +38,10 @@ export async function unwrap<T>(p: Promise<{ data?: T; error?: unknown; response
   const { data, error, response } = await p
   if (error !== undefined || data === undefined) {
     const e = (error ?? {}) as { title?: string; detail?: string; request_id?: string }
-    if (response.status === 401) tokenStore.clear()
+    if (response.status === 401) {
+      tokenStore.clear()
+      window.dispatchEvent(new Event(UNAUTHORIZED_EVENT))
+    }
     throw new ApiError(response.status, e.title ?? response.statusText, e.detail, e.request_id)
   }
   return data

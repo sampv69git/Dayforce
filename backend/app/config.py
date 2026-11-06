@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite:///{(BACKEND_DIR / 'countersign.db').as_posix()}"
     jwt_secret: str = "dev-only-change-me-please-32-characters"
     jwt_ttl_hours: int = 8
+    # Sign-in. Persona sign-in keeps the demo one click away; turn it off for a real deployment.
+    demo_login_enabled: bool = True
+    login_max_attempts: int = 5
+    login_lockout_minutes: int = 15
+    # Password given to the seeded synthetic accounts (documented in README; change it anywhere real).
+    seed_user_password: str = "Countersign2026"
     cors_origins: list[str] = Field(
         default=["http://localhost:5173", "http://localhost:8080", "http://127.0.0.1:5173"]
     )
