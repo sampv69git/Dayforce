@@ -1,0 +1,87 @@
+# Kestrel Logistics: California Site Addendum (Fremont DC)
+# FICTIONAL policy written for the Countersign prototype. Inspired by public California rules; not legal advice.
+document_id: CA
+title: California Site Addendum
+version: "2026.2"
+jurisdictions: ["US-CA"]
+effective_from: 2026-01-01
+clauses:
+  - id: CA-1.1
+    section: "1. Scope"
+    title: Scope of the California addendum
+    text: >-
+      This addendum applies to employees working at the Fremont distribution center. Where it is more
+      protective than the company handbook, this addendum applies.
+  - id: CA-2.1
+    section: "2. Overtime"
+    title: Daily overtime and double time
+    rules: [R-OT-DAILY]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      Non-exempt employees are paid 1.5 times the regular rate for hours worked over 8 in a workday, and
+      2 times the regular rate for hours worked over 12 in a workday.
+  - id: CA-2.2
+    section: "2. Overtime"
+    title: Weekly overtime in California
+    rules: [R-OT-WEEKLY]
+    classes: [non_exempt]
+    text: >-
+      Hours over 40 in a workweek are paid at 1.5 times the regular rate. Hours already paid as daily
+      overtime are not counted twice.
+  - id: CA-2.3
+    section: "2. Overtime"
+    title: Seventh consecutive day
+    rules: [R-DAYS-CONSECUTIVE]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      On the seventh consecutive day of work in a workweek, the first 8 hours are paid at 1.5 times the
+      regular rate and hours over 8 are paid at 2 times the regular rate.
+  - id: CA-4.1
+    section: "4. Meal periods"
+    title: Meal period requirement
+    rules: [R-MEAL-MISSED, R-MEAL-SHORT]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      Non-exempt employees who work more than 5 hours in a workday must be provided an unpaid,
+      uninterrupted meal period of at least 30 minutes.
+  - id: CA-4.2
+    section: "4. Meal periods"
+    title: Meal period timing
+    rules: [R-MEAL-LATE]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      The meal period must begin before the end of the fifth hour of work.
+  - id: CA-4.3
+    section: "4. Meal periods"
+    title: Second meal period
+    rules: [R-MEAL-MISSED]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      Employees who work more than 10 hours in a workday must be provided a second unpaid meal period of
+      at least 30 minutes.
+  - id: CA-4.4
+    section: "4. Meal periods"
+    title: Meal premium
+    rules: [R-MEAL-MISSED, R-MEAL-LATE, R-MEAL-SHORT]
+    classes: [non_exempt]
+    text: >-
+      When a required meal period is missed, late, or short, the employee is owed one additional hour of
+      pay at the regular rate for that workday. No more than one meal premium is owed per workday.
+  - id: CA-4.5
+    section: "4. Meal periods"
+    title: Correcting meal violations
+    rules: [R-MEAL-MISSED, R-MEAL-LATE, R-MEAL-SHORT]
+    text: >-
+      Recording a meal period that was not taken is not permitted. The meal premium is the correction for
+      a missed, late, or short meal.
+  - id: CA-5.1
+    section: "5. Rest breaks"
+    title: Rest breaks in California
+    text: >-
+      Employees are authorized a paid 10 minute rest break for every 4 hours worked or major fraction
+      thereof.

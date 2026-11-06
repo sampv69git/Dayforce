@@ -1,0 +1,73 @@
+# Kestrel Logistics: Bengaluru Site Addendum (Bengaluru Hub)
+# FICTIONAL policy written for the Countersign prototype. Inspired by public Indian rules; not legal advice.
+document_id: BLR
+title: Bengaluru Site Addendum
+version: "2026.2"
+jurisdictions: ["IN-KA"]
+effective_from: 2026-01-01
+clauses:
+  - id: BLR-1.1
+    section: "1. Scope"
+    title: Scope of the Bengaluru addendum
+    text: >-
+      This addendum applies to employees working at the Bengaluru hub. Where it is more protective than
+      the company handbook, this addendum applies.
+  - id: BLR-2.1
+    section: "2. Working hours and overtime"
+    title: Daily overtime
+    rules: [R-OT-DAILY]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      Working time beyond 9 hours in a day is overtime and is paid at twice the ordinary rate of wages.
+  - id: BLR-2.2
+    section: "2. Working hours and overtime"
+    title: Weekly overtime
+    rules: [R-OT-WEEKLY, F-OT-RISK]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      Working time beyond 48 hours in a week is overtime and is paid at twice the ordinary rate of wages.
+      Hours already paid as daily overtime are not counted twice.
+  - id: BLR-2.3
+    section: "2. Working hours and overtime"
+    title: Consent for overtime
+    rules: [R-OT-DAILY, R-OT-WEEKLY]
+    text: >-
+      Overtime requires the employee's consent, which the manager records when approving the overtime.
+  - id: BLR-3.1
+    section: "3. Rest intervals"
+    title: Rest interval after five hours
+    rules: [R-MEAL-MISSED, R-MEAL-SHORT]
+    classes: [non_exempt]
+    precedence: override
+    text: >-
+      No employee shall work for more than 5 hours continuously without a rest interval of at least 30
+      minutes.
+  - id: BLR-3.2
+    section: "3. Rest intervals"
+    title: Spread-over
+    text: >-
+      The total spread of a working day, including rest intervals, should not exceed 10.5 hours.
+  - id: BLR-3.3
+    section: "3. Rest intervals"
+    title: Rest between shifts in Bengaluru
+    rules: [R-REST-MIN]
+    precedence: override
+    text: >-
+      Employees should have at least 11 consecutive hours off between the end of one shift and the start
+      of the next.
+  - id: BLR-4.1
+    section: "4. Holidays"
+    title: Work on company holidays
+    rules: [R-HOLIDAY-WORK]
+    precedence: override
+    text: >-
+      Work on a company holiday listed in the Bengaluru holiday calendar is paid at twice the ordinary
+      rate of wages, or the employee may take a substitute holiday within 30 days.
+  - id: BLR-4.2
+    section: "4. Holidays"
+    title: Bengaluru holiday calendar
+    text: >-
+      The Bengaluru holiday calendar for November 2026 includes Kannada Rajyotsava on Sunday 1 November
+      and Deepavali on Sunday 8 November.

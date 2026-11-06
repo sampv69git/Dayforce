@@ -70,6 +70,7 @@ No-Docker path: `make dev` (SQLite, API on :8000, web on :5173).
 
 | File | Contents |
 |---|---|
+| `FEATURES.md` | Every feature and what it does |
 | `CHALLENGE_BRIEF.md` | The brief, verbatim |
 | `RESEARCH.md` | Domain, regulation, products, competitors, technical research |
 | `PROJECT.md` | Full specification and requirements traceability |

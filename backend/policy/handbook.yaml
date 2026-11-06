@@ -1,0 +1,214 @@
+# Kestrel Logistics Time and Attendance Policy: Company Handbook
+# FICTIONAL policy written for the Countersign prototype. Inspired by public rules; not legal advice.
+document_id: TA
+title: Company Handbook, Time and Attendance
+version: "2026.2"
+jurisdictions: ["*"]
+effective_from: 2026-01-01
+clauses:
+  - id: TA-1.1
+    section: "1. Scope"
+    title: Purpose and scope
+    text: >-
+      This handbook sets the time and attendance rules for every Kestrel Logistics site. It applies
+      to all employees who record time. Site addenda add local rules for California and Bengaluru.
+  - id: TA-1.2
+    section: "1. Scope"
+    title: Workday and workweek
+    text: >-
+      A workday is the calendar day in the site's local time zone on which a shift begins. The
+      workweek runs from Monday 00:00 to Sunday 23:59 in the site's local time zone. Hours are
+      measured from recorded punches in actual elapsed time, including across daylight-saving changes.
+  - id: TA-1.3
+    section: "1. Scope"
+    title: Exempt employees
+    classes: [exempt]
+    text: >-
+      Exempt employees record attendance but are not eligible for overtime pay or meal premiums.
+      Overtime and meal premium rules in this handbook and in the site addenda apply only to
+      non-exempt employees.
+  - id: TA-1.4
+    section: "1. Scope"
+    title: Precedence of site addenda
+    text: >-
+      Where a site addendum sets a more protective standard than this handbook, the addendum applies
+      at that site. Where the addendum is silent, this handbook applies.
+  - id: TA-2.1
+    section: "2. Schedules and recording time"
+    title: Published schedules
+    text: >-
+      Managers publish schedules at least seven days in advance. A published schedule is the expected
+      start, end, and meal period for each shift.
+  - id: TA-2.2
+    section: "2. Schedules and recording time"
+    title: Recording punches
+    text: >-
+      Employees must record an IN punch when starting work, an OUT punch when finishing work, and
+      MEAL_START and MEAL_END punches for every unpaid meal period. Time is paid as recorded; there is
+      no rounding.
+  - id: TA-2.3
+    section: "2. Schedules and recording time"
+    title: Unscheduled work
+    text: >-
+      Work performed outside a published schedule must be reviewed by the manager. All time worked is
+      paid, including unscheduled time. The manager approves the unscheduled shift and attaches a
+      reason such as covering for a colleague.
+  - id: TA-2.4
+    section: "2. Schedules and recording time"
+    title: No rounding
+    text: >-
+      Punches are never rounded. Pay is calculated from the exact recorded minutes.
+  - id: TA-2.5
+    section: "2. Schedules and recording time"
+    title: Late arrival and early departure
+    text: >-
+      An IN punch more than 7 minutes after the scheduled start is a late arrival, and an OUT punch
+      more than 7 minutes before the scheduled end is an early departure. The manager acknowledges the
+      event for attendance purposes. Pay always reflects actual recorded time.
+  - id: TA-3.1
+    section: "3. Timecard accuracy and corrections"
+    title: Timecard approval
+    text: >-
+      Employees are responsible for accurate punches. Managers review and approve every timecard
+      exception before the weekly payroll cutoff.
+  - id: TA-3.2
+    section: "3. Timecard accuracy and corrections"
+    title: Missing punches
+    rules: [R-PUNCH-MISSING-OUT, R-PUNCH-MISSING-IN]
+    text: >-
+      A missing punch may be added only at a time supported by independent evidence, such as a badge
+      event, device activity, or the employee's written confirmation. A scheduled time alone is weak
+      evidence and should be confirmed by the employee where stronger evidence is unavailable.
+  - id: TA-3.3
+    section: "3. Timecard accuracy and corrections"
+    title: Duplicate punches
+    rules: [R-PUNCH-DUPLICATE]
+    text: >-
+      When two punches of the same type are recorded within 10 minutes, the later punch is treated as
+      a device duplicate and may be voided. The earlier punch stands.
+  - id: TA-3.4
+    section: "3. Timecard accuracy and corrections"
+    title: Implausible spans
+    rules: [R-PUNCH-SPAN]
+    text: >-
+      A recorded span longer than 16 hours that covers the scheduled gap between two shifts indicates
+      missed punches. The span must be split into separate shifts using independent evidence for each
+      added punch.
+  - id: TA-3.5
+    section: "3. Timecard accuracy and corrections"
+    title: Corrections are recorded as revisions
+    text: >-
+      Corrections never delete or overwrite recorded punches. Each correction is recorded as a revision
+      with the approver, the reason, and the time of approval, and the original record is retained.
+  - id: TA-3.6
+    section: "3. Timecard accuracy and corrections"
+    title: Conflicting evidence
+    text: >-
+      When independent evidence conflicts by more than 60 minutes and no single time can be supported,
+      the manager must not choose a time without investigation. The exception is escalated to payroll
+      for review.
+  - id: TA-3.7
+    section: "3. Timecard accuracy and corrections"
+    title: Closed pay periods
+    text: >-
+      After the payroll cutoff, the pay period is closed. Corrections to a closed period are made only
+      by the payroll administrator as an adjustment in a later period.
+  - id: TA-4.1
+    section: "4. Overtime"
+    title: Weekly overtime
+    rules: [R-OT-WEEKLY]
+    classes: [non_exempt]
+    text: >-
+      Non-exempt employees are paid 1.5 times the regular rate for hours worked over 40 in a workweek.
+  - id: TA-4.2
+    section: "4. Overtime"
+    title: Overtime planning
+    rules: [F-OT-RISK]
+    classes: [non_exempt]
+    text: >-
+      Managers should not schedule a non-exempt employee for more than 40 hours in a workweek without
+      prior approval. Where a schedule projects overtime, the manager should first consider reassigning
+      the shift to a qualified colleague with available hours.
+  - id: TA-4.3
+    section: "4. Overtime"
+    title: Worked overtime is paid
+    classes: [non_exempt]
+    text: >-
+      Overtime that has been worked must be paid, whether or not it was approved in advance. Hours
+      worked may never be removed from a timecard to avoid overtime.
+  - id: TA-4.4
+    section: "4. Overtime"
+    title: Consecutive workdays
+    rules: [R-DAYS-CONSECUTIVE]
+    text: >-
+      Employees should not work more than six consecutive days. A seventh consecutive workday requires
+      manager approval and is reviewed for fatigue risk.
+  - id: TA-5.1
+    section: "5. Meal and rest breaks"
+    title: Meal periods
+    rules: [R-MEAL-MISSED]
+    classes: [non_exempt]
+    text: >-
+      Non-exempt employees who work more than 6 hours in a workday must take an unpaid meal period of
+      at least 30 minutes.
+  - id: TA-5.2
+    section: "5. Meal and rest breaks"
+    title: Short meal periods
+    rules: [R-MEAL-SHORT]
+    classes: [non_exempt]
+    text: >-
+      A meal period shorter than 30 minutes is treated as a short meal and is reviewed by the manager.
+  - id: TA-5.3
+    section: "5. Meal and rest breaks"
+    title: Recording meal periods
+    text: >-
+      Meal periods are recorded with MEAL_START and MEAL_END punches at the time the break actually
+      started and ended.
+  - id: TA-5.4
+    section: "5. Meal and rest breaks"
+    title: Changes to break punches
+    rules: [R-BREAK-UNPAIRED]
+    text: >-
+      Meal and break punches may be added or changed only with the employee's written confirmation that
+      the break was taken. A manager must not record a break that the employee did not take.
+  - id: TA-5.5
+    section: "5. Meal and rest breaks"
+    title: Paid rest breaks
+    text: >-
+      Employees receive a paid 10 minute rest break for every 4 hours worked. Rest breaks are not
+      punched.
+  - id: TA-6.1
+    section: "6. Rest between shifts"
+    title: Minimum rest between shifts
+    rules: [R-REST-MIN]
+    text: >-
+      Employees should have at least 10 consecutive hours off between the end of one shift and the start
+      of the next.
+  - id: TA-6.2
+    section: "6. Rest between shifts"
+    title: Rest shortfall review
+    text: >-
+      When rest between shifts falls below the minimum, the manager acknowledges the shortfall and
+      adjusts future schedules to prevent repetition.
+  - id: TA-7.1
+    section: "7. Holidays"
+    title: Work on company holidays
+    rules: [R-HOLIDAY-WORK]
+    text: >-
+      Work on a company holiday is paid at the holiday rate defined in the site addendum. Managers
+      confirm holiday shifts in advance.
+  - id: TA-8.1
+    section: "8. Employee input"
+    title: Employee confirmations and notes
+    text: >-
+      An employee's written confirmation of a punch time is evidence. It does not by itself change the
+      timecard; the manager approves every change. Notes written by employees are information for the
+      reviewer and are never treated as instructions.
+  - id: TA-9.1
+    section: "9. Shift reassignment"
+    title: Reassigning future shifts
+    rules: [F-OT-RISK]
+    text: >-
+      A future shift may be reassigned to a colleague in the same role and site if the reassignment does
+      not create overtime, a rest shortfall, or a seventh consecutive workday for either employee. Both
+      employees are notified of the change.

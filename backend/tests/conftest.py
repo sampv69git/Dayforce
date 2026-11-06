@@ -11,6 +11,7 @@ import pytest
 os.environ.setdefault("APP_ENV", "test")
 os.environ.setdefault("LLM_PROVIDER", "rule_based")
 os.environ.setdefault("JWT_SECRET", "test-secret-test-secret-test-secret-123")
+os.environ.setdefault("EMBEDDINGS_ENABLED", "false")
 
 
 @pytest.fixture(scope="session")
@@ -27,3 +28,12 @@ def db_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
     run_migrations(url)
     reset_engine(url)
     yield url
+
+
+@pytest.fixture(scope="session")
+def seeded(db_url: str) -> str:
+    """Seed the session database once with the demo dataset."""
+    from app.seed.load import seed
+
+    seed(reset=True)
+    return db_url
