@@ -168,3 +168,12 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 - **Context:** scroll reveals and staged animations leave text partly transparent for a moment, which axe measures as low contrast.
 - **Decision:** Playwright runs with `reducedMotion: 'reduce'`; every animated component renders its final state in that mode, which is also the accessible behaviour for users who ask for it.
 
+## D-030 Schedule conflicts look ahead (2026-11-06)
+- **Context:** a review against the brief found "schedule conflicts" covered only after the fact (late, early, unscheduled, rest already short). The most literal reading is a conflict in the published schedule.
+- **Alternatives:** relabel existing rules; a new scheduling module; a forward-looking rule that reuses the swap engine.
+- **Decision:** F-SCHED-CONFLICT flags a future shift that overlaps another or breaks minimum rest and proposes reassigning it through the same eight checks and G8 peer re-simulation as the overtime forecast, otherwise escalates. No new operation, gate, or page was needed.
+- **Trade-off:** the labelled evaluation set covers completed timecards only, so the rule is verified by unit, pipeline, fault, and end-to-end tests instead; stated in EVALUATION.md.
+
+## D-031 Make the brief visible without adding pages (2026-11-06)
+- **Decision:** queue lenses use the brief's own words, a cutoff briefing summarises the queue with numbers computed by code (never model text), and the landing page maps each phrase of Use Case 5 to rules, corrections, and screens. We chose these over new features to avoid a demo that looks like a feature list.
+

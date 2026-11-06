@@ -35,7 +35,7 @@ flowchart LR
 | `frontend/` | All screens, design system, typed API client | React 19, TypeScript, Vite, Tailwind v4, shadcn/ui, TanStack Query, React Router, Recharts, Motion, Zod |
 | `backend/app/api` | REST routes under `/api/v1`, RBAC dependencies, problem+json errors | FastAPI, Pydantic v2 |
 | `backend/app/domain` | ORM models and repositories | SQLAlchemy 2, Alembic |
-| `backend/app/engine` | Punch pairing, 17 rules, constraints envelope, deterministic candidates, pay calculation, cascade linker, forecast and swaps | Pure Python, no I/O |
+| `backend/app/engine` | Punch pairing, 18 rules, constraints envelope, deterministic candidates, pay calculation, cascade linker, forecast and swaps | Pure Python, no I/O |
 | `backend/app/retrieval` | Policy corpus loading, embeddings, BM25, hybrid fusion, metadata filters | fastembed, rank-bm25, pgvector |
 | `backend/app/llm` | Provider protocol and implementations, prompts | openai SDK (OpenAI-compatible), httpx |
 | `backend/app/harness` | Pipeline orchestration, gates G1 to G10, repair, routing, evidence strength | Pure Python |

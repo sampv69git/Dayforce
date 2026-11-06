@@ -95,7 +95,7 @@ All outcome numbers are computed from synthetic data in this environment and lab
 | Brief: human oversight | Every change needs approve/edit/reject with reason; edits re-validated; bulk approval gated | Decision bar, countersign stamp | Audit chain; demo minute 4 |
 | UC5: missed punches | R-PUNCH-* rules, evidence-anchored ADD_PUNCH | Queue, detail | Detection precision/recall per rule |
 | UC5: overtime risks | F-OT-RISK forecast plus R-OT-* worked overtime | Overtime Forecast page | Forecast demo; cost flagged |
-| UC5: schedule conflicts | R-SCHED-* (unscheduled, tardy, early out), R-REST-MIN, R-DAYS-CONSECUTIVE | Queue, detail | Detection metrics |
+| UC5: schedule conflicts | F-SCHED-CONFLICT (published shifts that overlap or break minimum rest, fixed by a checked swap before the shift), R-SCHED-* (unscheduled, tardy, early out), R-REST-MIN, R-DAYS-CONSECUTIVE | Queue lens, detail, Overtime forecast page | Unit, pipeline, fault-matrix, and end-to-end tests (J6); detection metrics for R-SCHED-*
 | UC5: policy breaches | R-MEAL-*, R-HOLIDAY-WORK, R-REST-MIN | Queue, detail | Detection metrics; citation accuracy |
 | UC5: compliant corrections | Allowed-action envelope, re-simulation, guardrails | Before/after diff, gate strip | Re-check pass rate |
 | Judging: product value 25% | Cascades, evidence, pay impact, forecast, attestation, cutoff queue | Whole UI | Outcomes dashboard |
@@ -228,7 +228,7 @@ The starting workflow from the team brief is sound. We keep its eight stages and
 | ID | Requirement |
 |---|---|
 | FR1 | Seed a deterministic synthetic dataset (3 sites, about 40 employees, 2 weeks) from a fixed random seed |
-| FR2 | Detect the 17 rule types listed in HARNESS.md section 2 (16 detection rules plus the overtime forecast), each with rule ID, severity, evidence, and fingerprint |
+| FR2 | Detect the 18 rule types listed in HARNESS.md section 2 (16 detection rules plus two forward-looking checks: the overtime forecast and upcoming schedule conflicts), each with rule ID, severity, evidence, and fingerprint |
 | FR3 | Exceptions are idempotent: re-running detection does not duplicate open exceptions (fingerprint) |
 | FR4 | Link cascades by counterfactual simulation of root corrections |
 | FR5 | Forecast weekly overtime and produce ranked, rule-checked swap candidates |
