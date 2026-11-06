@@ -349,9 +349,7 @@ def r_rest(week: EmployeeWeek, shifts: list[Shift], p: PolicyParams) -> list[Fin
     return out
 
 
-def r_schedule_conflict(
-    week: EmployeeWeek, shifts: list[Shift], p: PolicyParams
-) -> list[Finding]:
+def r_schedule_conflict(week: EmployeeWeek, shifts: list[Shift], p: PolicyParams) -> list[Finding]:
     """Upcoming published shifts that overlap another shift or leave less than the minimum rest.
 
     Unlike R-REST-MIN, which reviews rest that was already short, this looks ahead at the

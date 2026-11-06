@@ -537,9 +537,7 @@ def build(seed: int = 20261106) -> Dataset:
 
     # Grace: published to open Saturday at 06:00 after closing Friday at 23:00 (7 h rest, a
     # schedule conflict found before the shift is worked). Schedule only; no rng draws.
-    b.schedule(
-        "E-FRE-012", at("E-FRE-012", 11, 7, "06:00"), at("E-FRE-012", 11, 7, "14:30"), 30
-    )
+    b.schedule("E-FRE-012", at("E-FRE-012", 11, 7, "06:00"), at("E-FRE-012", 11, 7, "14:30"), 30)
 
     # ---- Emit punches and evidence -----------------------------------------------------
     for (emp, _d), s in sorted(shifts.items(), key=lambda kv: (kv[0][0], kv[1].start)):
