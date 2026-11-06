@@ -41,6 +41,7 @@ class EvidenceItem:
             "strength": self.strength,
             "source": self.source,
             "simulated": self.simulated,
+            "for_slot": self.slot,
         }
 
 

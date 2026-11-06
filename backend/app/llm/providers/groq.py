@@ -24,7 +24,7 @@ class GroqProvider:
         from openai import OpenAI, OpenAIError
 
         client = OpenAI(
-            api_key=self._api_key, base_url=self._base_url, timeout=params.timeout_s, max_retries=1
+            api_key=self._api_key, base_url=self._base_url, timeout=params.timeout_s, max_retries=4
         )
         kwargs: dict[str, Any] = {
             "model": self.model_id,
