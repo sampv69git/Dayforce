@@ -43,7 +43,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
-ignore = ["RUF001", "RUF002", "RUF003"]
+ignore = ["RUF001", "RUF002", "RUF003", "E501"]  # formatter enforces width; long strings allowed
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

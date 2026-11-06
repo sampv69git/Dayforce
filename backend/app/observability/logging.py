@@ -4,14 +4,18 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import MutableMapping
 from contextvars import ContextVar
+from typing import Any
 
 import structlog
 
 request_id_var: ContextVar[str | None] = ContextVar("request_id", default=None)
 
 
-def _add_request_id(_: object, __: str, event_dict: dict[str, object]) -> dict[str, object]:
+def _add_request_id(
+    _: Any, __: str, event_dict: MutableMapping[str, Any]
+) -> MutableMapping[str, Any]:
     rid = request_id_var.get()
     if rid:
         event_dict["request_id"] = rid

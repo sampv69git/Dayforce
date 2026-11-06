@@ -14,7 +14,7 @@ seed:
 	cd backend && uv run python -m app.seed.load --reset
 
 detect:
-	cd backend && uv run python -m app.engine.service
+	cd backend && uv run python -m app.services.detection
 
 test:
 	cd backend && uv run pytest -q --cov=app/engine --cov=app/harness --cov-report=term-missing:skip-covered
