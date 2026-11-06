@@ -20,8 +20,36 @@ from app.retrieval.embed import embed_query, embed_texts
 
 RRF_K = 60
 TOKEN = re.compile(r"[a-z0-9]+")
-STOP = {"the", "a", "an", "of", "to", "in", "and", "or", "is", "are", "be", "for", "on", "at", "with",
-        "by", "that", "this", "it", "as", "from", "than", "no", "not", "any", "each", "every", "may"}
+STOP = {
+    "the",
+    "a",
+    "an",
+    "of",
+    "to",
+    "in",
+    "and",
+    "or",
+    "is",
+    "are",
+    "be",
+    "for",
+    "on",
+    "at",
+    "with",
+    "by",
+    "that",
+    "this",
+    "it",
+    "as",
+    "from",
+    "than",
+    "no",
+    "not",
+    "any",
+    "each",
+    "every",
+    "may",
+}
 
 
 def tokenize(text: str) -> list[str]:
@@ -105,7 +133,9 @@ def retrieve(
     if "dense" in methods and idx.matrix is not None:
         if session is not None and dense_backend() == "pgvector":
             pos = {c.clause_id: i for i, c in enumerate(idx.clauses)}
-            ids = pgvector_rank(session, query, [idx.clauses[i].clause_id for i in allowed], len(allowed))
+            ids = pgvector_rank(
+                session, query, [idx.clauses[i].clause_id for i in allowed], len(allowed)
+            )
             dense_ranks = {pos[cid]: r + 1 for r, cid in enumerate(ids)}
         else:
             q = embed_query(query)
@@ -162,7 +192,7 @@ def pgvector_rank(session: Any, query: str, allowed_ids: list[str], limit: int =
     stmt = (
         select(PolicyClause.clause_id)
         .where(PolicyClause.clause_id.in_(allowed_ids))
-        .order_by(PolicyClause.embedding.cosine_distance(q))  # type: ignore[attr-defined]
+        .order_by(PolicyClause.embedding.cosine_distance(q))
         .limit(limit)
     )
     return list(session.scalars(stmt).all())

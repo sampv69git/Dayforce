@@ -18,7 +18,7 @@ def test_corpus_loads_with_unique_ids() -> None:
 
 
 def test_every_rule_required_clause_exists() -> None:
-    from app.engine.catalog import RULES, _REQUIRED
+    from app.engine.catalog import _REQUIRED, RULES
 
     idx = clause_index()
     for rule in RULES:
@@ -34,7 +34,9 @@ def test_jurisdiction_filter_excludes_other_addenda() -> None:
 
 
 def test_employee_class_filter() -> None:
-    exempt = retrieve("weekly overtime hours over 40", jurisdiction="US-TX", employee_class="exempt", k=10)
+    exempt = retrieve(
+        "weekly overtime hours over 40", jurisdiction="US-TX", employee_class="exempt", k=10
+    )
     assert "TA-4.1" not in ids(exempt)
 
 
@@ -43,20 +45,27 @@ def test_effective_date_filter() -> None:
 
 
 def test_required_clause_always_present_and_first() -> None:
-    res = retrieve("unrelated words about forklifts", jurisdiction="US-CA", required_ids=["TA-3.4"], k=5)
+    res = retrieve(
+        "unrelated words about forklifts", jurisdiction="US-CA", required_ids=["TA-3.4"], k=5
+    )
     assert res[0].clause_id == "TA-3.4" and res[0].required
 
 
 def test_bm25_finds_relevant_clause() -> None:
-    res = retrieve("missing punch added only at a time supported by independent evidence badge",
-                   jurisdiction="US-CA", k=5, seed_required=False)
+    res = retrieve(
+        "missing punch added only at a time supported by independent evidence badge",
+        jurisdiction="US-CA",
+        k=5,
+        seed_required=False,
+    )
     assert "TA-3.2" in ids(res)
     assert res[0].bm25_rank is not None
 
 
 def test_override_precedence_flag() -> None:
-    res = retrieve("meal period begin before end of fifth hour", jurisdiction="US-CA", k=5,
-                   seed_required=False)
+    res = retrieve(
+        "meal period begin before end of fifth hour", jurisdiction="US-CA", k=5, seed_required=False
+    )
     ca42 = next(r for r in res if r.clause_id == "CA-4.2")
     assert ca42.precedence == "override"
 

@@ -11,15 +11,21 @@ from app.engine.pairing import pair_shifts
 from app.engine.params import PolicyParams, params_for
 from app.engine.types import EmployeeWeek, Finding, Shift
 
-# Adjustment kinds that resolve a finding for the same rule and work date.
-RESOLVING_KINDS = {
-    "meal_premium",
-    "rest_premium",
-    "holiday_premium",
-    "seventh_day_premium",
-    "ot_approval",
-    "acknowledged",
-    "unscheduled_ok",
+# Which human-approved adjustment kinds can resolve each rule. Punch-integrity rules are absent on
+# purpose: a missing or duplicate punch can only be fixed by changing punches, never acknowledged away.
+RESOLVED_BY: dict[str, set[str]] = {
+    "R-SCHED-UNSCHEDULED": {"unscheduled_ok"},
+    "R-SCHED-TARDY": {"acknowledged"},
+    "R-SCHED-EARLY-OUT": {"acknowledged"},
+    "R-MEAL-MISSED": {"meal_premium", "acknowledged"},
+    "R-MEAL-LATE": {"meal_premium", "acknowledged"},
+    "R-MEAL-SHORT": {"meal_premium", "acknowledged"},
+    "R-REST-MIN": {"acknowledged", "rest_premium"},
+    "R-OT-DAILY": {"ot_approval"},
+    "R-OT-WEEKLY": {"ot_approval"},
+    "R-DAYS-CONSECUTIVE": {"acknowledged", "seventh_day_premium"},
+    "R-HOLIDAY-WORK": {"holiday_premium"},
+    "F-OT-RISK": {"ot_approval"},
 }
 
 
@@ -40,8 +46,11 @@ class Detection:
 
 
 def _resolved(week: EmployeeWeek, f: Finding) -> bool:
+    kinds = RESOLVED_BY.get(f.rule_id, set())
+    if week.employee.site.jurisdiction == "US-CA" and f.rule_id.startswith("R-MEAL-"):
+        kinds = {"meal_premium"}  # CA-4.5: the premium is the only correction for a meal violation
     return any(
-        a.kind in RESOLVING_KINDS and a.rule_id == f.rule_id and a.work_date == f.work_date
+        a.kind in kinds and a.rule_id == f.rule_id and a.work_date == f.work_date
         for a in week.adjustments
     )
 

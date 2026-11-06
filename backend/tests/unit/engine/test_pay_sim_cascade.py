@@ -186,3 +186,10 @@ def test_orphan_meal_punches_are_ignored() -> None:
         .shift("2026-11-03", "07:00", "15:30")
     )
     assert detect(w.build()).findings == []
+
+
+def test_acknowledge_cannot_clear_a_missing_punch() -> None:
+    week = W().sched("2026-11-03 07:00", "2026-11-03 15:30").punch("IN", "2026-11-03 07:00").build()
+    det = detect(week)
+    sim = simulate(week, [Op("acknowledge")], det.findings[0])
+    assert not sim.target_cleared
