@@ -68,7 +68,7 @@ export function CitationChip({ clauseId, quote, clause }: { clauseId: string; qu
     <Pop
       className="w-[26rem]"
       trigger={
-        <button className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md border border-model-line bg-surface px-1.5 py-px font-mono text-[11px] font-medium text-model outline-none hover:bg-model-soft focus-visible:ring-2 focus-visible:ring-accent">
+        <button className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md border border-model-line bg-surface px-1.5 py-px font-mono text-[11px] font-medium text-model shadow-card outline-none transition-transform hover:-translate-y-px hover:bg-model-soft focus-visible:ring-2 focus-visible:ring-accent">
           {clauseId}
         </button>
       }
@@ -108,7 +108,7 @@ export function DraftCard({ draft, evidence, names }: { draft: Draft; evidence: 
   if (!r) return null
   const kind = draft.route === 'suggest' ? 'model' : draft.route === 'fallback' ? 'fallback' : draft.route === 'escalate' ? 'escalate' : 'rule'
   const shell = {
-    model: 'border-model-line bg-model-soft/45 [border-left-style:dotted] border-l-[3px] border-l-model',
+    model: 'border-model-line bg-gradient-to-br from-model-soft/80 via-surface to-surface [border-left-style:dotted] border-l-[3px] border-l-model',
     fallback: 'border-warn-line bg-warn-soft/50 border-l-[3px] border-l-warn',
     escalate: 'border-crit/25 bg-crit-soft/50 border-l-[3px] border-l-crit',
     rule: 'border-line bg-surface-2/60 border-l-[3px] border-l-rule',
@@ -119,7 +119,7 @@ export function DraftCard({ draft, evidence, names }: { draft: Draft; evidence: 
       initial={reduce ? false : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.22 }}
-      className={cn('rounded-card border p-4', shell)}
+      className={cn('relative overflow-hidden rounded-card border p-5 shadow-card', shell)}
       aria-label="Proposed resolution"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -140,7 +140,8 @@ export function DraftCard({ draft, evidence, names }: { draft: Draft; evidence: 
           {draft.escalation_reason}
         </div>
       )}
-      <h3 className="mt-3 text-[15px] leading-6 font-semibold text-ink">{r.summary}</h3>
+      {kind === 'model' && <div aria-hidden className="pointer-events-none absolute -top-20 -right-16 size-56 rounded-full bg-model opacity-[0.08] blur-3xl" />}
+      <h3 className="relative mt-3 text-[16px] leading-6 font-semibold text-ink">{r.summary}</h3>
       <p className="mt-1 text-body leading-relaxed text-ink-2">{r.explanation}</p>
       <ul className="mt-2.5 divide-y divide-line/70 border-y border-line/70">
         {r.operations.map((op, i) => (
@@ -149,7 +150,7 @@ export function DraftCard({ draft, evidence, names }: { draft: Draft; evidence: 
       </ul>
       <div className="mt-3 space-y-2">
         {r.citations.map((c) => (
-          <blockquote key={c.clause_id + c.quote} className="flex items-start gap-2 text-small">
+          <blockquote key={c.clause_id + c.quote} className="flex items-start gap-2 rounded-lg border-l-2 border-model-line bg-surface/70 py-1.5 pr-2 pl-2.5 text-small">
             <CitationChip clauseId={c.clause_id} quote={c.quote} clause={clauseById[c.clause_id]} />
             <span className="text-ink-2 italic">"{c.quote}"</span>
           </blockquote>

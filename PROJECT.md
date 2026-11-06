@@ -300,7 +300,7 @@ Detailed layouts and interactions are in `claude-code/PROTOTYPE.md`. Summary:
 
 | Route | Screen | Roles |
 |---|---|---|
-| `/` | Persona chooser (demo sign-in) with product one-liner | Public |
+| `/` | Landing page: live pipeline walkthrough, guided tour, results, and persona cards for demo sign-in | Public |
 | `/queue` | Exception queue with split-view detail | Manager, admin |
 | `/exceptions/:id` | Exception detail (full page) | Manager, admin |
 | `/forecast` | Overtime forecast and swaps | Manager, admin |
@@ -334,9 +334,9 @@ Details in `ARCHITECTURE.md`. In short:
 Details in `HARNESS.md` and `MODEL_CARD.md`.
 
 - **Task:** given a verified case context, produce `DraftResolution` (summary, explanation, operations, citations with quotes, note assessment, escalation flag).
-- **Prompt:** system prompt `draft.v1` with role, hard rules, output contract, and two worked examples; user message with a JSON case context and an `<untrusted_employee_text>` block. Versioned in `backend/app/llm/prompts/`.
+- **Prompt:** system prompt `draft.v2` (successor of `draft.v1`, kept for history) with role, hard rules, output contract, and a worked example; user message with a JSON case context and an `<untrusted_employee_text>` block. Versioned in `backend/app/llm/prompts/`.
 - **Retrieval:** top 5 clauses after metadata filtering and hybrid ranking; the required clause for the rule is always included and marked.
-- **Inference:** temperature 0 (gpt-oss reasoning effort low), max 900 output tokens, 20 s timeout, one repair retry.
+- **Inference:** temperature 0 (gpt-oss reasoning effort low), max 2,048 completion tokens (gpt-oss reasoning counts toward them), 30 s timeout with retry and backoff on rate limits, one repair retry.
 - **Evaluation:** see `EVALUATION.md`.
 
 ---
@@ -382,7 +382,7 @@ Details in `TESTING.md`, `TEST_PLAN.md`, `QUALITY_GATES.md`.
 | LLM drafting with real open-weight models | Notifications to employees (in-app only) | Legal compliance claims |
 | Ten-gate harness, repair, fallback, escalation | Publishing schedule changes to a scheduling system (recorded locally) | SSO and production identity |
 | Human decisions, append-only revisions, audit chain | Simulated clock ("now" = Fri 6 Nov 2026 11:00 PT) | Multi-tenant hosting |
-| RBAC, traces, metrics, evaluation | Demo sign-in (persona chooser) | Mobile native apps |
+| RBAC, traces, metrics, evaluation | Demo sign-in (persona cards on the landing page) | Mobile native apps |
 
 ---
 

@@ -26,7 +26,7 @@ from app.llm.base import Message
 from app.retrieval.hybrid import Retrieved, retrieve
 from app.services.weeks import load_week, site_weeks
 
-PROMPT_VERSION = "draft.v1"
+PROMPT_VERSION = "draft.v2"
 PROMPT_DIR = Path(BACKEND_DIR) / "app" / "llm" / "prompts"
 
 
@@ -65,6 +65,9 @@ class CaseContext:
         for op in self.candidate.ops:
             if op.op in {"approve_overtime", "record_premium"} and op.hours is not None:
                 facts["computed_hours_for_" + op.op] = op.hours
+        if self.candidate.escalate:
+            # Code already determined that no single supported correction exists.
+            facts["no_safe_correction"] = self.candidate.escalation_reason
         ctx: dict[str, Any] = {
             "exception": {
                 "id": self.record.id,
@@ -117,7 +120,7 @@ class CaseContext:
         note = self.note.text or "none"
         user = (
             "CONTEXT:\n"
-            + json.dumps(self.model_context(), indent=1, default=str)
+            + json.dumps(self.model_context(), separators=(",", ":"), default=str)
             + f"\n\n<untrusted_employee_text>\n{note}\n</untrusted_employee_text>\n\n"
             + "Return the JSON object now."
         )

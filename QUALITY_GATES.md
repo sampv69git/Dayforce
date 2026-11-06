@@ -21,7 +21,9 @@ A pull request merges only when every CI gate passes. Real-model thresholds are 
 | Playwright (rule-based provider) + axe | Journeys pass; no serious or critical axe violations |
 | Secret scan | No findings |
 
-## Real-model targets (checked before the demo, reported honestly)
+## Real-model targets (set before the run; results in EVALUATION.md section 3)
+
+Measured for gpt-oss-20b on 30 cases: schema-valid 0.833 (missed), citation accuracy 0.833 (missed), quote grounding 1.000 (met), verified 0.833 (missed by one case), unsafe 0 (met), injection 100% (met), p95 17.0 s (missed, rate-limit backoff). The targets are unchanged.
 
 | Metric | gpt-oss-20b (Groq) target | qwen3:4b (Ollama) |
 |---|---|---|

@@ -3,7 +3,8 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { AlertTriangle, Inbox, RotateCw } from 'lucide-react'
-import { forwardRef, type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
+import { forwardRef, useId, type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 /* ---------------------------------------------------------------- Button */
@@ -12,11 +13,11 @@ const buttonStyles = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-accent text-accent-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] hover:bg-accent-hover',
-        secondary: 'border border-line-strong bg-surface text-ink hover:border-ink-3 hover:bg-surface-2',
+        primary: 'bg-accent bg-[image:var(--grad-brand)] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.22),0_6px_18px_-8px_rgb(40_73_214/0.6)] hover:brightness-110 hover:shadow-glow dark:text-white',
+        secondary: 'border border-line-strong bg-surface text-ink shadow-card hover:border-ink-3 hover:bg-surface-2',
         ghost: 'text-ink-2 hover:bg-surface-2 hover:text-ink',
         danger: 'border border-crit/40 bg-surface text-crit hover:bg-crit-soft',
-        model: 'border border-model-line bg-model-soft text-model hover:border-model',
+        model: 'border border-model-line bg-model-soft text-model hover:border-model hover:shadow-[0_6px_20px_-8px_var(--model)]',
       },
       size: { sm: 'h-7 px-2.5 text-small', md: 'h-8.5 px-3 text-body', lg: 'h-10 px-4 text-body' },
     },
@@ -56,7 +57,7 @@ export function Pill({ tone, className, ...props }: HTMLAttributes<HTMLSpanEleme
 
 /* ---------------------------------------------------------------- Card */
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('rounded-card border border-line bg-surface', className)} {...props} />
+  return <div className={cn('rounded-card border border-line bg-surface shadow-card', className)} {...props} />
 }
 
 export function CardHeader({ title, eyebrow, actions, className }: { title?: ReactNode; eyebrow?: ReactNode; actions?: ReactNode; className?: string }) {
@@ -138,8 +139,10 @@ export function Segmented<T extends string>({
   className?: string
   size?: 'sm' | 'md'
 }) {
+  const id = useId()
+  const reduce = useReducedMotion()
   return (
-    <div role="tablist" className={cn('inline-flex items-center gap-0.5 rounded-[8px] border border-line bg-surface-2 p-0.5', className)}>
+    <div role="tablist" className={cn('inline-flex items-center gap-0.5 rounded-[10px] border border-line bg-surface-2 p-0.5', className)}>
       {options.map((o) => (
         <button
           key={o.value}
@@ -147,13 +150,20 @@ export function Segmented<T extends string>({
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            'inline-flex items-center gap-1.5 whitespace-nowrap rounded-[6px] font-medium text-ink-3 transition-colors hover:text-ink',
+            'relative inline-flex items-center gap-1.5 whitespace-nowrap rounded-[8px] font-medium text-ink-3 transition-colors hover:text-ink',
             size === 'sm' ? 'h-6 px-2 text-caption' : 'h-7 px-2.5 text-small',
-            value === o.value && 'bg-surface text-ink shadow-[0_1px_2px_rgb(16_24_40/0.08)] ring-1 ring-line',
+            value === o.value && 'text-ink',
           )}
         >
-          {o.label}
-          {o.count !== undefined && <span className="tabular text-ink-3">{o.count}</span>}
+          {value === o.value && (
+            <motion.span
+              layoutId={`seg-${id}`}
+              className="absolute inset-0 rounded-[8px] bg-surface shadow-[0_1px_3px_rgb(16_24_40/0.1)] ring-1 ring-line"
+              transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 38 }}
+            />
+          )}
+          <span className="relative z-10">{o.label}</span>
+          {o.count !== undefined && <span className={cn('tabular relative z-10', value === o.value ? 'text-accent' : 'text-ink-3')}>{o.count}</span>}
         </button>
       ))}
     </div>
@@ -162,13 +172,16 @@ export function Segmented<T extends string>({
 
 /* ---------------------------------------------------------------- Skeleton, states */
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-md bg-surface-3/70', className)} />
+  return <div className={cn('relative overflow-hidden rounded-md bg-surface-3/70 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer-x_1.4s_infinite] before:bg-gradient-to-r before:from-transparent before:via-surface/60 before:to-transparent', className)} />
 }
 
 export function EmptyState({ title, body, icon, action }: { title: string; body?: ReactNode; icon?: ReactNode; action?: ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 px-6 py-14 text-center">
-      <div className="mb-1 grid size-10 place-items-center rounded-full border border-line bg-surface-2 text-ink-3">{icon ?? <Inbox size={18} />}</div>
+      <div className="relative mb-2 grid size-14 place-items-center">
+        <span aria-hidden className="bg-brand absolute inset-0 rounded-2xl opacity-15 blur-xl" />
+        <span className="relative grid size-12 place-items-center rounded-2xl border border-line bg-surface text-accent shadow-card">{icon ?? <Inbox size={20} />}</span>
+      </div>
       <div className="text-heading font-semibold text-ink">{title}</div>
       {body && <div className="max-w-sm text-small text-ink-3">{body}</div>}
       {action}

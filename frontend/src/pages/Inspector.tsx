@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowLeft, Bug, Check, ChevronRight, Copy, Loader2, Microscope, Play, X } from 'lucide-react'
+import { ArrowLeft, Bug, Check, ChevronRight, Copy, Loader2, Microscope, Play, ShieldAlert, ShieldCheck, Timer, X } from 'lucide-react'
+import { Kpi, NumberTicker, PageHeader } from '@/components/fx'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
@@ -36,11 +37,21 @@ function RunIndex() {
   const rows = (q.data ?? []).filter((r) => route === 'all' || r.route === route)
   return (
     <div className="mx-auto max-w-[1180px] space-y-5 p-6">
-      <div>
-        <div className="eyebrow">Observability</div>
-        <h1 className="text-display font-semibold tracking-tight text-ink">Harness inspector</h1>
-        <p className="mt-1 max-w-2xl text-body text-ink-2">Every pipeline run, step by step: context, retrieval, prompt, raw model output, gate results, route, and decision. Fault replays show the harness catching injected failures.</p>
-      </div>
+      <PageHeader
+        icon={<Microscope size={22} />}
+        tone="model"
+        eyebrow="Observability"
+        title="Harness inspector"
+        description="Every pipeline run, step by step: context, retrieval, prompt, raw model output, gate results, route, and decision. Fault replays show the harness catching injected failures."
+      />
+      {q.data && q.data.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Kpi icon={<Microscope size={14} />} label="Pipeline runs" value={<NumberTicker value={q.data.length} />} caption="Stored with full traces" />
+          <Kpi delay={0.05} tone="ok" icon={<ShieldCheck size={14} />} label="Passed every gate" value={<NumberTicker value={q.data.filter((r) => r.failed_gates.length === 0).length} />} caption="Verified or rule-based routes" />
+          <Kpi delay={0.1} tone="warn" icon={<Bug size={14} />} label="Fault replays" value={<NumberTicker value={q.data.filter((r) => r.fault).length} />} caption="Injected failures, all caught" />
+          <Kpi delay={0.15} tone="teal" icon={<Timer size={14} />} label="Median latency" value={<>{(([...q.data].map((r) => r.latency_ms).sort((a, b) => a - b)[Math.floor(q.data.length / 2)] ?? 0) / 1000).toFixed(2)}<span className="text-title text-ink-3"> s</span></>} caption="Per pipeline run" />
+        </div>
+      )}
       <Segmented
         value={route}
         onChange={setRoute}
@@ -71,7 +82,7 @@ function RunIndex() {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.run_id} className="group border-b border-line/70 last:border-0 hover:bg-surface-2/50">
+                <tr key={r.run_id} className={cn('group border-b border-line/70 transition-colors last:border-0 hover:bg-surface-2/50', r.fault && 'bg-warn-soft/30')}>
                   <td className="px-4 py-2 font-mono text-[12px] text-ink">
                     <Link to={`/inspector/${r.run_id}`} className="hover:underline">{r.run_id}</Link>
                     {r.fault && <Pill tone="warn" className="ml-2"><Bug size={10} /> {r.fault.replace(/_/g, ' ')}</Pill>}
@@ -124,8 +135,10 @@ function RunView({ runId }: { runId: string }) {
 
   return (
     <div className="mx-auto max-w-[1280px] space-y-4 p-6">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="noise relative flex flex-wrap items-center gap-3 overflow-hidden rounded-[18px] border border-line bg-surface p-4 shadow-card">
+        <div aria-hidden className={cn('pointer-events-none absolute -top-20 -right-10 size-56 rounded-full opacity-15 blur-3xl', t.run.fault ? 'bg-warn' : 'bg-model')} />
         <Button asChild size="sm" variant="ghost"><Link to="/inspector"><ArrowLeft size={13} /> All runs</Link></Button>
+        <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-brand-2 to-[#d6457a] text-white shadow-glow">{t.run.fault ? <ShieldAlert size={16} /> : <Microscope size={16} />}</span>
         <h1 className="font-mono text-title font-semibold text-ink">{t.run.run_id}</h1>
         <RouteBadge route={t.run.route} />
         {t.run.fault && <Pill tone="warn"><Bug size={11} /> Fault replay: {t.run.fault.replace(/_/g, ' ')}</Pill>}
@@ -176,7 +189,7 @@ function RunView({ runId }: { runId: string }) {
         <CardHeader eyebrow="Validation" title={`Gate results across ${t.validations.length} check(s)`} />
         <div className="space-y-3 px-4 pb-4">
           {t.validations.map((v, i) => (
-            <div key={i} className="rounded-md border border-line p-3">
+            <div key={i} className={cn('rounded-xl border p-3', v.passed ? 'border-ok/25 bg-ok-soft/30' : 'border-crit/25 bg-crit-soft/30')}>
               <div className="mb-2 flex items-center gap-2 text-small">
                 <span className="font-medium text-ink">{modelAttempts === 0 ? 'Rule-based template' : i < modelAttempts ? `Model attempt ${i + 1}` : 'Rule-based fallback'}</span>
                 {v.passed ? <Pill tone="ok"><Check size={11} /> passed</Pill> : <Pill tone="crit"><X size={11} /> rejected</Pill>}
@@ -205,13 +218,13 @@ function WaterfallRow({ s, t0, total, active, onClick }: { s: Span; t0: number; 
         <span className="flex items-center gap-1.5 truncate font-medium text-ink">
           <span className={cn('size-2 rounded-full', failed ? 'bg-crit' : s.name === 'generate' ? 'bg-model' : 'bg-ok')} />
           {SPAN_LABEL[s.name] ?? s.name}
-          {attempt ? <span className="font-mono text-[10px] text-ink-3">{mode ? mode.replace('_', ' ') : `#${attempt}`}</span> : null}
+          {attempt ? <span className="font-mono text-[10px] text-ink-3">{mode === 'rule_based' ? 'template' : mode ?? `#${attempt}`}</span> : null}
         </span>
         <span className="relative h-2.5 rounded-full bg-surface-3">
           <motion.span
             initial={{ width: 0 }}
             animate={{ width: `${Math.max((dur / total) * 100, 1.2)}%` }}
-            className={cn('absolute inset-y-0 rounded-full', failed ? 'bg-crit' : s.name === 'generate' ? 'bg-model' : 'bg-ink/60')}
+            className={cn('absolute inset-y-0 rounded-full', failed ? 'bg-gradient-to-r from-crit to-warn shadow-[0_0_10px_-2px_var(--crit)]' : s.name === 'generate' ? 'bg-gradient-to-r from-brand-2 to-[#d6457a]' : 'bg-brand')}
             style={{ left: `${(start / total) * 100}%` }}
           />
         </span>
@@ -245,7 +258,7 @@ function SpanDetail({ span, trace }: { span: Span | undefined; trace: Trace }) {
         {tab === 'prompt' && (
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-caption text-ink-3">Prompt hash <span className="font-mono text-ink-2">{trace.prompt_hash?.slice(0, 16)}</span></div>
-            <Block title="System prompt (draft.v1)" text={trace.system_prompt} />
+            <Block title="System prompt" text={trace.system_prompt} />
             <Block title="User message (case context and untrusted block)" text={trace.user_prompt} />
           </div>
         )}

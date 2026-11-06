@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { AlertTriangle, Check, Loader2, MailQuestion, Pencil, ScanLine, X } from 'lucide-react'
+import { AlertTriangle, Check, Loader2, MailQuestion, Pencil, ScanLine, Sparkles, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import type { Draft, EvidenceItem, ExceptionDetail, Operation, ReasonCode, ValidationReport } from '@/api/types'
@@ -20,11 +20,19 @@ export function PipelineProgress({ provider }: { provider?: string }) {
     return () => clearInterval(t)
   }, [provider])
   return (
-    <div className="rounded-card border border-model-line bg-model-soft/40 p-4" aria-live="polite">
-      <div className="flex items-center gap-2 text-small font-medium text-model">
-        <Loader2 size={14} className="animate-spin" /> Running the governed pipeline
+    <div className="relative overflow-hidden rounded-card border border-model-line bg-gradient-to-br from-model-soft/80 to-surface p-5 shadow-card" aria-live="polite">
+      <span aria-hidden className="animate-scan pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-transparent via-model/10 to-transparent" />
+      <div className="relative flex items-center gap-2 text-small font-semibold text-model">
+        <span className="relative grid size-6 place-items-center">
+          <span className="animate-pulse-ring absolute inset-0 rounded-full bg-model/30" />
+          <Sparkles size={14} className="relative" />
+        </span>
+        Running the governed pipeline
       </div>
-      <ol className="mt-3 flex flex-wrap items-center gap-1.5">
+      <div className="relative mt-3 h-1 overflow-hidden rounded-full bg-surface-3">
+        <motion.div className="bg-brand h-full rounded-full" animate={{ width: `${((step + 1) / STAGES.length) * 100}%` }} transition={{ duration: 0.4 }} />
+      </div>
+      <ol className="relative mt-3 flex flex-wrap items-center gap-1.5">
         {STAGES.map((s, i) => (
           <li key={s} className="flex items-center gap-1.5">
             <span
@@ -41,7 +49,7 @@ export function PipelineProgress({ provider }: { provider?: string }) {
           </li>
         ))}
       </ol>
-      <p className="mt-2 text-caption text-ink-3">Stage names show progress while the request runs; the trace records the real timings.</p>
+      <p className="relative mt-2 text-caption text-ink-3">Stage names show progress while the request runs; the trace records the real timings.</p>
     </div>
   )
 }
@@ -106,16 +114,42 @@ export function UntrustedQuote({ text, flags }: { text: string; flags: string[] 
 }
 
 /* ------------------------------------------------------------ Countersign stamp */
-export function CountersignStamp({ name, at }: { name: string; at: string }) {
+const BURST = ['var(--brand-1)', 'var(--brand-2)', 'var(--ok)', 'var(--brand-3)', '#d6457a', 'var(--warn)']
+
+function Burst() {
+  const reduce = useReducedMotion()
+  if (reduce) return null
+  return (
+    <span aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
+      {Array.from({ length: 18 }).map((_, i) => {
+        const a = (i / 18) * Math.PI * 2
+        const d = 54 + (i % 3) * 16
+        return (
+          <motion.span
+            key={i}
+            className="absolute size-1.5 rounded-full"
+            style={{ background: BURST[i % BURST.length] }}
+            initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+            animate={{ x: Math.cos(a) * d, y: Math.sin(a) * d, opacity: 0, scale: 0.4 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
+          />
+        )
+      })}
+    </span>
+  )
+}
+
+export function CountersignStamp({ name, at, burst = false }: { name: string; at: string; burst?: boolean }) {
   const reduce = useReducedMotion()
   return (
     <motion.div
       initial={reduce ? false : { scale: 1.25, opacity: 0, rotate: -14 }}
       animate={{ scale: 1, opacity: 1, rotate: -6 }}
       transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-      className="relative grid size-[88px] shrink-0 place-items-center rounded-full border-2 border-accent text-accent"
+      className="relative grid size-[88px] shrink-0 place-items-center rounded-full border-2 border-accent bg-surface text-accent shadow-glow"
       aria-label={`Countersigned by ${name}`}
     >
+      {burst && <Burst />}
       <span className="absolute inset-1.5 rounded-full border border-dashed border-accent/60" />
       <span className="flex flex-col items-center leading-none">
         <span className="text-[9px] font-semibold tracking-[0.18em] uppercase">Countersigned</span>
@@ -190,10 +224,11 @@ export function DecisionBar({
   if (stamp || decided) {
     const d = decided
     return (
-      <div className="flex items-center gap-4 rounded-card border border-accent/25 bg-accent-soft/60 p-4">
-        <CountersignStamp name={stamp?.name ?? d?.actor_name ?? ''} at={stamp?.at ?? (d ? new Date(d.decided_at).toISOString().slice(11, 16) : '')} />
-        <div className="min-w-0 text-small">
-          <div className="font-semibold text-ink">
+      <div data-tour="detail-decision" className="relative flex items-center gap-4 overflow-hidden rounded-card border border-accent/25 bg-gradient-to-r from-accent-soft to-surface p-4 shadow-card">
+        <div aria-hidden className="bg-dots pointer-events-none absolute inset-0 opacity-60" />
+        <CountersignStamp burst={!!stamp} name={stamp?.name ?? d?.actor_name ?? ''} at={stamp?.at ?? (d ? new Date(d.decided_at).toISOString().slice(11, 16) : '')} />
+        <div className="relative min-w-0 text-small">
+          <div className="text-[15px] font-semibold text-ink">
             {d ? `${d.action === 'approve' ? 'Approved' : d.action === 'edit' ? 'Edited and approved' : 'Rejected'} by ${d.actor_name}` : 'Countersigned'}
           </div>
           <div className="text-ink-2">{d?.note ?? 'Recorded as an append-only revision in the audit chain.'}</div>
@@ -204,7 +239,7 @@ export function DecisionBar({
   }
 
   return (
-    <div className="rounded-card border border-line bg-surface p-3">
+    <div data-tour="detail-decision" className="glass sticky bottom-3 z-20 rounded-card border border-line p-3 shadow-lift">
       <AnimatePresence mode="wait" initial={false}>
         {mode === 'idle' && (
           <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-wrap items-center gap-2">

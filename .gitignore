@@ -39,3 +39,4 @@ Thumbs.db
 *.db-wal
 *.db-journal
 *.tmp.mjs
+*.log

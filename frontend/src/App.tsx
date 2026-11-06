@@ -6,9 +6,9 @@ import { ExceptionPanel } from '@/components/domain/ExceptionPanel'
 import { AppShell } from '@/components/shell/AppShell'
 import { Skeleton, TooltipProvider } from '@/components/ui/primitives'
 import { homeFor, SessionProvider, useSession } from '@/lib/session'
-import { Personas } from '@/pages/Personas'
 import { Queue } from '@/pages/Queue'
 
+const Landing = lazy(() => import('@/pages/Landing').then((m) => ({ default: m.Landing })))
 const Forecast = lazy(() => import('@/pages/Forecast'))
 const Inspector = lazy(() => import('@/pages/Inspector'))
 const Outcomes = lazy(() => import('@/pages/Outcomes'))
@@ -32,7 +32,7 @@ function Guard({ roles, children }: { roles?: string[]; children: ReactNode }) {
 
 function Home() {
   const { user } = useSession()
-  return user ? <Navigate to={homeFor(user)} replace /> : <Personas />
+  return user ? <Navigate to={homeFor(user)} replace /> : <Landing />
 }
 
 function ExceptionPage() {

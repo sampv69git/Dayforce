@@ -435,7 +435,12 @@ def main() -> None:
         if p == "scripted":
             report["fault_matrix"] = fault_matrix(ev)
         else:
-            report["runs"].append(generation_metrics(ev, p, args.limit, args.tpm))
+            run = generation_metrics(ev, p, args.limit, args.tpm)
+            run.update({"commit": report["commit"], "run_at": report["run_at"]})
+            from app.harness.context import PROMPT_VERSION
+
+            run["prompt_version"] = PROMPT_VERSION
+            report["runs"].append(run)
     report["duration_s"] = round(time.time() - t0, 1)
     path = write_report(report)
     print(

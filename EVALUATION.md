@@ -6,7 +6,7 @@ Every number below comes from a committed report in `eval/reports/`. Each report
 |---|---|---|---|
 | `eval/reports/20261106T093850Z-rule_based.json` | c3fae81 | scripted (fault matrix), rule_based | **Failed gates.** Kept as evidence of the bugs the suite found (section 6) |
 | `eval/reports/20261106T094621Z-rule_based.json` and `latest.json` | 748fd38 | scripted (fault matrix), rule_based | **All gates passed** |
-| Real model (gpt-oss-20b on Groq) | pending | groq | Runs as soon as a `GROQ_API_KEY` is configured: `make eval-groq` |
+| `eval/reports/20261106T130125Z-groq.json` (merged into `latest.json`) | 4dcf6b7 | groq (gpt-oss-20b, prompt draft.v2) | 30 stratified cases; reported in section 3 |
 | Local model (qwen3:4b on Ollama) | pending | ollama | `make eval-ollama` once Ollama is installed |
 
 Reproduce: `cd backend && uv run python -m eval.run --providers scripted,rule_based --gate` (about 30 seconds after the embedding model is cached).
@@ -113,9 +113,65 @@ The rule-based provider is the degraded mode and the fallback path. These number
 | Provider timeout | provider | 12/12 | 0 |
 | Bad output, then repaired | repair | 12/12 repaired on attempt 2 | 0 |
 
-## 3. Real-model results
+## 3. Real-model results: gpt-oss-20b on Groq
 
-Pending: no `GROQ_API_KEY` is configured in this environment yet. When it is, `make eval-groq` runs a stratified subset paced to the Groq token budget and adds a `groq` entry to `latest.json`, and this section will report its numbers exactly, including the failure cases.
+Report `eval/reports/20261106T130125Z-groq.json` (merged into `latest.json`): commit 4dcf6b7, prompt `draft.v2` (published as commit f88a2ab: before pushing, commits were rewritten only to remove a secret accidentally added to `.env.example`; the code is identical), run at 2026-11-06 12:22 UTC, **30 cases** stratified across every template (Groq token limits rule out all 105 targets in one run).
+
+| Metric | Result |
+|---|---|
+| Schema-valid first pass (G1) | 0.833 |
+| Citation accuracy, attempt 1 (G3 and G4) | 0.833 |
+| Quote grounding (G5) | **1.000** |
+| Re-check pass (G8) | **1.000** |
+| Verified on attempt 1 | 0.767 (23 of 30) |
+| Repaired on attempt 2 | 0.100 (3 of 30) |
+| Verified suggestion rate | **0.833** (25 of 30) |
+| Visible fallback to the rule-based draft | 0.067 (2 of 30) |
+| Escalated | 0.100 (3 of 30: both conflicting-evidence cases, plus one unnecessary escalation) |
+| Correction accuracy against labels | **0.967** (29 of 30) |
+| Unsafe drafts reaching a manager | **0** |
+| Raw unsafe rate (harness ablation) | **0.233**: 7 of 30 first drafts failed a gate and would have reached a manager without the harness |
+| Injection resistance | 2 of 2 injection cases in the sample |
+| Latency p50 / p95 | 1.7 s / 17.0 s |
+| Tokens used | 75,464 |
+
+### What failed, exactly
+
+Across 30 cases there were 10 failed model attempts:
+
+| Count | Gate | Cause |
+|---|---|---|
+| 4 | G1 | Groq's strict decoder returned HTTP 400 "Failed to generate JSON" |
+| 1 | G1 | Completion token limit reached before valid JSON (gpt-oss reasoning counts toward the limit) |
+| 2 | G1 | More than six operations in one draft |
+| 1 | G1 | An empty operations list |
+| 2 | G6 | An escalation combined with other operations |
+
+No draft failed a grounding gate: every citation existed and was retrieved, every quote was verbatim, every timestamp was anchored to evidence, and every correction cleared its exception without creating a new one. The model's errors were format errors, and the harness caught all of them.
+
+The single incorrect outcome was conservative: on a Texas missed-meal case the model escalated instead of acknowledging. The p95 latency includes automatic backoff on Groq rate limits (HTTP 429); uncontended calls took about 1 to 2 seconds.
+
+### Prompt v1 to v2
+
+The first live smoke test on prompt `draft.v1` verified 1 of 4 demo drafts (the harness caught every failure). The causes were generic gaps in what the model was shown: evidence items did not say which missing punch they supported, the engine's "no safe correction" finding was not passed on, and operation fields were not explained. `draft.v2` added those, plus a 2,048-token completion cap and retry with backoff. On the same demo cases v2 verified 4 of 5 and escalated the conflict case. The evaluation above was run only on v2.
+
+### Against the targets set before the run
+
+| Target (QUALITY_GATES.md) | Target | Measured | Met |
+|---|---|---|---|
+| Schema-valid first pass | at least 0.98 | 0.833 | No |
+| Citation accuracy | at least 0.90 | 0.833 | No |
+| Quote grounding | at least 0.90 | 1.000 | Yes |
+| Verified suggestion rate | at least 0.85 | 0.833 | No (25 of 30; 0.85 would need 26) |
+| Unsafe drafts reaching a manager | 0 | 0 | Yes |
+| Injection resistance | 100% | 100% (2 of 2) | Yes |
+| Draft latency p95 | under 6 s | 17.0 s | No (rate-limit backoff) |
+
+We report the misses rather than adjust the targets. They are the reason the harness exists: one in four first drafts from a capable open-weight model would have been unsafe to show without it.
+
+### Local model (qwen3:4b on Ollama)
+
+Not run: Ollama is not installed in this environment.
 
 ## 4. Quality gates (CI)
 
@@ -126,7 +182,8 @@ Enforced by `--gate` in the `evaluation` job: detection precision and recall at 
 - Synthetic data cannot capture every real-world punch pattern, device failure, or local pay practice.
 - Labels and rules share authors (see section 2).
 - The injection set has 8 hand-written variants; it shows the controls work on known patterns, not that injection is impossible.
-- Groq rate limits mean the real-model run covers a stratified subset, not all 105 targets; the subset size is recorded in the report.
+- Groq rate limits mean the real-model run covers 30 stratified cases, not all 105 targets; with n = 30 each case moves a rate by 3.3 points, so treat the real-model rates as indicative.
+- The real-model sample contained 2 of the 8 injection cases.
 
 ## 6. What the first run caught
 

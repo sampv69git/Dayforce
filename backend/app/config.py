@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "qwen3:4b"
     llm_timeout_s: float = 30.0
-    llm_max_output_tokens: int = 1200
+    llm_max_output_tokens: int = 2048
 
     embeddings_enabled: bool = True
     embedding_model: str = "BAAI/bge-small-en-v1.5"

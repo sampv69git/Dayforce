@@ -118,8 +118,8 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 - **Options:** Render (API and Postgres) plus Vercel (web), free tiers; about 1 h.
 - **Decision:** owner approved a cloud deployment **only if ahead of schedule** at the end of step 9. Local Docker Compose remains the primary run path.
 
-## D-019 MCP server: stretch (2026-11-06)
-- **Decision:** read-only MCP server only if ahead of schedule. Not on the critical path; the JD values MCP but the product does not need it to work.
+## D-019 MCP server: built, read-only (2026-11-06)
+- **Decision:** built once ahead of schedule. Five read-only tools annotated `readOnlyHint`; no tool can approve, edit, or write, so agents can investigate and simulate but people still countersign. Uses `MCPServer` from the `mcp` 2.x SDK (FastMCP was renamed in v2).
 
 ## D-020 Demo video hosting and length (2026-11-06)
 - **Decision:** YouTube, unlisted, linked from README.
@@ -128,3 +128,43 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 ## D-021 Task runner (2026-11-06)
 - **Context:** `make` is not available on the owner's Windows machine.
 - **Decision:** keep a `Makefile` for CI, Linux, macOS, and WSL, and document the equivalent direct `uv` and `npm` commands in README for Windows.
+
+## D-022 Human edits may reveal worked overtime (2026-11-06)
+- **Context:** an API journey test showed G8 blocking a payroll admin's evidence-based edit (scanner time 17:20) because it revealed daily overtime that was really worked.
+- **Alternatives:** keep G8 strict for everyone; drop G8 for edits.
+- **Trade-offs:** strict G8 would push managers to under-record time, contradicting TA-4.3; no G8 would allow edits that create punch or schedule problems.
+- **Decision:** in edit mode, G8 accepts newly revealed overtime and meal exceptions (they enter the queue to be approved and paid); new punch-integrity or schedule exceptions still fail. Model drafts stay strict.
+- **Revisit when:** policy owners define a different treatment for manager edits.
+
+## D-023 Evaluation design (2026-11-06)
+- **Decision:** a hand-labelled synthetic set (128 cases, seed 777) loaded into a dedicated database and run through the real detection service and pipeline; deterministic providers in CI with gates; the real model on a stratified subset paced to the Groq token budget; the failing first run kept as evidence.
+- **Trade-off:** labels and rules share authors, stated in EVALUATION.md.
+
+## D-024 Commit identity (2026-11-06)
+- **Context:** the owner asked that further commits be authored and pushed by teammate Dhravya285.
+- **Decision:** repository-local Git identity `Dhravya285 <dhravyashetty285@gmail.com>`; pushes and pull requests use her token, kept outside the repository and never written to Git configuration. Earlier commits keep their original author.
+- **Constraint found:** the token lacks the `workflow` scope, so changes to `.github/workflows/` need a token with that scope.
+
+## D-025 pgvector query through SQL operator (2026-11-06)
+- **Context:** the pgvector comparator was not reachable through the `Embedding` type decorator, which would have broken dense ranking on PostgreSQL.
+- **Decision:** rank with an explicit `embedding <=> CAST(:q AS vector)` query; verified end to end on an embedded PostgreSQL with pgvector.
+
+## D-026 Tertiary text colour (2026-11-06)
+- **Context:** axe found tertiary text at 4.34 to 4.49:1 on tinted surfaces.
+- **Decision:** `--ink-3` changed from #6B707C to #5F6470 (about 5.2:1 on tinted surfaces); gate labels no longer use reduced opacity.
+
+## D-027 Visual redesign and a custom guided tour (2026-11-06)
+- **Context:** the owner rated the first interface 4 out of 10 and asked for a landing page with a guided tour and a stronger visual identity on every page.
+- **Alternatives:** a tour library (react-joyride, driver.js); a UI kit; keeping the restrained style.
+- **Trade-offs:** tour libraries add weight and styling we would override, and some lag behind React 19. A small engine on Motion, which we already ship, gives a spotlight cutout, keyboard control, and theme tokens in about 250 lines with unit tests.
+- **Decision:** a brand layer (gradients, glass, aurora, light-beam borders, tickers, gauges) on the existing tokens, a full landing page, and a custom tour. All motion honours reduced-motion settings; tours never auto-start under browser automation; an axe sweep of every page in both themes gates the change.
+- **Revisit when:** a design system from Dayforce is available.
+
+## D-028 Commit identity changed to mythilisn (2026-11-06)
+- **Context:** the owner asked that further commits be authored and pushed by teammate mythilisn.
+- **Decision:** repository-local Git identity `mythilisn <mythilisn15@gmail.com>`; pushes and pull requests use her token, kept outside the repository and never written to Git configuration. Earlier commits keep their original authors.
+
+## D-029 End-to-end tests with reduced motion (2026-11-06)
+- **Context:** scroll reveals and staged animations leave text partly transparent for a moment, which axe measures as low contrast.
+- **Decision:** Playwright runs with `reducedMotion: 'reduce'`; every animated component renders its final state in that mode, which is also the accessible behaviour for users who ask for it.
+

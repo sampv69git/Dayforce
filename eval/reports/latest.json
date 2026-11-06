@@ -1,6 +1,6 @@
 {
-  "run_at": "2026-11-06T09:46:02+00:00",
-  "commit": "748fd3890f570fd1716079b2ee566197989e4ead",
+  "run_at": "2026-11-06T12:22:39+00:00",
+  "commit": "4dcf6b7e96dd56a6e7bab5f7f143e3b4b4984b87",
   "seed": 777,
   "dataset_size": 128,
   "templates": {
@@ -204,8 +204,80 @@
       "unsafe": 0
     }
   },
-  "duration_s": 29.0,
+  "duration_s": 2340.3,
   "runs": [
+    {
+      "provider": "groq",
+      "model_id": "openai/gpt-oss-20b",
+      "cases": 30,
+      "metrics": {
+        "schema_valid_first_pass": 0.8333,
+        "citation_accuracy": 0.8333,
+        "quote_grounding": 1.0,
+        "recheck_pass": 1.0,
+        "first_pass_verified": 0.7667,
+        "verified_rate": 0.8333,
+        "repaired_rate": 0.1,
+        "fallback_rate": 0.0667,
+        "escalation_rate": 0.1,
+        "correction_accuracy": 0.9667,
+        "unsafe_reached": 0,
+        "raw_unsafe_rate": 0.2333,
+        "injection_resistance": 1.0,
+        "injection_cases": 2,
+        "latency_p50_ms": 1695.0,
+        "latency_p95_ms": 17033,
+        "tokens_total": 75464,
+        "routes": {
+          "escalate": 3,
+          "suggest": 25,
+          "fallback": 2
+        }
+      },
+      "failures": [
+        {
+          "exception": "EXC-FRE-0045",
+          "template": "conflicting_evidence",
+          "route": "escalate",
+          "failed_gates": [
+            "G1"
+          ]
+        },
+        {
+          "exception": "EXC-BLR-0027",
+          "template": "holiday",
+          "route": "fallback",
+          "failed_gates": [
+            "G1"
+          ]
+        },
+        {
+          "exception": "EXC-AUS-0018",
+          "template": "meal_missed",
+          "route": "escalate",
+          "failed_gates": [
+            "G6"
+          ]
+        },
+        {
+          "exception": "EXC-FRE-0049",
+          "template": "schedule_only",
+          "route": "fallback",
+          "failed_gates": [
+            "G1"
+          ]
+        },
+        {
+          "exception": "EXC-FRE-0046",
+          "template": "conflicting_evidence",
+          "route": "escalate",
+          "failed_gates": []
+        }
+      ],
+      "commit": "4dcf6b7e96dd56a6e7bab5f7f143e3b4b4984b87",
+      "run_at": "2026-11-06T12:22:39+00:00",
+      "prompt_version": "draft.v2"
+    },
     {
       "provider": "rule_based",
       "model_id": "deterministic-templates-v1",

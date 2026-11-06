@@ -43,7 +43,7 @@ flowchart LR
 | `backend/app/observability` | Span recorder, structured logging, request IDs | structlog |
 | `backend/app/seed` | Deterministic synthetic data generator | Python, fixed seed |
 | `eval/` | Labelled dataset generator, runner, metrics, reports | Python |
-| `mcp/` (stretch) | Read-only MCP server exposing rules engine and policy search | `mcp` Python SDK |
+| `backend/app/mcp_server.py` | Read-only MCP server (stdio) exposing exception lookup, policy search, correction simulation, and audit verification; no decision tool | `mcp` Python SDK 2.x (`MCPServer`) |
 
 Dependency rule: `api -> harness -> (engine, retrieval, llm, audit) -> domain`. `engine` depends on nothing but plain data classes, which keeps it fast to unit test.
 
@@ -62,11 +62,15 @@ Dependency rule: `api -> harness -> (engine, retrieval, llm, audit) -> domain`. 
 │   │   ├── harness/        pipeline, gates, routing, confidence
 │   │   ├── audit/          chain writer, verifier
 │   │   ├── observability/  spans, logging
-│   │   ├── seed/           synthetic data generator
+│   │   ├── seed/           synthetic data generator and loader
+│   │   ├── services/       detection, view models, decisions, insights (database-facing)
+│   │   ├── bootstrap.py    migrations and first-start seeding
+│   │   ├── export_openapi.py
 │   │   ├── config.py
 │   │   └── main.py
+│   ├── eval/               labelled dataset and evaluation runner
 │   ├── alembic/
-│   ├── policy/             policy pack markdown + clause metadata (YAML)
+│   ├── policy/             policy pack: handbook, California and Bengaluru addenda (YAML)
 │   ├── tests/              unit/, integration/, contract/
 │   └── pyproject.toml
 ├── frontend/
@@ -76,8 +80,9 @@ Dependency rule: `api -> harness -> (engine, retrieval, llm, audit) -> domain`. 
 │   │   ├── pages/
 │   │   ├── lib/            format, keyboard, theme
 │   │   └── styles/
-│   └── tests/ (vitest), e2e/ (playwright)
-├── eval/                   dataset/, generate.py, run.py, metrics.py, reports/
+│   ├── src/test/           Vitest
+│   └── e2e/                Playwright with axe
+├── eval/reports/           committed evaluation reports (JSON)
 ├── claude-code/            build instructions and logs
 ├── docker-compose.yml
 ├── openapi.yaml

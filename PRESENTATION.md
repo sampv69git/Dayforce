@@ -26,10 +26,11 @@ Exactly the five topics required by the brief. Numbers marked [from eval] are fi
 
 ## Slide 4. Safety, testing, and evaluation evidence
 
-- Evaluation dataset: [from eval] cases including overnight, DST, conflicting policy, ambiguous evidence, and injection.
-- Results table [from eval]: detection precision and recall; retrieval recall@5 and MRR (BM25 vs dense vs hybrid); schema-valid first pass; citation accuracy; quote grounding; verified rate; fallback and escalation rates; p95 latency.
-- Fault-injection matrix: every fault caught, 0 unsafe drafts reached a manager [from eval].
-- Harness ablation: share of raw drafts that would have been unsafe without the harness [from eval].
+- Evaluation dataset: 128 hand-labelled synthetic cases (separate seed) including overnight shifts, time zones, conflicting and schedule-only evidence, cascades, and 8 prompt-injection variants.
+- Results (commit 748fd38): detection precision 1.000 and recall 1.000; required clause in top 5 BM25 0.974, dense 1.000, hybrid 1.000 (MRR 0.770); rule-based drafts correction accuracy 1.000 with 0 unsafe; gpt-oss-20b on 30 cases: 83.3% verified suggestions, 96.7% correction accuracy, 100% quote grounding, 0 unsafe drafts shown, p50 latency 1.7 s.
+- Fault-injection matrix: 144 of 144 injected faults caught (12 kinds), 0 unsafe drafts reached a manager; 8 of 8 injection attempts resisted.
+- Harness ablation: 23.3% of gpt-oss-20b first drafts (7 of 30) failed a gate and would have reached a manager without the harness; all were caught, repaired, or replaced by a visible fallback.
+- The suite found real defects on its first run (degraded-mode routing, a G9 gap); both fixed with regression tests.
 - Tests: unit, integration, contract (Schemathesis), evaluation, Vitest, Playwright with accessibility checks, all in CI.
 
 ## Slide 5. Future improvements and expected business impact

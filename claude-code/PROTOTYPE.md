@@ -117,9 +117,11 @@ Lucide icons (ISC licence), 16 px in dense UI, 20 px in headers, stroke 1.75. Ne
 
 ## 4. Screens
 
-### 4.1 Persona chooser `/`
+### 4.1 Landing page and demo sign-in `/`
 
 Purpose: the demo sign-in and first impression in five seconds.
+
+Implemented as a full landing page (revision after the first build): sticky glass navigation; a hero with the tagline and a replayable walkthrough of one seeded exception (detect, retrieve, draft, ten gates, countersign) in a browser frame that straightens on scroll; a technology marquee; before-and-after; a feature bento with small animated illustrations; a dark harness panel with hoverable gates; results from committed evaluation reports; persona cards; a closing call to action. A guided tour (spotlight cutout, keyboard control) starts on the first visit and can hand off to the in-app tour. The original layout below remains the information architecture of the persona cards.
 
 ```
             COUNTERSIGN

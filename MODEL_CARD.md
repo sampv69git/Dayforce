@@ -1,6 +1,6 @@
 # Model Card: Countersign Drafting Component
 
-Status: pre-implementation. Performance sections will be filled only with results from real runs (see `EVALUATION.md`).
+Status: implemented. Performance below comes from committed evaluation reports (see `EVALUATION.md`).
 
 ## 1. What the model does
 
@@ -34,9 +34,9 @@ Licences verified on 2026-11-06 from the Hugging Face model pages and the gpt-os
 
 ## 5. Inputs and outputs
 
-- **Input:** system prompt `draft.v1`; user message with JSON case context (employee code, site jurisdiction, exempt flag, work date, rule ID, evidence items with IDs, facts, allowed ops, plausible window, retrieved clauses with IDs and text) and an `<untrusted_employee_text>` block. No names, no rates beyond what the facts need.
+- **Input:** system prompt `draft.v2`; user message with JSON case context (employee code, site jurisdiction, exempt flag, work date, rule ID, evidence items with IDs, facts, allowed ops, plausible window, retrieved clauses with IDs and text) and an `<untrusted_employee_text>` block. No names, no rates beyond what the facts need.
 - **Output:** JSON conforming to `DraftResolution` (HARNESS.md section 1.3).
-- **Parameters:** temperature 0; gpt-oss reasoning effort low; max output 900 tokens; timeout 20 s; one repair retry.
+- **Parameters:** temperature 0; gpt-oss reasoning effort low; max 2,048 completion tokens; timeout 30 s with up to 4 retries on rate limits; one repair retry.
 
 ## 6. Known limitations and risks
 
@@ -47,7 +47,19 @@ Licences verified on 2026-11-06 from the Hugging Face model pages and the gpt-os
 
 ## 7. Evaluation
 
-Methods and results: `EVALUATION.md`. Metrics: schema-valid first pass, citation accuracy, quote grounding, re-check pass, correction accuracy against gold, fallback and escalation rates, injection resistance, latency. No numbers are reported here until a real run exists.
+Methods and full results: `EVALUATION.md`. gpt-oss-20b on Groq, prompt `draft.v2`, 30 stratified cases (recorded as commit 4dcf6b7, published as f88a2ab with identical code):
+
+| Metric | Result |
+|---|---|
+| Schema-valid first pass | 0.833 |
+| Quote grounding / re-check pass | 1.000 / 1.000 |
+| Verified suggestion rate (incl. repaired) | 0.833 |
+| Correction accuracy | 0.967 |
+| Unsafe drafts reaching a manager | 0 |
+| Raw unsafe rate without the harness | 0.233 |
+| Latency p50 / p95 | 1.7 s / 17.0 s (p95 includes rate-limit backoff) |
+
+Every model error observed was a format error (strict-decoding failures at the provider, too many or too few operations, escalation combined with other operations); none was a grounding error. qwen3:4b has not been evaluated in this environment.
 
 ## 8. Ethical considerations
 
