@@ -98,7 +98,7 @@ export function GateStrip({ gates, animate = true, compact = false }: { gates: G
               >
                 {g.status === 'pass' ? <Check size={11} strokeWidth={2.5} /> : g.status === 'fail' ? <X size={11} strokeWidth={2.5} /> : <CircleSlash size={10} />}
                 {g.id}
-                {!compact && <span className="font-sans font-normal opacity-80">{g.name.split(' ')[0]}</span>}
+                {!compact && <span className="font-sans font-normal">{g.name.split(' ')[0]}</span>}
               </span>
             </Tip>
           </motion.li>

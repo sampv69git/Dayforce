@@ -40,7 +40,7 @@ Implemented as CSS custom properties in `frontend/src/styles/tokens.css` and map
 | `--line-strong` | `#C9C9C1` | `#3A404B` | Input borders, focus base |
 | `--ink` | `#15171C` | `#ECEEF2` | Primary text |
 | `--ink-2` | `#4A4F5A` | `#B4BAC5` | Secondary text |
-| `--ink-3` | `#6E7380` | `#8A919E` | Tertiary text, captions (AA on canvas and surface) |
+| `--ink-3` | `#5F6470` | `#8F96A3` | Tertiary text, captions (AA on canvas and surface) |
 | `--accent` | `#2849D6` | `#7D96FF` | Cobalt: primary actions, human decisions, focus ring |
 | `--accent-soft` | `#E9EDFC` | `#1B2448` | Selected rows, accent backgrounds |
 | `--model` | `#6D3FD1` | `#B49BFF` | Violet: model drafts |
