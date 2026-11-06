@@ -1,0 +1,39 @@
+# Presentation: Five Slides
+
+Exactly the five topics required by the brief. Numbers marked [from eval] are filled only from committed evaluation reports.
+
+## Slide 1. Problem and user value
+
+- **Headline:** Payroll closes Monday. Exceptions do not resolve themselves.
+- Managers clear missed punches, overtime, and break violations by hand, one at a time, with no evidence and no view of pay impact.
+- One root problem (two missed punches) creates several downstream exceptions.
+- Mistakes mean underpaid employees and wage-claim exposure (a Washington meal break and rounding class action: about USD 98.3 million in damages, as reported by Seyfarth).
+- **Value:** Countersign turns exceptions into verified, evidence-backed suggestions that a manager countersigns in seconds, before the cutoff.
+- Visual: queue screenshot with cutoff countdown.
+
+## Slide 2. Product workflow and demo
+
+- Rules detect -> cascade linker groups root causes -> retrieval finds policy -> open-weight model drafts -> harness verifies -> manager countersigns -> append-only revision and audit.
+- Differentiators: root-cause cascades, evidence-anchored times, pay impact preview, overtime forecast with compliant swaps, employee attestation, guarded bulk approval.
+- Visual: detail screen with shift ribbon, draft, gate strip, before/after.
+- Demo link and QR code.
+
+## Slide 3. Architecture and harness design
+
+- Diagram: React web, FastAPI, Postgres plus pgvector, engine, retrieval, harness, providers (gpt-oss-20b on Groq, qwen3:4b on Ollama, rule-based).
+- Harness: strict JSON schema; ten gates (schema, binding, citation exists, citation retrieved, quote grounding, action allowed, evidence anchoring, re-simulation, business guardrails, fact and injection check); one repair; visible fallback or escalation; harness-computed confidence; human decision; hash-chained audit.
+- Principle line: "Code computes. The model explains. A person decides."
+
+## Slide 4. Safety, testing, and evaluation evidence
+
+- Evaluation dataset: [from eval] cases including overnight, DST, conflicting policy, ambiguous evidence, and injection.
+- Results table [from eval]: detection precision and recall; retrieval recall@5 and MRR (BM25 vs dense vs hybrid); schema-valid first pass; citation accuracy; quote grounding; verified rate; fallback and escalation rates; p95 latency.
+- Fault-injection matrix: every fault caught, 0 unsafe drafts reached a manager [from eval].
+- Harness ablation: share of raw drafts that would have been unsafe without the harness [from eval].
+- Tests: unit, integration, contract (Schemathesis), evaluation, Vitest, Playwright with accessibility checks, all in CI.
+
+## Slide 5. Future improvements and expected business impact
+
+- **Next:** real HRIS, badge, and scheduling integrations behind the existing interfaces; self-hosted gpt-oss-20b on vLLM; calibrate evidence weights on labelled outcomes; jurisdiction packs maintained by compliance teams; manager feedback loop (rejection reasons) into prompt and rule tuning; MCP tools for other agents.
+- **Expected impact (to be validated in a pilot, not claimed as measured):** less manager time per exception (we measured [from outcomes] median time to decision in our session); more exceptions cleared before cutoff; avoided overtime through forecasting; fewer underpayments and premium omissions; complete audit for every AI-assisted change.
+- Close: "The model drafts. The rules verify. A manager countersigns."
