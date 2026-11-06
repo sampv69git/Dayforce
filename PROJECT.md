@@ -300,7 +300,7 @@ Detailed layouts and interactions are in `claude-code/PROTOTYPE.md`. Summary:
 
 | Route | Screen | Roles |
 |---|---|---|
-| `/` | Persona chooser (demo sign-in) with product one-liner | Public |
+| `/` | Landing page: live pipeline walkthrough, guided tour, results, and persona cards for demo sign-in | Public |
 | `/queue` | Exception queue with split-view detail | Manager, admin |
 | `/exceptions/:id` | Exception detail (full page) | Manager, admin |
 | `/forecast` | Overtime forecast and swaps | Manager, admin |
@@ -382,7 +382,7 @@ Details in `TESTING.md`, `TEST_PLAN.md`, `QUALITY_GATES.md`.
 | LLM drafting with real open-weight models | Notifications to employees (in-app only) | Legal compliance claims |
 | Ten-gate harness, repair, fallback, escalation | Publishing schedule changes to a scheduling system (recorded locally) | SSO and production identity |
 | Human decisions, append-only revisions, audit chain | Simulated clock ("now" = Fri 6 Nov 2026 11:00 PT) | Multi-tenant hosting |
-| RBAC, traces, metrics, evaluation | Demo sign-in (persona chooser) | Mobile native apps |
+| RBAC, traces, metrics, evaluation | Demo sign-in (persona cards on the landing page) | Mobile native apps |
 
 ---
 

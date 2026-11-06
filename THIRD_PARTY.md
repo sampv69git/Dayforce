@@ -74,6 +74,7 @@ Versions are the latest published on 2026-11-06 and will be pinned in lock files
 | Asset | Licence | Source |
 |---|---|---|
 | Geist Sans and Geist Mono via `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` | SIL Open Font License 1.1 | https://github.com/vercel/geist-font |
+| Instrument Serif via `@fontsource/instrument-serif` (display accents) | SIL Open Font License 1.1 | https://github.com/Instrument/instrument-serif |
 | Lucide icons | ISC | https://lucide.dev |
 
 ## Infrastructure images

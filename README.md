@@ -8,7 +8,7 @@ Countersign is a timecard exception resolution agent built for the Dayforce AI I
 >
 > All data is synthetic. The company "Kestrel Logistics" and its policy pack are fictional and not legal advice.
 
-![Root-cause exception with evidence, model draft, gates, and pay impact](docs/screenshots/02-root-cause-detail.png)
+![Landing page with a live walkthrough of one exception moving through the pipeline](docs/screenshots/01-landing.png)
 
 ---
 
@@ -26,6 +26,7 @@ Before every payroll cutoff, managers clear timecard exceptions by hand. They se
 | **Overtime forecast with compliant swaps** | Projected hours from the remaining schedule; colleagues ranked by eight rule checks for both employees |
 | **Employee confirmation** | A mobile screen to confirm a missed punch; the confirmation becomes strong evidence, the note stays untrusted |
 | **A visible harness** | Gate strip, route badges, harness-computed evidence strength, and a trace inspector with live fault replay |
+| **Guided tours** | A landing tour on the first visit that hands off to role-specific tours inside the app, with keyboard control |
 
 ## User journey
 
@@ -42,9 +43,13 @@ Before every payroll cutoff, managers clear timecard exceptions by hand. They se
 
 | | |
 |---|---|
+| ![Root cause with evidence, timeline, and pay impact](docs/screenshots/02-root-cause-detail.png) | ![gpt-oss-20b draft verified by all ten gates](docs/screenshots/13-draft-and-gates.png) |
 | ![Countersigned](docs/screenshots/03-countersigned.png) | ![Injection blocked](docs/screenshots/04-injection-blocked.png) |
 | ![Overtime forecast](docs/screenshots/05-overtime-forecast.png) | ![Fault replay](docs/screenshots/06-fault-replay.png) |
-| ![Payroll escalations](docs/screenshots/08-payroll.png) | ![Dark theme](docs/screenshots/10-dark-detail.png) |
+| ![Payroll escalations](docs/screenshots/08-payroll.png) | ![Guided tour](docs/screenshots/12-guided-tour.png) |
+| ![Outcomes](docs/screenshots/07-outcomes.png) | ![Dark theme](docs/screenshots/10-dark-detail.png) |
+
+Screenshots are from the running app with gpt-oss-20b on Groq and synthetic data. The employee screen is in `docs/screenshots/09-employee-mobile.png`.
 
 ## Architecture
 
@@ -63,7 +68,7 @@ flowchart LR
 ```
 
 - **Backend:** Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, structlog. The engine is pure Python with no database or clock, so G8 re-simulation and the evaluation oracle can trust it.
-- **Frontend:** React 19, TypeScript 5.9, Vite, Tailwind v4, Radix primitives, TanStack Query, React Router, Motion, cmdk, Geist fonts.
+- **Frontend:** React 19, TypeScript 5.9, Vite, Tailwind v4, Radix primitives, TanStack Query, React Router, Motion, cmdk, Geist and Instrument Serif fonts. A custom guided-tour engine and effects library; every animation honours reduced-motion settings.
 - **Data:** PostgreSQL 16 with pgvector in Docker Compose; SQLite for the no-Docker path and tests.
 
 Details: `ARCHITECTURE.md`.
@@ -141,7 +146,7 @@ cd backend && uv sync && uv run uvicorn app.main:app --port 8000
 cd frontend && npm install && npm run dev
 ```
 
-Sign in as **Maya Chen** (manager), **Arjun Rao** (payroll admin), or **Diego Alvarez** (employee). Arjun can switch the LLM provider, reset demo data, and replay faults.
+The landing page opens with a guided tour on the first visit (replay it from "Take the tour"). Sign in as **Maya Chen** (manager), **Arjun Rao** (payroll admin), or **Diego Alvarez** (employee); each role has its own in-app tour from the header. Arjun can switch the LLM provider, reset demo data, and replay faults.
 
 ### MCP tools for other agents (read-only)
 

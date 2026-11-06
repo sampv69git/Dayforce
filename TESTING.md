@@ -12,8 +12,8 @@
 | API contract | OpenAPI drift check + Schemathesis | Committed `openapi.yaml` equals generated spec; responses conform to schema under generated inputs | Yes |
 | Evaluation (deterministic) | `eval/run.py --provider scripted,rule_based` | Detection P/R, retrieval recall@5 and MRR, fault-injection matrix, routing | Yes, with thresholds |
 | Evaluation (real model) | `eval/run.py --provider groq` / `ollama` | Generation quality, latency, ablation | Manual (needs key); report committed |
-| Frontend unit | Vitest + Testing Library | GateStrip, DecisionBar, PayDelta, ShiftRibbon layout maths, formatters, Zod schemas | Yes |
-| End to end | Playwright + axe | J1, J3, J4, J5 in a browser against the API with the rule-based provider; accessibility violations | Yes |
+| Frontend unit | Vitest + Testing Library | GateStrip, DecisionBar, PayDelta, ShiftRibbon layout maths, formatters, Zod schemas, guided tour navigation and auto-start guard | Yes |
+| End to end | Playwright + axe | J1 to J5, the landing page, and the guided tour in a browser against the API with the rule-based provider, with reduced motion; accessibility violations | Yes |
 
 ## Current status (2026-11-06)
 
@@ -22,8 +22,9 @@
 | Backend pytest (unit, integration, contract) | 134 passed, plus 32 Schemathesis subtests |
 | Coverage of `app/engine` and `app/harness` | 95% |
 | Evaluation with `--gate` | All gates passed (see `EVALUATION.md`) |
-| Vitest | 9 passed |
-| Playwright journeys with axe | 6 passed in two consecutive full runs |
+| Vitest | 13 passed |
+| Playwright journeys with axe | 7 passed |
+| Manual axe sweep | Every page in light and dark themes: no serious or critical violations |
 
 ## Commands
 

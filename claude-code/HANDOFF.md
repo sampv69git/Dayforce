@@ -21,7 +21,7 @@ Updated: Fri 6 Nov 2026, about 16:30 IST.
 
 - Backend: 134 passed plus 32 Schemathesis subtests; 95% coverage of engine and harness.
 - Evaluation gates: passed (EVALUATION.md).
-- Vitest: 9 passed. Playwright with axe: 6 passed in two consecutive full runs.
+- Vitest: 13 passed. Playwright with axe: 7 passed (adds the guided tour journey). Every page also passes an axe sweep in light and dark themes.
 - CI on `main`: backend, evaluation, frontend, secrets all green.
 
 ## Git and access

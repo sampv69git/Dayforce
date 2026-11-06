@@ -152,3 +152,19 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 ## D-026 Tertiary text colour (2026-11-06)
 - **Context:** axe found tertiary text at 4.34 to 4.49:1 on tinted surfaces.
 - **Decision:** `--ink-3` changed from #6B707C to #5F6470 (about 5.2:1 on tinted surfaces); gate labels no longer use reduced opacity.
+
+## D-027 Visual redesign and a custom guided tour (2026-11-06)
+- **Context:** the owner rated the first interface 4 out of 10 and asked for a landing page with a guided tour and a stronger visual identity on every page.
+- **Alternatives:** a tour library (react-joyride, driver.js); a UI kit; keeping the restrained style.
+- **Trade-offs:** tour libraries add weight and styling we would override, and some lag behind React 19. A small engine on Motion, which we already ship, gives a spotlight cutout, keyboard control, and theme tokens in about 250 lines with unit tests.
+- **Decision:** a brand layer (gradients, glass, aurora, light-beam borders, tickers, gauges) on the existing tokens, a full landing page, and a custom tour. All motion honours reduced-motion settings; tours never auto-start under browser automation; an axe sweep of every page in both themes gates the change.
+- **Revisit when:** a design system from Dayforce is available.
+
+## D-028 Commit identity changed to mythilisn (2026-11-06)
+- **Context:** the owner asked that further commits be authored and pushed by teammate mythilisn.
+- **Decision:** repository-local Git identity `mythilisn <mythilisn15@gmail.com>`; pushes and pull requests use her token, kept outside the repository and never written to Git configuration. Earlier commits keep their original authors.
+
+## D-029 End-to-end tests with reduced motion (2026-11-06)
+- **Context:** scroll reveals and staged animations leave text partly transparent for a moment, which axe measures as low contrast.
+- **Decision:** Playwright runs with `reducedMotion: 'reduce'`; every animated component renders its final state in that mode, which is also the accessible behaviour for users who ask for it.
+

@@ -5,10 +5,20 @@ All notable changes to this project are documented here. Format follows Keep a C
 ## [Unreleased]
 
 ### Added
+- Landing page replacing the persona chooser: a replayable walkthrough of one seeded exception through detection, retrieval, drafting, the ten gates, and countersignature; a before-and-after section; an animated feature bento; an interactive harness panel; results from committed evaluation reports; persona cards.
+- Guided tours without a new dependency: a nine-step landing tour that starts on the first visit and can hand off to the app, and role-specific in-app tours for managers and payroll administrators. Tours never auto-start under browser automation.
+- Brand design system: gradients, glass surfaces, aurora backgrounds, light-beam borders on verified drafts, number tickers, radial gauges, avatars, page headers, a visual fault-injection matrix, site readiness rings, an audit-chain strip, and a countersign burst. All motion honours reduced-motion settings.
+- Unit tests for the tour engine and an end-to-end journey for the landing tour (Vitest 13, Playwright 7).
 - Playwright end-to-end journeys (J1 to J5 and the landing page) with WCAG 2 A/AA axe checks.
 - README rewritten for the implemented product, with screenshots in `docs/screenshots/`.
 
 ### Changed
+- End-to-end journeys run with reduced motion so animated pages are deterministic for the axe checks.
+- The landing page is lazy-loaded; no production chunk exceeds 500 kB.
+- README screenshots regenerated from the live app with gpt-oss-20b on Groq.
+
+### Fixed
+- Accessibility findings from an axe scan of every page in light and dark themes, including an older low-contrast previous-hash label in the audit table.
 - `--ink-3` darkened to #5F6470 to meet WCAG AA on tinted surfaces.
 - Dense retrieval on PostgreSQL uses an explicit pgvector `<=>` query (verified on an embedded PostgreSQL).
 
