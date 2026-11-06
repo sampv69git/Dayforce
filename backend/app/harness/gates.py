@@ -14,6 +14,7 @@ from typing import Any, Literal
 from pydantic import ValidationError
 
 from app.contracts.draft import DraftResolution, Operation
+from app.engine.catalog import RULES
 from app.engine.forecast import evaluate_peer
 from app.engine.simulate import InvalidOp, SimResult, parse_local, simulate
 from app.engine.types import Op
@@ -55,6 +56,7 @@ class ValidationReport:
     attempt: int
     gates: list[GateResult] = field(default_factory=list)
     sim: SimResult | None = None
+    notes: list[str] = field(default_factory=list)
 
     def failures(self) -> list[GateResult]:
         return [g for g in self.gates if g.status == "fail"]
@@ -153,8 +155,10 @@ def _numbers_allowed(ctx: CaseContext, draft: DraftResolution) -> tuple[set[str]
 
 
 def run_gates(
-    ctx: CaseContext, raw: str, attempt: int
+    ctx: CaseContext, raw: str, attempt: int, mode: Literal["draft", "edit"] = "draft"
 ) -> tuple[DraftResolution | None, ValidationReport]:
+    """Validate a draft. In "edit" mode (human edits), G8 accepts newly revealed overtime or meal
+    exceptions, because worked time must be paid (TA-4.3); new punch or schedule problems still fail."""
     report = ValidationReport(passed=False, attempt=attempt)
     gates = report.gates
     draft, detail = parse_draft(raw)
@@ -319,10 +323,18 @@ def run_gates(
         else:
             if not sim.target_cleared:
                 problems.append("the target exception would remain")
-            if sim.introduced:
+            blocking = [
+                f
+                for f in sim.introduced
+                if mode == "draft" or RULES[f.rule_id].family not in {"overtime", "meal_rest"}
+            ]
+            if blocking:
                 problems.append(
-                    "would introduce: " + ", ".join(sorted({f.rule_id for f in sim.introduced}))
+                    "would introduce: " + ", ".join(sorted({f.rule_id for f in blocking}))
                 )
+            elif sim.introduced:
+                revealed = ", ".join(sorted({f.rule_id for f in sim.introduced}))
+                report.notes.append(f"reveals {revealed}; it will be queued for approval and paid")
             for o in ops:
                 if o.op == "reassign_shift" and o.to_employee_id:
                     peer = next((p for p in ctx.peers if p.employee.id == o.to_employee_id), None)
@@ -341,7 +353,8 @@ def run_gates(
                 "G8",
                 not problems,
                 "; ".join(problems)
-                or f"target cleared, nothing new introduced, {cleared} related exception(s) also cleared",
+                or f"target cleared, {cleared} related exception(s) also cleared"
+                + ("; " + "; ".join(report.notes) if report.notes else ", nothing new introduced"),
             )
         )
 

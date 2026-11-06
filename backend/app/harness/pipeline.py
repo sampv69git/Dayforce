@@ -228,7 +228,11 @@ def run_draft(
         repaired=len(attempts) > 1 and route == "suggest",
         context=ctx.model_context(),
         retrieved=[r.as_dict() for r in ctx.retrieved],
-        prompts={"system_version": PROMPT_VERSION, "user": ctx.messages()[1].content},
+        prompts={
+            "system_version": PROMPT_VERSION,
+            "user": ctx.messages()[1].content,
+            "note_flags": ctx.note.flags,
+        },
         raw_outputs=[a.raw for a in attempts] + ([final_raw] if route in {"fallback"} else []),
         resolution=final.model_dump() if final else None,
         validations=[a.report.as_dict() for a in attempts]
@@ -253,14 +257,15 @@ def run_draft(
         created_by=actor.id,
     )
     run.clears = [c for c in run.clears if c]
-    for old in session.query(m.PipelineRun).filter(
-        m.PipelineRun.exception_id == exception_id, m.PipelineRun.superseded.is_(False)
-    ):
-        old.superseded = True
+    if fault is None:  # fault replays are side-by-side inspections and never replace the real draft
+        for old in session.query(m.PipelineRun).filter(
+            m.PipelineRun.exception_id == exception_id, m.PipelineRun.superseded.is_(False)
+        ):
+            old.superseded = True
     session.add(run)
-    if route == "escalate":
+    if fault is None and route == "escalate":
         ctx.record.status = "escalated"
-    elif ctx.record.status in {"open", "escalated"}:
+    elif fault is None and ctx.record.status in {"open", "escalated"}:
         ctx.record.status = "suggested"
     tracer.persist(session)
     chain.append(

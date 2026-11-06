@@ -30,9 +30,9 @@ def db_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
     yield url
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def seeded(db_url: str) -> str:
-    """Seed the session database once with the demo dataset."""
+    """Reseed the demo dataset for each test module so modules never share mutated state."""
     from app.seed.load import seed
 
     seed(reset=True)
