@@ -173,7 +173,7 @@ def build_context(session: Session, exception_id: str) -> CaseContext:
     envelope = build_envelope(det, finding)
     peers: list[EmployeeWeek] = []
     swaps: list[SwapCheck] = []
-    if finding.rule_id == "F-OT-RISK":
+    if finding.rule_id in {"F-OT-RISK", "F-SCHED-CONFLICT"}:
         peers = site_weeks(session, week.employee.site.code)
         swaps = swap_candidates(det, finding, peers)
     candidate = build_candidate(det, finding, envelope, peers)

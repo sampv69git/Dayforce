@@ -231,6 +231,24 @@ def build_candidate(
             f"{f.summary} Under {req[0]} work on a company holiday is paid at the holiday rate.",
             req,
         )
+    if f.rule_id == "F-SCHED-CONFLICT":
+        from app.engine.forecast import best_swap  # local import avoids a cycle
+
+        swap = best_swap(det, f, peers or [])
+        shift_id = str(f.evidence["shift_id"])
+        if swap is not None:
+            return Candidate(
+                [Op("reassign_shift", shift_id=shift_id, to_employee_id=swap)],
+                "Reassign the conflicting shift to a qualified colleague before it is worked.",
+                f"{f.summary} {req[0]} sets the minimum rest between shifts, and TA-9.1 allows a "
+                "future shift to move to a colleague in the same role and site when neither "
+                "employee gains overtime, a rest shortfall, or a seventh consecutive day.",
+                req,
+            )
+        return esc(
+            "No colleague in the same role can take the shift without overtime or a rest "
+            "shortfall; the schedule must be changed by a person."
+        )
     if f.rule_id == "F-OT-RISK":
         from app.engine.forecast import best_swap  # local import avoids a cycle
 

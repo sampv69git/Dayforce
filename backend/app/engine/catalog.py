@@ -42,6 +42,7 @@ RULES: dict[str, RuleMeta] = {
         RuleMeta("R-DAYS-CONSECUTIVE", "Seventh consecutive workday", "overtime", "medium"),
         RuleMeta("R-HOLIDAY-WORK", "Shift on a company holiday", "policy", "low"),
         RuleMeta("F-OT-RISK", "Projected overtime this week", "forecast", "medium"),
+        RuleMeta("F-SCHED-CONFLICT", "Upcoming schedule conflict", "schedule", "medium"),
     ]
 }
 
@@ -65,6 +66,7 @@ _REQUIRED: dict[str, dict[str, list[str]]] = {
     "R-DAYS-CONSECUTIVE": {"US-CA": ["CA-2.3"], "*": ["TA-4.4"]},
     "R-HOLIDAY-WORK": {"IN-KA": ["BLR-4.1"], "*": ["TA-7.1"]},
     "F-OT-RISK": {"IN-KA": ["BLR-2.2"], "*": ["TA-4.2"]},
+    "F-SCHED-CONFLICT": {"IN-KA": ["BLR-3.3", "TA-9.1"], "*": ["TA-6.1", "TA-9.1"]},
 }
 
 # Supporting clauses that retrieval should surface for context (gold labels for the eval).
@@ -86,6 +88,7 @@ SUPPORTING: dict[str, dict[str, list[str]]] = {
     "R-DAYS-CONSECUTIVE": {"*": ["TA-4.4"]},
     "R-HOLIDAY-WORK": {"IN-KA": ["BLR-4.2"], "*": []},
     "F-OT-RISK": {"*": ["TA-9.1", "TA-4.2"]},
+    "F-SCHED-CONFLICT": {"*": ["TA-2.1", "TA-6.2"]},
 }
 
 
@@ -123,6 +126,7 @@ def allowed_ops(rule_id: str, jurisdiction: str) -> list[str]:
         "R-DAYS-CONSECUTIVE": ["acknowledge", "escalate"],
         "R-HOLIDAY-WORK": ["record_premium", "escalate"],
         "F-OT-RISK": ["reassign_shift", "approve_overtime", "escalate"],
+        "F-SCHED-CONFLICT": ["reassign_shift", "escalate"],
     }
     if rule_id in {"R-MEAL-MISSED", "R-MEAL-LATE", "R-MEAL-SHORT"}:
         return (

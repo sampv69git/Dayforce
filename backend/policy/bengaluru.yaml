@@ -52,7 +52,7 @@ clauses:
   - id: BLR-3.3
     section: "3. Rest intervals"
     title: Rest between shifts in Bengaluru
-    rules: [R-REST-MIN]
+    rules: [R-REST-MIN, F-SCHED-CONFLICT]
     precedence: override
     text: >-
       Employees should have at least 11 consecutive hours off between the end of one shift and the start

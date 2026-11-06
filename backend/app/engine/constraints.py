@@ -289,6 +289,6 @@ def build_envelope(det: Detection, f: Finding) -> Envelope:
         env.target_punch_ids = [meal_start.id]
     elif f.rule_id == "R-PUNCH-DUPLICATE":
         env.target_punch_ids = [str(f.evidence["punch_id"])]
-    elif f.rule_id == "F-OT-RISK":
+    elif f.rule_id in {"F-OT-RISK", "F-SCHED-CONFLICT"}:
         env.target_shift_id = str(f.evidence["shift_id"])
     return env
