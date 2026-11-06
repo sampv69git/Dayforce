@@ -47,7 +47,7 @@ Licences verified on 2026-11-06 from the Hugging Face model pages and the gpt-os
 
 ## 7. Evaluation
 
-Methods and full results: `EVALUATION.md`. gpt-oss-20b on Groq, prompt `draft.v2`, 30 stratified cases (commit 4dcf6b7):
+Methods and full results: `EVALUATION.md`. gpt-oss-20b on Groq, prompt `draft.v2`, 30 stratified cases (recorded as commit 4dcf6b7, published as f88a2ab with identical code):
 
 | Metric | Result |
 |---|---|

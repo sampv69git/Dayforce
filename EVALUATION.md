@@ -115,7 +115,7 @@ The rule-based provider is the degraded mode and the fallback path. These number
 
 ## 3. Real-model results: gpt-oss-20b on Groq
 
-Report `eval/reports/20261106T130125Z-groq.json` (merged into `latest.json`): commit 4dcf6b7, prompt `draft.v2`, run at 2026-11-06 12:22 UTC, **30 cases** stratified across every template (Groq token limits rule out all 105 targets in one run).
+Report `eval/reports/20261106T130125Z-groq.json` (merged into `latest.json`): commit 4dcf6b7, prompt `draft.v2` (published as commit f88a2ab: before pushing, commits were rewritten only to remove a secret accidentally added to `.env.example`; the code is identical), run at 2026-11-06 12:22 UTC, **30 cases** stratified across every template (Groq token limits rule out all 105 targets in one run).
 
 | Metric | Result |
 |---|---|
