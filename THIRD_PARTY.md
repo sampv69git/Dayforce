@@ -34,6 +34,10 @@ Versions are the latest published on 2026-11-06 and will be pinned in lock files
 | httpx | latest | BSD-3-Clause |
 | structlog | 26.1 | MIT or Apache 2.0 |
 | pyjwt | latest | MIT |
+| pydantic-settings | 2.x | MIT |
+| numpy | 2.x | BSD-3-Clause |
+| pyyaml | 6.x | MIT |
+| tzdata | latest | Apache 2.0 |
 | pytest | 9.2 | MIT |
 | schemathesis | 4.33 | MIT |
 | ruff | 0.17 | MIT |
@@ -46,7 +50,7 @@ Versions are the latest published on 2026-11-06 and will be pinned in lock files
 |---|---|---|
 | react, react-dom | 19.3 | MIT |
 | vite | 8.3 | MIT |
-| typescript | pinned at scaffold | Apache 2.0 |
+| typescript | 5.9.3 (openapi-typescript requires 5.x) | Apache 2.0 |
 | tailwindcss | 4.3 | MIT |
 | shadcn/ui (copied components) and Radix UI primitives | latest | MIT |
 | @tanstack/react-query | 5.106 | MIT |
@@ -61,12 +65,15 @@ Versions are the latest published on 2026-11-06 and will be pinned in lock files
 | vitest | 5.1 | MIT |
 | @playwright/test | 1.65 | Apache 2.0 |
 | @axe-core/playwright | latest | MPL-2.0 |
+| oxlint | 1.x | MIT |
+| clsx, tailwind-merge, class-variance-authority | latest | MIT |
+| @tailwindcss/vite | 4.x | MIT |
 
 ## Fonts and icons
 
 | Asset | Licence | Source |
 |---|---|---|
-| Geist Sans, Geist Mono (`geist` npm 1.9) | SIL Open Font License 1.1 | https://github.com/vercel/geist-font |
+| Geist Sans and Geist Mono via `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` | SIL Open Font License 1.1 | https://github.com/vercel/geist-font |
 | Lucide icons | ISC | https://lucide.dev |
 
 ## Infrastructure images

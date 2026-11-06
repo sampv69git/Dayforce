@@ -15,23 +15,31 @@
 | Frontend unit | Vitest + Testing Library | GateStrip, DecisionBar, PayDelta, ShiftRibbon layout maths, formatters, Zod schemas | Yes |
 | End to end | Playwright + axe | J1, J3, J4, J5 in a browser against the API with the rule-based provider; accessibility violations | Yes |
 
+## Current status (2026-11-06)
+
+| Suite | Result |
+|---|---|
+| Backend pytest (unit, integration, contract) | 134 passed, plus 32 Schemathesis subtests |
+| Coverage of `app/engine` and `app/harness` | 95% |
+| Evaluation with `--gate` | All gates passed (see `EVALUATION.md`) |
+| Vitest | 9 passed |
+| Playwright journeys with axe | 6 passed in two consecutive full runs |
+
 ## Commands
 
 ```
-make test            # backend unit + integration
-make test-contract   # drift check + schemathesis
-make eval-ci         # deterministic evaluation with thresholds
-make eval-groq       # real model evaluation (needs GROQ_API_KEY)
-make web-test        # vitest
-make e2e             # playwright
-make check           # everything CI runs
+cd backend && uv run pytest -q                                   # all backend tests incl. contract
+cd backend && uv run python -m eval.run --providers scripted,rule_based --gate
+cd backend && uv run python -m eval.run --providers groq --limit 40
+cd frontend && npm test                                          # Vitest
+cd frontend && npx playwright test                               # e2e on ports 8100/5180 with its own database
 ```
 
 ## Conventions
 
-- Tests live next to their layer: `backend/tests/unit/<module>/`, `backend/tests/integration/`, `backend/tests/contract/`, `frontend/src/**/*.test.tsx`, `frontend/e2e/`.
-- Engine tests use builders (`make_punch`, `make_shift`) with explicit UTC times; no reliance on the seed.
-- Integration tests use a fresh SQLite database per test module and the scripted provider.
+- Tests live next to their layer: `backend/tests/unit/<module>/`, `backend/tests/integration/`, `backend/tests/contract/`, `frontend/src/test/`, `frontend/e2e/`.
+- Engine tests use the fluent `W` builder (`tests/unit/engine/builders.py`) with site-local times converted to UTC; no reliance on the seed.
+- Integration tests share one SQLite database per session, reseeded per module, with the rule-based and scripted providers.
 - Real network calls are never made in CI except the optional real-model job.
 
 See `TEST_PLAN.md` for the test case list mapped to requirements and `QUALITY_GATES.md` for thresholds.

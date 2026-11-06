@@ -62,11 +62,15 @@ Dependency rule: `api -> harness -> (engine, retrieval, llm, audit) -> domain`. 
 │   │   ├── harness/        pipeline, gates, routing, confidence
 │   │   ├── audit/          chain writer, verifier
 │   │   ├── observability/  spans, logging
-│   │   ├── seed/           synthetic data generator
+│   │   ├── seed/           synthetic data generator and loader
+│   │   ├── services/       detection, view models, decisions, insights (database-facing)
+│   │   ├── bootstrap.py    migrations and first-start seeding
+│   │   ├── export_openapi.py
 │   │   ├── config.py
 │   │   └── main.py
+│   ├── eval/               labelled dataset and evaluation runner
 │   ├── alembic/
-│   ├── policy/             policy pack markdown + clause metadata (YAML)
+│   ├── policy/             policy pack: handbook, California and Bengaluru addenda (YAML)
 │   ├── tests/              unit/, integration/, contract/
 │   └── pyproject.toml
 ├── frontend/
@@ -76,8 +80,9 @@ Dependency rule: `api -> harness -> (engine, retrieval, llm, audit) -> domain`. 
 │   │   ├── pages/
 │   │   ├── lib/            format, keyboard, theme
 │   │   └── styles/
-│   └── tests/ (vitest), e2e/ (playwright)
-├── eval/                   dataset/, generate.py, run.py, metrics.py, reports/
+│   ├── src/test/           Vitest
+│   └── e2e/                Playwright with axe
+├── eval/reports/           committed evaluation reports (JSON)
 ├── claude-code/            build instructions and logs
 ├── docker-compose.yml
 ├── openapi.yaml

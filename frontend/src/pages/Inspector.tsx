@@ -205,7 +205,7 @@ function WaterfallRow({ s, t0, total, active, onClick }: { s: Span; t0: number; 
         <span className="flex items-center gap-1.5 truncate font-medium text-ink">
           <span className={cn('size-2 rounded-full', failed ? 'bg-crit' : s.name === 'generate' ? 'bg-model' : 'bg-ok')} />
           {SPAN_LABEL[s.name] ?? s.name}
-          {attempt ? <span className="font-mono text-[10px] text-ink-3">{mode ? mode.replace('_', ' ') : `#${attempt}`}</span> : null}
+          {attempt ? <span className="font-mono text-[10px] text-ink-3">{mode === 'rule_based' ? 'template' : mode ?? `#${attempt}`}</span> : null}
         </span>
         <span className="relative h-2.5 rounded-full bg-surface-3">
           <motion.span
