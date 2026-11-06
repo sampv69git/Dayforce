@@ -118,8 +118,8 @@ Format per decision: context, alternatives, evidence, trade-offs, decision, revi
 - **Options:** Render (API and Postgres) plus Vercel (web), free tiers; about 1 h.
 - **Decision:** owner approved a cloud deployment **only if ahead of schedule** at the end of step 9. Local Docker Compose remains the primary run path.
 
-## D-019 MCP server: stretch (2026-11-06)
-- **Decision:** read-only MCP server only if ahead of schedule. Not on the critical path; the JD values MCP but the product does not need it to work.
+## D-019 MCP server: built, read-only (2026-11-06)
+- **Decision:** built once ahead of schedule. Five read-only tools annotated `readOnlyHint`; no tool can approve, edit, or write, so agents can investigate and simulate but people still countersign. Uses `MCPServer` from the `mcp` 2.x SDK (FastMCP was renamed in v2).
 
 ## D-020 Demo video hosting and length (2026-11-06)
 - **Decision:** YouTube, unlisted, linked from README.

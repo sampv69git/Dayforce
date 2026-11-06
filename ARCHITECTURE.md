@@ -43,7 +43,7 @@ flowchart LR
 | `backend/app/observability` | Span recorder, structured logging, request IDs | structlog |
 | `backend/app/seed` | Deterministic synthetic data generator | Python, fixed seed |
 | `eval/` | Labelled dataset generator, runner, metrics, reports | Python |
-| `mcp/` (stretch) | Read-only MCP server exposing rules engine and policy search | `mcp` Python SDK |
+| `backend/app/mcp_server.py` | Read-only MCP server (stdio) exposing exception lookup, policy search, correction simulation, and audit verification; no decision tool | `mcp` Python SDK 2.x (`MCPServer`) |
 
 Dependency rule: `api -> harness -> (engine, retrieval, llm, audit) -> domain`. `engine` depends on nothing but plain data classes, which keeps it fast to unit test.
 

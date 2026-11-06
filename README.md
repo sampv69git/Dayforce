@@ -143,6 +143,14 @@ cd frontend && npm install && npm run dev
 
 Sign in as **Maya Chen** (manager), **Arjun Rao** (payroll admin), or **Diego Alvarez** (employee). Arjun can switch the LLM provider, reset demo data, and replay faults.
 
+### MCP tools for other agents (read-only)
+
+`cd backend && uv run python -m app.mcp_server` starts an MCP server over stdio with five read-only tools: `list_exceptions`, `get_exception`, `search_policy`, `simulate_correction`, and `verify_audit_chain`. There is deliberately no tool that approves or writes; only people countersign. Example client configuration:
+
+```json
+{ "mcpServers": { "countersign": { "command": "uv", "args": ["run", "python", "-m", "app.mcp_server"], "cwd": "backend" } } }
+```
+
 ### Checks
 
 ```bash
