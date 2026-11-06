@@ -35,3 +35,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+*.db-shm
+*.db-wal
+*.db-journal
+*.tmp.mjs
