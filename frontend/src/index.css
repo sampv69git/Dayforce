@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/geist';
 @import '@fontsource-variable/geist-mono';
+@import '@fontsource/instrument-serif/latin-400.css';
+@import '@fontsource/instrument-serif/latin-400-italic.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -32,22 +34,39 @@
   --rule: #3d4350;
   --shadow-overlay: 0 12px 32px -12px rgb(16 24 40 / 0.22), 0 2px 6px -2px rgb(16 24 40 / 0.08);
   --hatch: repeating-linear-gradient(135deg, transparent 0 4px, rgb(21 23 28 / 0.07) 4px 5px);
+
+  /* Brand and effects */
+  --brand-1: #2849d6;
+  --brand-2: #6d3fd1;
+  --brand-3: #0e9f8a;
+  --grad-brand: linear-gradient(120deg, #2849d6 0%, #5b3fd6 55%, #8a3fd1 100%);
+  --grad-text: linear-gradient(120deg, #2849d6 0%, #6a3fd6 50%, #b0367f 100%);
+  --grad-ok: linear-gradient(120deg, #127a52, #0e9f8a);
+  --glass: rgb(255 255 255 / 0.72);
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 6px 18px -10px rgb(16 24 40 / 0.1);
+  --shadow-lift: 0 2px 4px rgb(16 24 40 / 0.04), 0 22px 44px -18px rgb(40 73 214 / 0.32);
+  --glow-accent: 0 0 0 1px rgb(40 73 214 / 0.16), 0 10px 30px -8px rgb(40 73 214 / 0.5);
+  --aurora-1: rgb(40 73 214 / 0.2);
+  --aurora-2: rgb(138 63 209 / 0.16);
+  --aurora-3: rgb(14 159 138 / 0.13);
+  --grid-line: rgb(21 23 28 / 0.055);
+  --spot: rgb(40 73 214 / 0.1);
 }
 
 .dark {
-  --canvas: #0d0f12;
-  --surface: #14171c;
-  --surface-2: #1b1f26;
+  --canvas: #0b0d10;
+  --surface: #13161b;
+  --surface-2: #1a1e25;
   --surface-3: #222731;
-  --line: #272c35;
+  --line: #262b34;
   --line-strong: #3a404b;
   --ink: #eceef2;
   --ink-2: #b4bac5;
-  --ink-3: #8f96a3;
+  --ink-3: #959cab;
   --accent: #7d96ff;
   --accent-hover: #9aaeff;
   --accent-soft: #1b2448;
-  --accent-ink: #0d0f12;
+  --accent-ink: #0b0d10;
   --model: #b49bff;
   --model-soft: #231a3d;
   --model-line: #4a3a7a;
@@ -61,11 +80,28 @@
   --rule: #a9b0bc;
   --shadow-overlay: 0 16px 40px -12px rgb(0 0 0 / 0.6);
   --hatch: repeating-linear-gradient(135deg, transparent 0 4px, rgb(255 255 255 / 0.08) 4px 5px);
+
+  --brand-1: #7d96ff;
+  --brand-2: #b49bff;
+  --brand-3: #43d3b8;
+  --grad-brand: linear-gradient(120deg, #3f5be0 0%, #6447dc 55%, #8445d6 100%);
+  --grad-text: linear-gradient(120deg, #9fb0ff 0%, #c3a8ff 50%, #f0a6d0 100%);
+  --grad-ok: linear-gradient(120deg, #4cc38a, #43d3b8);
+  --glass: rgb(19 22 27 / 0.66);
+  --shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 10px 28px -14px rgb(0 0 0 / 0.7);
+  --shadow-lift: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 26px 50px -18px rgb(109 139 255 / 0.3);
+  --glow-accent: 0 0 0 1px rgb(125 150 255 / 0.3), 0 10px 36px -6px rgb(125 150 255 / 0.55);
+  --aurora-1: rgb(109 139 255 / 0.2);
+  --aurora-2: rgb(180 155 255 / 0.15);
+  --aurora-3: rgb(67 211 184 / 0.1);
+  --grid-line: rgb(255 255 255 / 0.045);
+  --spot: rgb(125 150 255 / 0.12);
 }
 
 @theme inline {
   --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
 
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
@@ -91,14 +127,20 @@
   --color-crit: var(--crit);
   --color-crit-soft: var(--crit-soft);
   --color-rule: var(--rule);
+  --color-brand-1: var(--brand-1);
+  --color-brand-2: var(--brand-2);
+  --color-brand-3: var(--brand-3);
 
-  --radius-control: 6px;
-  --radius-card: 10px;
-  --radius-dialog: 14px;
+  --radius-control: 8px;
+  --radius-card: 14px;
+  --radius-dialog: 18px;
   --shadow-overlay: var(--shadow-overlay);
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
+  --shadow-glow: var(--glow-accent);
 
-  --text-display: 28px;
-  --text-display--line-height: 34px;
+  --text-display: 30px;
+  --text-display--line-height: 36px;
   --text-title: 20px;
   --text-title--line-height: 28px;
   --text-heading: 16px;
@@ -128,7 +170,7 @@
     min-height: 100dvh;
   }
   ::selection {
-    background: var(--accent-soft);
+    background: color-mix(in oklab, var(--accent) 24%, transparent);
   }
   :focus-visible {
     outline: 2px solid var(--accent);
@@ -147,6 +189,30 @@
   }
 }
 
+/* ------------------------------------------------------------------ Motion */
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes aurora-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(6%, -5%, 0) scale(1.08); }
+  66% { transform: translate3d(-5%, 5%, 0) scale(0.95); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes beam-spin { to { --beam-angle: 360deg; } }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes scan-y { 0% { transform: translateY(-120%); } 100% { transform: translateY(520%); } }
+@keyframes pulse-ring { 0% { transform: scale(0.9); opacity: 0.75; } 100% { transform: scale(2); opacity: 0; } }
+@keyframes grad-pan { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes shimmer-x { to { transform: translateX(100%); } }
+
 @layer utilities {
   .tabular {
     font-variant-numeric: tabular-nums;
@@ -155,7 +221,7 @@
     font-size: 11px;
     line-height: 16px;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--ink-3);
   }
@@ -165,5 +231,130 @@
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: var(--line-strong) transparent;
+  }
+  .font-display {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .text-gradient {
+    background-image: var(--grad-text);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: grad-pan 9s ease-in-out infinite;
+  }
+  .bg-brand {
+    background-image: var(--grad-brand);
+  }
+  .bg-brand-ok {
+    background-image: var(--grad-ok);
+  }
+  .glass {
+    background-color: var(--glass);
+    backdrop-filter: saturate(1.6) blur(14px);
+    -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  }
+  .bg-grid {
+    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .bg-dots {
+    background-image: radial-gradient(var(--grid-line) 1.2px, transparent 1.3px);
+    background-size: 16px 16px;
+  }
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 35%, transparent);
+  }
+  .mask-radial {
+    mask-image: radial-gradient(ellipse at 50% 0%, black 25%, transparent 70%);
+  }
+  .mask-fade-x {
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+  .aurora-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(64px);
+    animation: aurora-drift 20s ease-in-out infinite;
+    will-change: transform;
+    pointer-events: none;
+  }
+  /* A light that travels round the border of a rounded element. */
+  .beam-border {
+    position: relative;
+    isolation: isolate;
+  }
+  .beam-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(from var(--beam-angle), transparent 0 64%, var(--brand-1) 78%, var(--brand-2) 88%, transparent 97%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: beam-spin 5.5s linear infinite;
+  }
+  .gradient-border {
+    border: 1px solid transparent;
+    background: linear-gradient(var(--surface), var(--surface)) padding-box, var(--grad-brand) border-box;
+  }
+  .shimmer-text {
+    background-image: linear-gradient(90deg, var(--ink-2) 0%, var(--ink) 40%, var(--ink-2) 80%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 2.6s linear infinite;
+  }
+  .animate-marquee {
+    animation: marquee var(--marquee-duration, 40s) linear infinite;
+  }
+  .animate-float {
+    animation: float-y 6s ease-in-out infinite;
+  }
+  .animate-scan {
+    animation: scan-y 3s ease-in-out infinite;
+  }
+  .animate-pulse-ring {
+    animation: pulse-ring 1.8s ease-out infinite;
+  }
+  .animate-blink {
+    animation: blink 1s step-end infinite;
+  }
+  .animate-spin-slow {
+    animation: spin-slow 14s linear infinite;
+  }
+  .lift {
+    transition: transform 0.25s var(--ease-out-soft), box-shadow 0.25s var(--ease-out-soft), border-color 0.2s;
+  }
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob,
+  .text-gradient,
+  .animate-marquee,
+  .animate-float,
+  .animate-scan,
+  .animate-spin-slow,
+  .beam-border::before {
+    animation: none !important;
   }
 }
