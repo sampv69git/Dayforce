@@ -69,7 +69,7 @@ export function GateStrip({ gates, animate = true, compact = false }: { gates: G
   const failed = gates.filter((g) => g.status === 'fail').length
   return (
     <div>
-      <ol className="flex flex-wrap items-center gap-1" aria-label="Harness gates">
+      <ol className="flex flex-wrap items-center gap-1.5" aria-label="Harness gates">
         {gates.map((g, i) => (
           <motion.li
             key={`${g.id}-${g.status}`}
@@ -90,9 +90,9 @@ export function GateStrip({ gates, animate = true, compact = false }: { gates: G
               <span
                 tabIndex={0}
                 className={cn(
-                  'inline-flex h-6 items-center gap-1 rounded-md border px-1.5 font-mono text-[11px] font-medium outline-none',
-                  g.status === 'pass' && 'border-ok/25 bg-ok-soft text-ok',
-                  g.status === 'fail' && 'border-crit/35 bg-crit-soft text-crit',
+                  'inline-flex h-7 items-center gap-1 rounded-lg border px-2 font-mono text-[11px] font-medium outline-none transition-transform hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-accent',
+                  g.status === 'pass' && 'border-ok/25 bg-ok-soft text-ok shadow-[0_2px_10px_-4px_var(--ok)]',
+                  g.status === 'fail' && 'border-crit/40 bg-crit-soft text-crit shadow-[0_2px_12px_-3px_var(--crit)]',
                   g.status === 'skip' && 'border-line bg-surface-2 text-ink-3',
                 )}
               >
@@ -129,7 +129,7 @@ export function EvidenceMeter({ strength }: { strength: Draft['evidence_strength
     <Pop
       trigger={
         <button className="group flex items-center gap-2 rounded-md text-left outline-none" aria-label={`Evidence strength ${pct} percent, ${strength.level}`}>
-          <span className="relative h-1.5 w-24 overflow-hidden rounded-full bg-surface-3">
+          <span className="relative h-2 w-24 overflow-hidden rounded-full bg-surface-3">
             <motion.span
               className={cn('absolute inset-y-0 left-0 rounded-full', tone)}
               initial={{ width: 0 }}
