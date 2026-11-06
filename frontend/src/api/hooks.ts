@@ -23,6 +23,9 @@ export const keys = {
 
 type Site = 'FRE' | 'AUS' | 'BLR'
 
+export const useAuthConfig = () =>
+  useQuery({ queryKey: ['auth-config'], queryFn: () => unwrap(api.GET('/api/v1/auth/config')), staleTime: 300_000 })
+
 export const usePersonas = () =>
   useQuery({ queryKey: keys.personas, queryFn: () => unwrap(api.GET('/api/v1/auth/personas')) })
 

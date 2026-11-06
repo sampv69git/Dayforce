@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { lazy, Suspense, type ReactNode } from 'react'
-import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router'
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router'
 import { Toaster } from 'sonner'
 import { ExceptionPanel } from '@/components/domain/ExceptionPanel'
 import { AppShell } from '@/components/shell/AppShell'
@@ -9,6 +9,7 @@ import { homeFor, SessionProvider, useSession } from '@/lib/session'
 import { Queue } from '@/pages/Queue'
 
 const Landing = lazy(() => import('@/pages/Landing').then((m) => ({ default: m.Landing })))
+const Login = lazy(() => import('@/pages/Login'))
 const Forecast = lazy(() => import('@/pages/Forecast'))
 const Inspector = lazy(() => import('@/pages/Inspector'))
 const Outcomes = lazy(() => import('@/pages/Outcomes'))
@@ -24,8 +25,9 @@ const queryClient = new QueryClient({
 })
 
 function Guard({ roles, children }: { roles?: string[]; children: ReactNode }) {
-  const { user } = useSession()
-  if (!user) return <Navigate to="/" replace />
+  const { user, signedOut } = useSession()
+  const location = useLocation()
+  if (!user) return <Navigate to={signedOut ? '/' : `/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />
   if (roles && !roles.includes(user.role)) return <Navigate to={homeFor(user)} replace />
   return <>{children}</>
 }
@@ -60,6 +62,7 @@ export default function App() {
             <Suspense fallback={<Fallback />}>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/me" element={<Guard roles={['employee']}><Me /></Guard>} />
                 <Route element={<Guard roles={['manager', 'payroll_admin']}><AppShell /></Guard>}>
                   <Route path="/queue" element={<Queue />} />

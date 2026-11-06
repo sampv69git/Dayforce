@@ -12,6 +12,7 @@ import {
   CornerDownLeft,
   FlaskConical,
   Inbox,
+  KeyRound,
   Link2,
   LogOut,
   Microscope,
@@ -27,6 +28,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { usePayPeriod, useProvider, useQueue, useSwitchProvider } from '@/api/hooks'
 import { Avatar } from '@/components/fx'
+import { ChangePasswordDialog } from '@/components/shell/ChangePassword'
 import { Tour, type TourStep } from '@/components/tour/Tour'
 import { APP_TOUR_KEY, canAutoStart, markTourDone } from '@/lib/tour'
 import { Dot, Hatch, Kbd, Tip } from '@/components/ui/primitives'
@@ -168,6 +170,7 @@ function Readiness() {
 function PersonaMenu() {
   const { user, signOut, theme, toggleTheme } = useSession()
   const navigate = useNavigate()
+  const [pwOpen, setPwOpen] = useState(false)
   if (!user) return null
   return (
     <div className="flex items-center gap-1">
@@ -192,10 +195,16 @@ function PersonaMenu() {
               <Avatar name={user.display_name} size={34} />
               <div>
                 <div className="text-small font-medium text-ink">{user.display_name}</div>
-                <div className="text-caption text-ink-3 capitalize">{user.role.replace('_', ' ')} · demo sign-in</div>
+                <div className="text-caption text-ink-3 capitalize">{user.role.replace('_', ' ')} · {user.auth_method === 'password' ? 'password sign-in' : 'demo sign-in'}</div>
+                {user.email && <div className="truncate font-mono text-[11px] text-ink-3">{user.email}</div>}
               </div>
             </div>
             <Dropdown.Separator className="my-1 h-px bg-line" />
+            {user.email && (
+              <Dropdown.Item onSelect={() => setPwOpen(true)} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-small text-ink-2 outline-none data-[highlighted]:bg-surface-2">
+                <KeyRound size={14} /> Change password
+              </Dropdown.Item>
+            )}
             <Dropdown.Item onSelect={() => { signOut(); navigate('/') }} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-small text-ink-2 outline-none data-[highlighted]:bg-surface-2">
               <Users size={14} /> Switch persona
             </Dropdown.Item>
@@ -205,6 +214,7 @@ function PersonaMenu() {
           </Dropdown.Content>
         </Dropdown.Portal>
       </Dropdown.Root>
+      <ChangePasswordDialog open={pwOpen} onOpenChange={setPwOpen} />
     </div>
   )
 }
