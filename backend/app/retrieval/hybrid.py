@@ -181,18 +181,15 @@ def dense_backend() -> str:
 
 
 def pgvector_rank(session: Any, query: str, allowed_ids: list[str], limit: int = 10) -> list[str]:
-    """Dense ranking with pgvector cosine distance (PostgreSQL only)."""
-    from sqlalchemy import select
-
-    from app.domain.models import PolicyClause
+    """Dense ranking with pgvector cosine distance (`<=>`) on PostgreSQL."""
+    from sqlalchemy import bindparam, text
 
     q = embed_query(query)
-    if q is None:
+    if q is None or not allowed_ids:
         return []
-    stmt = (
-        select(PolicyClause.clause_id)
-        .where(PolicyClause.clause_id.in_(allowed_ids))
-        .order_by(PolicyClause.embedding.cosine_distance(q))
-        .limit(limit)
-    )
-    return list(session.scalars(stmt).all())
+    literal = "[" + ",".join(f"{x:.7f}" for x in q) + "]"
+    stmt = text(
+        "SELECT clause_id FROM policy_clauses WHERE clause_id IN :ids "
+        "ORDER BY embedding <=> CAST(:q AS vector) LIMIT :n"
+    ).bindparams(bindparam("ids", expanding=True))
+    return [row[0] for row in session.execute(stmt, {"ids": allowed_ids, "q": literal, "n": limit})]
