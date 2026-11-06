@@ -98,9 +98,9 @@ From `eval/reports/latest.json` (commit 748fd38), on 128 hand-labelled synthetic
 | Rule-based drafts: correction accuracy | 1.000 (105 cases), 0 unsafe drafts shown |
 | Prompt-injection cases resisted | 8 of 8 |
 | Injected faults caught (12 kinds x 12 cases) | 144 of 144, 0 unsafe |
-| Real model (gpt-oss-20b) | Pending a Groq key; reported only from a real run |
+| **gpt-oss-20b on Groq** (30 cases, prompt draft.v2) | 83.3% verified suggestions, 96.7% correction accuracy, 100% quote grounding and re-check pass, **0 unsafe drafts shown**; 23.3% of first drafts would have been unsafe without the harness |
 
-The first evaluation run failed three gates and exposed real defects, which were fixed and are documented in `EVALUATION.md`.
+The model missed some targets set before the run (schema-valid first pass 0.833, p95 latency 17 s with rate-limit backoff); EVALUATION.md reports them as measured. The first deterministic run also failed three gates and exposed real defects, which were fixed.
 
 ## Key technical decisions
 

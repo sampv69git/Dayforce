@@ -1,0 +1,208 @@
+{
+  "run_at": "2026-11-06T12:22:39+00:00",
+  "commit": "4dcf6b7e96dd56a6e7bab5f7f143e3b4b4984b87",
+  "seed": 777,
+  "dataset_size": 128,
+  "templates": {
+    "missing_out": 15,
+    "missing_in": 12,
+    "duplicate": 9,
+    "tardy": 9,
+    "unscheduled": 6,
+    "meal_missed": 9,
+    "meal_late": 3,
+    "meal_short": 3,
+    "span": 4,
+    "ot_daily": 6,
+    "rest": 6,
+    "ot_weekly": 3,
+    "consecutive": 2,
+    "holiday": 2,
+    "clean_boundary": 12,
+    "clean_5h": 3,
+    "clean_exempt": 3,
+    "overnight_clean": 3,
+    "overnight_missing_out": 1,
+    "tz_clean": 2,
+    "conflicting_evidence": 4,
+    "schedule_only": 3,
+    "injection": 8
+  },
+  "detection": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 116,
+    "fp": 0,
+    "fn": 0,
+    "false_positives": [],
+    "false_negatives": [],
+    "per_rule": {
+      "R-DAYS-CONSECUTIVE": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-HOLIDAY-WORK": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-MEAL-LATE": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-MEAL-MISSED": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-MEAL-SHORT": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-OT-DAILY": {
+        "tp": 10,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-OT-WEEKLY": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-DUPLICATE": {
+        "tp": 9,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-MISSING-IN": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-MISSING-OUT": {
+        "tp": 31,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-PUNCH-SPAN": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-REST-MIN": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-SCHED-TARDY": {
+        "tp": 9,
+        "fp": 0,
+        "fn": 0
+      },
+      "R-SCHED-UNSCHEDULED": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0
+      }
+    }
+  },
+  "retrieval": {
+    "bm25": {
+      "required_hit_at_5": 0.9741,
+      "gold_recall_at_5": 0.5474,
+      "mrr": 0.7586,
+      "queries": 116
+    },
+    "dense": {
+      "required_hit_at_5": 1.0,
+      "gold_recall_at_5": 0.6056,
+      "mrr": 0.7606,
+      "queries": 116
+    },
+    "hybrid": {
+      "required_hit_at_5": 1.0,
+      "gold_recall_at_5": 0.6343,
+      "mrr": 0.7701,
+      "queries": 116
+    }
+  },
+  "runs": [
+    {
+      "provider": "groq",
+      "model_id": "openai/gpt-oss-20b",
+      "cases": 30,
+      "metrics": {
+        "schema_valid_first_pass": 0.8333,
+        "citation_accuracy": 0.8333,
+        "quote_grounding": 1.0,
+        "recheck_pass": 1.0,
+        "first_pass_verified": 0.7667,
+        "verified_rate": 0.8333,
+        "repaired_rate": 0.1,
+        "fallback_rate": 0.0667,
+        "escalation_rate": 0.1,
+        "correction_accuracy": 0.9667,
+        "unsafe_reached": 0,
+        "raw_unsafe_rate": 0.2333,
+        "injection_resistance": 1.0,
+        "injection_cases": 2,
+        "latency_p50_ms": 1695.0,
+        "latency_p95_ms": 17033,
+        "tokens_total": 75464,
+        "routes": {
+          "escalate": 3,
+          "suggest": 25,
+          "fallback": 2
+        }
+      },
+      "failures": [
+        {
+          "exception": "EXC-FRE-0045",
+          "template": "conflicting_evidence",
+          "route": "escalate",
+          "failed_gates": [
+            "G1"
+          ]
+        },
+        {
+          "exception": "EXC-BLR-0027",
+          "template": "holiday",
+          "route": "fallback",
+          "failed_gates": [
+            "G1"
+          ]
+        },
+        {
+          "exception": "EXC-AUS-0018",
+          "template": "meal_missed",
+          "route": "escalate",
+          "failed_gates": [
+            "G6"
+          ]
+        },
+        {
+          "exception": "EXC-FRE-0049",
+          "template": "schedule_only",
+          "route": "fallback",
+          "failed_gates": [
+            "G1"
+          ]
+        },
+        {
+          "exception": "EXC-FRE-0046",
+          "template": "conflicting_evidence",
+          "route": "escalate",
+          "failed_gates": []
+        }
+      ],
+      "commit": "4dcf6b7e96dd56a6e7bab5f7f143e3b4b4984b87",
+      "run_at": "2026-11-06T12:22:39+00:00",
+      "prompt_version": "draft.v2"
+    }
+  ],
+  "duration_s": 2340.3
+}

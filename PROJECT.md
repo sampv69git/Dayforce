@@ -334,9 +334,9 @@ Details in `ARCHITECTURE.md`. In short:
 Details in `HARNESS.md` and `MODEL_CARD.md`.
 
 - **Task:** given a verified case context, produce `DraftResolution` (summary, explanation, operations, citations with quotes, note assessment, escalation flag).
-- **Prompt:** system prompt `draft.v1` with role, hard rules, output contract, and two worked examples; user message with a JSON case context and an `<untrusted_employee_text>` block. Versioned in `backend/app/llm/prompts/`.
+- **Prompt:** system prompt `draft.v2` (successor of `draft.v1`, kept for history) with role, hard rules, output contract, and a worked example; user message with a JSON case context and an `<untrusted_employee_text>` block. Versioned in `backend/app/llm/prompts/`.
 - **Retrieval:** top 5 clauses after metadata filtering and hybrid ranking; the required clause for the rule is always included and marked.
-- **Inference:** temperature 0 (gpt-oss reasoning effort low), max 900 output tokens, 20 s timeout, one repair retry.
+- **Inference:** temperature 0 (gpt-oss reasoning effort low), max 2,048 completion tokens (gpt-oss reasoning counts toward them), 30 s timeout with retry and backoff on rate limits, one repair retry.
 - **Evaluation:** see `EVALUATION.md`.
 
 ---
