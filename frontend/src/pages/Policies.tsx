@@ -1,7 +1,9 @@
-import { Search } from 'lucide-react'
+import { BookText, Search, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { usePolicies, usePolicySearch } from '@/api/hooks'
 import { DocChip } from '@/components/domain/badges'
+import { PageHeader, Reveal } from '@/components/fx'
+import { motion } from 'motion/react'
 import { Button, Card, CardHeader, ErrorState, Pill, Segmented, Skeleton } from '@/components/ui/primitives'
 import { cn } from '@/lib/cn'
 
@@ -20,14 +22,31 @@ export default function Policies() {
   if (q.isError) return <ErrorState error={q.error} onRetry={() => q.refetch()} />
   return (
     <div className="mx-auto max-w-[1280px] space-y-5 p-6">
-      <div>
-        <div className="eyebrow">Approved knowledge</div>
-        <h1 className="text-display font-semibold tracking-tight text-ink">Policies and retrieval</h1>
-        <p className="mt-1 max-w-2xl text-body text-ink-2">Fictional policy pack v{q.data?.version ?? '2026.2'} for Kestrel Logistics: a company handbook and two site addenda. Inspired by public rules; not legal advice.</p>
-      </div>
+      <PageHeader
+        icon={<BookText size={22} />}
+        tone="teal"
+        eyebrow="Approved knowledge"
+        title="Policies and retrieval"
+        description={`Fictional policy pack v${q.data?.version ?? '2026.2'} for Kestrel Logistics: a company handbook and two site addenda. Inspired by public rules; not legal advice.`}
+        actions={
+          <div className="flex gap-2">
+            {[
+              [q.data?.clauses.length ?? 0, 'clauses'],
+              [q.data?.documents.length ?? 0, 'documents'],
+              [3, 'jurisdictions'],
+            ].map(([n, l]) => (
+              <div key={String(l)} className="rounded-xl border border-line bg-surface px-3 py-2 text-center shadow-card">
+                <div className="tabular font-mono text-[20px] leading-6 font-semibold text-ink">{n}</div>
+                <div className="text-caption text-ink-3">{l}</div>
+              </div>
+            ))}
+          </div>
+        }
+      />
 
-      <Card>
-        <CardHeader eyebrow="Same code path as the pipeline" title="Retrieval playground" />
+      <Card className="relative overflow-hidden">
+        <div aria-hidden className="bg-brand pointer-events-none absolute -top-24 right-10 size-56 rounded-full opacity-10 blur-3xl" />
+        <CardHeader eyebrow="Same code path as the pipeline" title={<span className="flex items-center gap-2"><Sparkles size={15} className="text-accent" /> Retrieval playground</span>} />
         <form
           className="flex flex-wrap items-center gap-2 px-4"
           onSubmit={(e) => {
@@ -35,7 +54,7 @@ export default function Policies() {
             search.mutate({ query, jurisdiction: juris, k: 6 })
           }}
         >
-          <div className="flex h-9 min-w-[320px] flex-1 items-center gap-2 rounded-control border border-line-strong bg-surface px-2.5 focus-within:border-accent">
+          <div className="flex h-10 min-w-[320px] flex-1 items-center gap-2 rounded-xl border border-line-strong bg-surface px-3 shadow-card transition-shadow focus-within:border-accent focus-within:shadow-glow">
             <Search size={14} className="text-ink-3" />
             <input value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 bg-transparent text-body text-ink outline-none" aria-label="Search query" />
           </div>
@@ -66,7 +85,14 @@ export default function Policies() {
                     </td>
                     <td className="tabular py-2 text-right font-mono text-ink-2">{r.bm25_rank ? `#${r.bm25_rank}` : '–'}</td>
                     <td className="tabular py-2 text-right font-mono text-ink-2">{r.dense_rank ? `#${r.dense_rank}` : '–'}</td>
-                    <td className="tabular py-2 text-right font-mono text-ink">{r.fused_score.toFixed(4)}</td>
+                    <td className="py-2 text-right">
+                      <div className="ml-auto flex w-36 items-center gap-2">
+                        <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-3">
+                          <motion.span className="bg-brand block h-full rounded-full" initial={{ width: 0 }} animate={{ width: `${(r.fused_score / Math.max(...search.data!.map((x) => x.fused_score))) * 100}%` }} transition={{ duration: 0.6, delay: i * 0.05 }} />
+                        </span>
+                        <span className="tabular font-mono text-ink">{r.fused_score.toFixed(4)}</span>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -86,7 +112,7 @@ export default function Policies() {
             {q.isLoading && <li className="p-3"><Skeleton className="h-64" /></li>}
             {clauses.map((c) => (
               <li key={c.clause_id}>
-                <button onClick={() => setSelected(c.clause_id)} className={cn('flex w-full items-start gap-2 border-b border-line/70 px-3 py-2 text-left hover:bg-surface-2/60', current?.clause_id === c.clause_id && 'bg-accent-soft/60')}>
+                <button onClick={() => setSelected(c.clause_id)} className={cn('relative flex w-full items-start gap-2 border-b border-line/70 px-3 py-2.5 text-left transition-colors hover:bg-surface-2/60', current?.clause_id === c.clause_id && 'bg-gradient-to-r from-accent-soft to-transparent shadow-[inset_3px_0_0_var(--accent)]')}>
                   <span className="w-16 shrink-0 font-mono text-[11px] text-ink-3">{c.clause_id}</span>
                   <span className="text-small text-ink">{c.title}</span>
                 </button>
@@ -94,23 +120,24 @@ export default function Policies() {
             ))}
           </ul>
         </Card>
-        <Card className="p-5">
+        <Card className="relative overflow-hidden p-6">
+          <div aria-hidden className="bg-dots mask-fade-b pointer-events-none absolute inset-x-0 top-0 h-40 opacity-70" />
           {current && (
-            <>
+            <Reveal key={current.clause_id} y={8} className="relative">
               <div className="flex flex-wrap items-center gap-2">
                 <DocChip id={current.clause_id} />
                 <span className="text-small text-ink-3">{current.document_title} · {current.section}</span>
                 {current.precedence === 'override' && <Pill tone="warn">Overrides handbook</Pill>}
               </div>
-              <h2 className="mt-3 text-title font-semibold text-ink">{current.title}</h2>
-              <p className="mt-3 max-w-prose text-[15px] leading-relaxed text-ink-2">{current.text}</p>
+              <h2 className="font-display mt-4 text-[34px] leading-[1.1] text-ink">{current.title}</h2>
+              <p className="mt-4 max-w-prose border-l-2 border-accent/40 pl-4 text-[15.5px] leading-relaxed text-ink-2">{current.text}</p>
               <dl className="mt-5 grid gap-x-6 gap-y-2 border-t border-line pt-4 text-small sm:grid-cols-2">
                 <div><dt className="text-caption text-ink-3">Applies to</dt><dd className="text-ink">{current.jurisdictions.includes('*') ? 'All sites' : current.jurisdictions.join(', ')}</dd></div>
                 <div><dt className="text-caption text-ink-3">Employee class</dt><dd className="text-ink">{current.employee_classes.length ? current.employee_classes.join(', ').replace('_', '-') : 'All'}</dd></div>
                 <div><dt className="text-caption text-ink-3">Effective</dt><dd className="font-mono text-ink">{current.effective_from}{current.effective_to ? ` to ${current.effective_to}` : ' onward'}</dd></div>
                 <div><dt className="text-caption text-ink-3">Rules that require it</dt><dd className="font-mono text-ink">{current.rule_ids.join(', ') || '–'}</dd></div>
               </dl>
-            </>
+            </Reveal>
           )}
         </Card>
       </div>

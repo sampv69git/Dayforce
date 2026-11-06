@@ -1,10 +1,11 @@
 import { motion } from 'motion/react'
-import { Check, ChevronDown, TrendingUp, X } from 'lucide-react'
+import { CalendarClock, Check, ChevronDown, TrendingUp, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useForecast } from '@/api/hooks'
 import type { ForecastRisk, OvertimeForecast } from '@/api/types'
 import { StatusPill } from '@/components/domain/badges'
 import { ExceptionPanel } from '@/components/domain/ExceptionPanel'
+import { Avatar, PageHeader } from '@/components/fx'
 import { Button, Card, CardHeader, EmptyState, ErrorState, Pill, Segmented, Skeleton, Tip } from '@/components/ui/primitives'
 import { cn } from '@/lib/cn'
 import { dayTime, hours, money, weekday } from '@/lib/format'
@@ -32,26 +33,27 @@ export default function Forecast() {
   const totalRisk = f?.risks.filter((r) => r.status !== 'resolved').reduce((a, r) => a + r.projected_cost.amount, 0) ?? 0
   return (
     <div className="mx-auto max-w-[1280px] space-y-5 p-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <div className="eyebrow">Prevent, do not pay</div>
-          <h1 className="text-display font-semibold tracking-tight text-ink">Overtime forecast</h1>
-          <p className="mt-1 max-w-2xl text-body text-ink-2">
-            Worked hours plus the remaining published schedule, projected against the weekly threshold. Swap candidates are checked against every rule for both employees before they are suggested.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {user?.role === 'payroll_admin' && (
-            <Segmented value={site} onChange={setSite} options={[{ value: 'FRE', label: 'Fremont' }, { value: 'AUS', label: 'Austin' }, { value: 'BLR', label: 'Bengaluru' }]} />
-          )}
-          {f && (
-            <div className="rounded-card border border-line bg-surface px-4 py-2 text-right">
-              <div className="eyebrow">Projected overtime cost</div>
-              <div className="tabular font-mono text-title font-semibold text-ink">{money({ amount: totalRisk, currency: f.risks[0]?.projected_cost.currency ?? (site === 'BLR' ? 'INR' : 'USD') })}</div>
-            </div>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        icon={<CalendarClock size={22} />}
+        tone="warn"
+        eyebrow="Prevent, do not pay"
+        title="Overtime forecast"
+        description="Worked hours plus the remaining published schedule, projected against the weekly threshold. Swap candidates are checked against every rule for both employees before they are suggested."
+        actions={
+          <>
+            {user?.role === 'payroll_admin' && (
+              <Segmented value={site} onChange={setSite} options={[{ value: 'FRE', label: 'Fremont' }, { value: 'AUS', label: 'Austin' }, { value: 'BLR', label: 'Bengaluru' }]} />
+            )}
+            {f && (
+              <div className="relative overflow-hidden rounded-xl border border-crit/25 bg-crit-soft px-4 py-2.5 text-right">
+                <div className="eyebrow !text-crit">Projected overtime cost</div>
+                <div className="tabular font-mono text-[24px] leading-8 font-semibold text-ink">{money({ amount: totalRisk, currency: f.risks[0]?.projected_cost.currency ?? (site === 'BLR' ? 'INR' : 'USD') })}</div>
+                <div className="text-caption text-ink-2">{f.risks.filter((r) => r.status !== 'resolved').length} employee(s) at risk</div>
+              </div>
+            )}
+          </>
+        }
+      />
       {q.isLoading && <Skeleton className="h-96" />}
       {q.isError && <ErrorState error={q.error} onRetry={() => q.refetch()} />}
       {f && <WeekGrid f={f} />}
@@ -84,16 +86,21 @@ function WeekGrid({ f }: { f: OvertimeForecast }) {
               const over = r.projected_hours > r.threshold_hours
               return (
                 <tr key={r.employee.id} className="border-b border-line/70 last:border-0">
-                  <td className="px-4 py-2">
-                    <div className="font-medium text-ink">{r.employee.name}</div>
-                    <div className="text-caption text-ink-3">{r.employee.role}</div>
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name={r.employee.name} size={30} />
+                      <div>
+                        <div className="font-semibold text-ink">{r.employee.name}</div>
+                        <div className="text-caption text-ink-3">{r.employee.role}</div>
+                      </div>
+                    </div>
                   </td>
                   {r.days.map((d) => (
                     <td key={d.date} className="px-1 py-2 text-center">
                       {d.worked_hours > 0 ? (
-                        <span className="inline-block min-w-11 rounded-md bg-ink/85 px-1.5 py-0.5 font-mono text-[11px] text-canvas">{d.worked_hours.toFixed(1)}</span>
+                        <span className="inline-block min-w-11 rounded-md bg-gradient-to-b from-ink/80 to-ink px-1.5 py-1 font-mono text-[11px] text-canvas shadow-card">{d.worked_hours.toFixed(1)}</span>
                       ) : d.scheduled_hours > 0 ? (
-                        <span className="inline-block min-w-11 rounded-md border border-dashed border-accent/60 bg-accent-soft/50 px-1.5 py-0.5 font-mono text-[11px] text-accent">{d.scheduled_hours.toFixed(1)}</span>
+                        <span className="inline-block min-w-11 rounded-md border border-dashed border-accent/60 bg-accent-soft/60 px-1.5 py-1 font-mono text-[11px] text-accent">{d.scheduled_hours.toFixed(1)}</span>
                       ) : (
                         <span className="text-ink-3">·</span>
                       )}
@@ -103,9 +110,9 @@ function WeekGrid({ f }: { f: OvertimeForecast }) {
                   <td className="tabular px-3 py-2 text-right font-mono text-ink-2">{r.scheduled_remaining_hours.toFixed(1)}</td>
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-2">
-                      <div className="relative h-2 flex-1 rounded-full bg-surface-3">
+                      <div className="relative h-2.5 flex-1 rounded-full bg-surface-3">
                         <motion.div
-                          className={cn('absolute inset-y-0 left-0 rounded-full', over ? 'bg-crit' : 'bg-ink/70')}
+                          className={cn('absolute inset-y-0 left-0 rounded-full', over ? 'bg-gradient-to-r from-warn to-crit shadow-[0_0_14px_-2px_var(--crit)]' : 'bg-brand')}
                           initial={{ width: 0 }}
                           animate={{ width: `${(r.projected_hours / max) * 100}%` }}
                           transition={{ duration: 0.5 }}
@@ -134,12 +141,16 @@ function RiskCard({ risk, names, threshold }: { risk: ForecastRisk; names: Recor
   const [open, setOpen] = useState(false)
   const resolved = risk.status === 'resolved'
   return (
-    <Card className={cn(resolved && 'opacity-80')}>
+    <Card className={cn('overflow-hidden', resolved && 'opacity-80')}>
+      <div aria-hidden className="h-1 bg-gradient-to-r from-warn via-crit to-brand-2" />
       <CardHeader
         eyebrow={`Risk · ${risk.exception_id}`}
         title={
-          <span>
-            {risk.employee_name}: <span className="text-crit">+{hours(risk.projected_overtime_hours)}</span> projected ({risk.projected_hours.toFixed(1)} h of {threshold} h)
+          <span className="flex items-center gap-2.5">
+            <Avatar name={risk.employee_name} size={30} />
+            <span>
+              {risk.employee_name}: <span className="text-crit">+{hours(risk.projected_overtime_hours)}</span> projected ({risk.projected_hours.toFixed(1)} h of {threshold} h)
+            </span>
           </span>
         }
         actions={
@@ -165,7 +176,7 @@ function RiskCard({ risk, names, threshold }: { risk: ForecastRisk; names: Recor
             </thead>
             <tbody>
               {risk.candidates.map((c, i) => (
-                <tr key={c.employee_id} className={cn('border-t border-line/70', c.eligible && i === 0 && 'bg-ok-soft/40')}>
+                <tr key={c.employee_id} className={cn('border-t border-line/70 transition-colors hover:bg-surface-2/50', c.eligible && i === 0 && 'bg-gradient-to-r from-ok-soft to-transparent')}>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
                       {c.eligible ? <Check size={14} className="text-ok" /> : <X size={14} className="text-ink-3" />}

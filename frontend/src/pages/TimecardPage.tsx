@@ -2,7 +2,9 @@ import { Link, useParams } from 'react-router'
 import { useTimecard } from '@/api/hooks'
 import { StatusPill } from '@/components/domain/badges'
 import { ShiftRibbon } from '@/components/domain/ShiftRibbon'
+import { Avatar, PageHeader } from '@/components/fx'
 import { Card, CardHeader, ErrorState, Skeleton } from '@/components/ui/primitives'
+import { CalendarRange } from 'lucide-react'
 import { day, hours, money } from '@/lib/format'
 
 export default function TimecardPage() {
@@ -14,11 +16,22 @@ export default function TimecardPage() {
   if (!t) return null
   return (
     <div className="mx-auto max-w-[1180px] space-y-5 p-6">
-      <div>
-        <div className="eyebrow">Weekly timecard · week of {day(t.week_start)}</div>
-        <h1 className="text-display font-semibold tracking-tight text-ink">{t.employee.name}</h1>
-        <p className="mt-1 text-body text-ink-2">{t.employee.title}, {t.employee.site_name} · {t.employee.exempt ? 'Exempt' : 'Non-exempt'} · {money(t.employee.hourly_rate)}/h</p>
-      </div>
+      <PageHeader
+        icon={<CalendarRange size={22} />}
+        tone="teal"
+        eyebrow={`Weekly timecard · week of ${day(t.week_start)}`}
+        title={<span className="flex items-center gap-3"><Avatar name={t.employee.name} size={34} /> {t.employee.name}</span>}
+        description={`${t.employee.title}, ${t.employee.site_name} · ${t.employee.exempt ? 'Exempt' : 'Non-exempt'} · ${money(t.employee.hourly_rate)}/h`}
+      >
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+          {([['Regular', hours(t.pay.regular_hours)], ['Overtime', hours(t.pay.overtime_hours)], ['Double time', hours(t.pay.double_time_hours)], ['Premiums', hours(t.pay.premium_hours)], ['Cost', money(t.pay.cost)]] as const).map(([k, v]) => (
+            <div key={k} className="rounded-xl border border-line bg-surface px-3 py-2 shadow-card">
+              <div className="text-caption text-ink-3">{k}</div>
+              <div className="tabular font-mono text-[17px] font-semibold text-ink">{v}</div>
+            </div>
+          ))}
+        </div>
+      </PageHeader>
       <Card>
         <CardHeader eyebrow="Recorded and corrected punches" title="Week" />
         <div className="px-4 pb-4"><ShiftRibbon days={t.timeline.days} /></div>

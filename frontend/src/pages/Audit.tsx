@@ -1,4 +1,6 @@
-import { CheckCircle2, ChevronRight, Link2, XCircle } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Link2, ShieldCheck, XCircle } from 'lucide-react'
+import { motion } from 'motion/react'
+import { PageHeader } from '@/components/fx'
 import { Fragment, useState } from 'react'
 import { useAudit, useVerifyAudit } from '@/api/hooks'
 import { Button, Card, ErrorState, Skeleton } from '@/components/ui/primitives'
@@ -11,22 +13,34 @@ export default function Audit() {
   if (q.isError) return <ErrorState error={q.error} onRetry={() => q.refetch()} />
   return (
     <div className="mx-auto max-w-[1280px] space-y-5 p-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="eyebrow">Integrity</div>
-          <h1 className="text-display font-semibold tracking-tight text-ink">Audit chain</h1>
-          <p className="mt-1 max-w-2xl text-body text-ink-2">Every detection run, draft, decision, attestation, and setting change, appended in the same transaction. Each event hashes the previous one (SHA-256), so any edit breaks the chain.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {verify.data && (
-            <div className={cn('flex items-center gap-1.5 text-small font-medium', verify.data.intact ? 'text-ok' : 'text-crit')}>
-              {verify.data.intact ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-              {verify.data.intact ? `Chain intact: ${verify.data.events_checked} events verified` : `Broken at event ${verify.data.first_broken_seq}`}
-            </div>
-          )}
-          <Button variant="primary" onClick={() => verify.mutate()} disabled={verify.isPending}><Link2 size={14} /> Verify chain</Button>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Link2 size={22} />}
+        eyebrow="Integrity"
+        title="Audit chain"
+        description="Every detection run, draft, decision, attestation, and setting change, appended in the same transaction. Each event hashes the previous one (SHA-256), so any edit breaks the chain."
+        actions={<Button variant="primary" size="lg" onClick={() => verify.mutate()} disabled={verify.isPending}><Link2 size={14} className={verify.isPending ? 'animate-spin' : ''} /> Verify chain</Button>}
+      >
+        {verify.data && (
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className={cn('flex items-center gap-3 rounded-xl border px-4 py-3 text-small font-medium', verify.data.intact ? 'border-ok/25 bg-ok-soft text-ok' : 'border-crit/25 bg-crit-soft text-crit')}>
+            <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 14 }}>{verify.data.intact ? <CheckCircle2 size={20} /> : <XCircle size={20} />}</motion.span>
+            {verify.data.intact ? `Chain intact: ${verify.data.events_checked} events verified, every hash recomputed from its predecessor.` : `Broken at event ${verify.data.first_broken_seq}`}
+          </motion.div>
+        )}
+        {q.data && q.data.length > 0 && (
+          <div className="mt-4 flex items-center gap-1.5 overflow-x-auto rounded-lg pb-1 scrollbar-thin" role="region" tabIndex={0} aria-label="Most recent chain links">
+            {q.data.slice(0, 7).map((e, i, arr) => (
+              <div key={e.seq} className="flex shrink-0 items-center gap-1.5">
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="w-[132px] rounded-xl border border-line bg-surface p-2.5 shadow-card">
+                  <div className="flex items-center justify-between font-mono text-[11px]"><span className="font-semibold text-ink">#{e.seq}</span>{verify.data?.intact && <ShieldCheck size={12} className="text-ok" />}</div>
+                  <div className="mt-0.5 truncate font-mono text-[10.5px] text-ink-2">{e.event_type}</div>
+                  <div className="mt-1.5 truncate rounded-md bg-model-soft px-1.5 font-mono text-[10.5px] text-model">{e.hash.slice(0, 10)}</div>
+                </motion.div>
+                {i < arr.length - 1 && <span className="flex items-center text-ink-3"><span className="h-px w-3 bg-line-strong" /><Link2 size={11} /><span className="h-px w-3 bg-line-strong" /></span>}
+              </div>
+            ))}
+          </div>
+        )}
+      </PageHeader>
       <Card className="overflow-hidden">
         {q.isLoading ? <div className="p-4"><Skeleton className="h-96" /></div> : (
           <table className="w-full text-small">
@@ -51,7 +65,7 @@ export default function Audit() {
                     <td className="px-3 py-2 text-ink">{e.actor_id} <span className="text-caption text-ink-3">{e.actor_role}</span></td>
                     <td className="px-3 py-2 font-mono text-[12px] text-ink">{e.event_type}</td>
                     <td className="px-3 py-2 font-mono text-[12px] text-ink-2">{e.entity_id}</td>
-                    <td className="px-3 py-2 font-mono text-[11px] text-ink-3">{e.hash.slice(0, 12)}… <span className="opacity-60">← {e.prev_hash.slice(0, 6)}</span></td>
+                    <td className="px-3 py-2 font-mono text-[11px] text-ink-3">{e.hash.slice(0, 12)}… <span className="text-ink-3">← {e.prev_hash.slice(0, 6)}</span></td>
                   </tr>
                   {open === e.seq && (
                     <tr className="border-b border-line/70 bg-surface-2/40">
