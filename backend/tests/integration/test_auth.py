@@ -181,3 +181,72 @@ def test_startup_backfills_credentials_for_existing_users(client: TestClient) ->
     assert backfill_credentials() == 1
     assert backfill_credentials() == 0  # idempotent
     assert login(client, "diego.alvarez@kestrel.example").status_code == 200
+
+
+def test_register_then_sign_in(client: TestClient) -> None:
+    body = {
+        "display_name": "  Alex   Morgan ",
+        "email": "Alex.Morgan@Example.com",
+        "password": "Warehouse-2026",
+        "site": "AUS",
+    }
+    r = client.post("/api/v1/auth/register", json=body)
+    assert r.status_code == 201, r.text
+    created = r.json()
+    assert created["display_name"] == "Alex Morgan"
+    assert created["email"] == "alex.morgan@example.com"
+    assert created["role"] == "manager" and created["site_scope"] == ["AUS"]
+    # Registration does not sign in; the new account signs in like any other.
+    signed = login(client, "alex.morgan@example.com", "Warehouse-2026")
+    assert signed.status_code == 200
+    token = signed.json()["access_token"]
+    queue = client.get("/api/v1/exceptions", headers=bearer(token)).json()
+    assert queue["items"] and {i["site"] for i in queue["items"]} == {"AUS"}
+    # Registered accounts never appear in the demo persona list.
+    assert "Alex Morgan" not in [
+        p["display_name"] for p in client.get("/api/v1/auth/personas").json()
+    ]
+    with session_scope() as s:
+        assert "auth.register" in [e.event_type for e in s.scalars(select(m.AuditEvent))]
+
+
+def test_register_validates_input(client: TestClient) -> None:
+    base = {
+        "display_name": "Sam Lee",
+        "email": "sam.lee@example.com",
+        "password": "Warehouse-2026",
+        "site": "FRE",
+    }
+    assert (
+        client.post("/api/v1/auth/register", json={**base, "email": "not-an-email"}).status_code
+        == 422
+    )
+    assert (
+        client.post("/api/v1/auth/register", json={**base, "password": "short"}).status_code == 422
+    )
+    assert client.post("/api/v1/auth/register", json={**base, "site": "XYZ"}).status_code == 422
+    assert client.post("/api/v1/auth/register", json=base).status_code == 201
+    dup = client.post("/api/v1/auth/register", json={**base, "email": "SAM.LEE@example.com"})
+    assert dup.status_code == 409
+    taken = client.post("/api/v1/auth/register", json={**base, "email": MAYA})
+    assert taken.status_code == 409
+
+
+def test_registration_can_be_disabled(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("REGISTRATION_ENABLED", "false")
+    get_settings.cache_clear()
+    try:
+        assert client.get("/api/v1/auth/config").json()["registration"] is False
+        r = client.post(
+            "/api/v1/auth/register",
+            json={
+                "display_name": "No One",
+                "email": "no.one@example.com",
+                "password": "Warehouse-2026",
+                "site": "FRE",
+            },
+        )
+        assert r.status_code == 403
+    finally:
+        monkeypatch.delenv("REGISTRATION_ENABLED")
+        get_settings.cache_clear()

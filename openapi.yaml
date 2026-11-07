@@ -209,6 +209,80 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+  /api/v1/auth/register:
+    post:
+      tags:
+      - auth
+      summary: Register
+      description: Create an account (a manager for one site), then sign in with it.
+      operationId: register_api_v1_auth_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registered'
+        '400':
+          description: Malformed request body
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Outside your role or site scope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with the current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
   /api/v1/auth/login:
     post:
       tags:
@@ -3098,6 +3172,10 @@ components:
           type: boolean
           title: Password Login
           default: true
+        registration:
+          type: boolean
+          title: Registration
+          default: true
         demo_login:
           type: boolean
           title: Demo Login
@@ -4796,6 +4874,77 @@ components:
       - embeddings
       - provider
       title: Readiness
+    RegisterRequest:
+      properties:
+        display_name:
+          type: string
+          maxLength: 80
+          minLength: 2
+          pattern: '[^ \t\r\n][\s\S]*[^ \t\r\n]'
+          title: Display Name
+          examples:
+          - Alex Morgan
+        email:
+          type: string
+          maxLength: 254
+          minLength: 3
+          pattern: ^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$
+          title: Email
+          examples:
+          - alex.morgan@example.com
+        password:
+          type: string
+          maxLength: 128
+          minLength: 10
+          pattern: ([A-Za-z][\s\S]*[0-9]|[0-9][\s\S]*[A-Za-z])
+          title: Password
+          description: At least 10 characters with a letter and a number
+        site:
+          type: string
+          enum:
+          - FRE
+          - AUS
+          - BLR
+          title: Site
+      additionalProperties: false
+      type: object
+      required:
+      - display_name
+      - email
+      - password
+      - site
+      title: RegisterRequest
+    Registered:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        display_name:
+          type: string
+          title: Display Name
+        email:
+          type: string
+          title: Email
+        role:
+          type: string
+          enum:
+          - employee
+          - manager
+          - payroll_admin
+          title: Role
+        site_scope:
+          items:
+            type: string
+          type: array
+          title: Site Scope
+      type: object
+      required:
+      - user_id
+      - display_name
+      - email
+      - role
+      - site_scope
+      title: Registered
     ReplayRequest:
       properties:
         exception_id:

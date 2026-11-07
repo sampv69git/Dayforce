@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     jwt_ttl_hours: int = 8
     # Sign-in. Persona sign-in keeps the demo one click away; turn it off for a real deployment.
     demo_login_enabled: bool = True
+    # Self-service registration creates a manager account for one site.
+    registration_enabled: bool = True
     login_max_attempts: int = 5
     login_lockout_minutes: int = 15
     # Password given to the seeded synthetic accounts (documented in README; change it anywhere real).

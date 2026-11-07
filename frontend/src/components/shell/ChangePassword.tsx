@@ -12,7 +12,7 @@ function checks(pw: string, email?: string | null) {
   return [
     { ok: pw.length >= MIN, label: `At least ${MIN} characters` },
     { ok: /[a-z]/i.test(pw) && /\d/.test(pw), label: 'A letter and a number' },
-    { ok: !email || !pw.toLowerCase().includes(email.split('@')[0]!.toLowerCase()), label: 'Not based on your email' },
+    { ok: !email || email.split('@')[0]!.length < 4 || !pw.toLowerCase().includes(email.split('@')[0]!.toLowerCase()), label: 'Not based on your email' },
   ]
 }
 

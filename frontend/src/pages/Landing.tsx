@@ -76,12 +76,12 @@ function Nav({ onTour }: { onTour: () => void }) {
   }, [])
   return (
     <div className={cn('sticky top-0 z-40 transition-all duration-300', scrolled ? 'glass border-b border-line' : 'border-b border-transparent')}>
-      <nav aria-label="Landing" className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-6">
-        <a href="#top" className="flex items-center gap-2.5">
+      <nav aria-label="Landing" className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 whitespace-nowrap sm:px-6">
+        <a href="#top" className="flex shrink-0 items-center gap-2.5">
           <Logo />
-          <span className="text-[17px] font-semibold tracking-tight text-ink">Countersign</span>
+          <span className="hidden text-[17px] font-semibold tracking-tight text-ink sm:inline">Countersign</span>
         </a>
-        <div className="ml-4 hidden items-center gap-1 md:flex">
+        <div className="ml-2 hidden min-w-0 items-center gap-0.5 lg:flex">
           {[
             ['#brief', 'The brief'],
             ['#how', 'How it works'],
@@ -89,22 +89,22 @@ function Nav({ onTour }: { onTour: () => void }) {
             ['#harness', 'Harness'],
             ['#results', 'Results'],
           ].map(([href, label]) => (
-            <a key={href} href={href} className="rounded-md px-3 py-1.5 text-small font-medium text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
+            <a key={href} href={href} className="shrink-0 rounded-md px-2.5 py-1.5 text-small font-medium whitespace-nowrap text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
               {label}
             </a>
           ))}
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <button onClick={toggleTheme} aria-label="Toggle theme" data-tour="theme" className="grid size-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5">
+          <button onClick={toggleTheme} aria-label="Toggle theme" data-tour="theme" className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 hover:text-ink">
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
-          <Link to="/login" className="hidden h-9 items-center gap-1.5 rounded-lg px-3 text-small font-medium text-ink-2 hover:bg-surface-2 hover:text-ink sm:inline-flex">
+          <Link to="/login" className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-small font-medium whitespace-nowrap text-ink-2 hover:bg-surface-2 hover:text-ink">
             <KeyRound size={14} /> Sign in
           </Link>
-          <button onClick={onTour} data-tour="tour-button" className="hidden h-9 items-center gap-1.5 rounded-lg border border-line bg-surface px-3 text-small font-medium text-ink shadow-card hover:border-line-strong sm:inline-flex">
-            <Compass size={14} className="text-accent" /> Take the tour
+          <button onClick={onTour} data-tour="tour-button" aria-label="Take the tour" className="hidden h-9 shrink-0 items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 text-small font-medium whitespace-nowrap text-ink shadow-card hover:border-line-strong sm:inline-flex xl:px-3">
+            <Compass size={14} className="text-accent" /> <span className="hidden xl:inline">Take the tour</span>
           </button>
-          <a href="#personas" className="bg-brand inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-small font-semibold text-white shadow-glow transition-transform hover:-translate-y-px">
+          <a href="#personas" className="bg-brand inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3.5 text-small font-semibold whitespace-nowrap text-white shadow-glow transition-transform hover:-translate-y-px">
             Open the demo <ArrowRight size={14} />
           </a>
         </div>
@@ -125,11 +125,7 @@ function Hero({ onStart, onTour, busy }: { onStart: () => void; onTour: () => vo
       <Aurora dense />
       <div aria-hidden className="bg-grid mask-radial pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-6xl px-6 text-center" data-tour="hero">
-        <motion.div initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 py-1 pr-3 pl-1 text-caption font-medium text-ink-2 shadow-card backdrop-blur">
-          <span className="bg-brand rounded-full px-2 py-0.5 text-[10.5px] font-semibold text-white">Use Case 5</span>
-          <span className="shimmer-text font-semibold">Dayforce AI Innovation Challenge · Time and Attendance</span>
-        </motion.div>
-        <h1 className="mx-auto mt-7 max-w-6xl text-[clamp(38px,5.6vw,76px)] leading-[1.04] font-semibold tracking-[-0.035em] text-ink">
+        <h1 className="mx-auto mt-4 max-w-6xl text-[clamp(38px,5.6vw,76px)] leading-[1.04] font-semibold tracking-[-0.035em] text-ink">
           {words.map((w, i) => (
             <motion.span key={w} className="inline-block" initial={reduce ? false : { opacity: 0, y: 24, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 0.7, delay: 0.1 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}>
               {w}&nbsp;

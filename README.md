@@ -77,7 +77,7 @@ The queue groups work under these same four headings, and the landing page maps 
 | **Keyboard-first triage** | `J`/`K` to move, `A` approve, `E` edit (re-validated live), `R` reject, `Ctrl K` command palette, guarded bulk approve |
 | **Hash-chained audit** | Every draft, decision, revision, and setting change is appended with a SHA-256 link to the one before |
 | **Degraded mode** | With no model available, deterministic templates pass the same gates and the workflow keeps running |
-| **Secure sign-in** | Email and password with scrypt hashing, account lockout, revocable sessions, password change, and role-based access on every route; one-click persona sign-in for the demo can be switched off |
+| **Registration and secure sign-in** | Create an account, then sign in with email and password: scrypt hashing, account lockout, revocable sessions, password change, and role-based access on every route; one-click persona sign-in for the demo can be switched off |
 
 ## Demo walkthrough
 
@@ -270,7 +270,8 @@ On Linux and macOS, `make dev` starts both. Set `VITE_API_PROXY` to point the de
 ### Using the demo
 
 - The landing page opens with a guided tour on the first visit; replay it from **Take the tour**.
-- Pick a persona for one-click access, or choose **Sign in** and use a synthetic account:
+- **New user:** choose **Sign in**, then **Create an account**. Enter your name, email, the site you manage, and a password (at least 10 characters with a letter and a number). After registering you return to the sign-in page with your email filled in; sign in with your password. New accounts are managers for one site.
+- Or pick a persona for one-click access, or sign in with a synthetic account:
 
   | Account | Email | Role |
   |---|---|---|
@@ -306,6 +307,7 @@ All settings are environment variables, read from `.env` at the repository root.
 | `JWT_SECRET` | development value | Signing key for demo tokens; use 32 or more random characters |
 | `JWT_TTL_HOURS` | `8` | Session lifetime |
 | `DEMO_LOGIN_ENABLED` | `true` | One-click persona sign-in; set to `false` to allow only email and password |
+| `REGISTRATION_ENABLED` | `true` | Self-service registration (creates a manager account for one site) |
 | `LOGIN_MAX_ATTEMPTS` / `LOGIN_LOCKOUT_MINUTES` | `5` / `15` | Failed attempts before an account locks, and for how long |
 | `SEED_USER_PASSWORD` | `Countersign2026` | Password given to the seeded synthetic accounts |
 | `CORS_ORIGINS` | local dev origins | JSON list of allowed web origins |
@@ -341,7 +343,7 @@ Secrets belong in `.env` or your platform's secret store, never in Git. CI scans
 │   └── tests/              unit, integration, contract
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/          landing, sign-in, queue, forecast, inspector, outcomes, evaluation, policies, payroll, audit, timecard, employee
+│   │   ├── pages/          landing, registration, sign-in, queue, forecast, inspector, outcomes, evaluation, policies, payroll, audit, timecard, employee
 │   │   ├── components/     domain widgets, app shell, guided tour, effects, UI primitives
 │   │   ├── api/            generated OpenAPI types, typed client, hooks, Zod schemas
 │   │   └── lib/            session, formatting, brief mapping, tour state
@@ -359,7 +361,7 @@ The contract lives in `openapi.yaml` (OpenAPI 3.1), generated from the FastAPI a
 
 | Group | Endpoints |
 |---|---|
-| System and auth | `GET /health`, `GET /health/ready`, `GET /auth/config`, `POST /auth/login`, `POST /auth/logout`, `POST /auth/password`, `GET /auth/personas`, `POST /auth/demo-login`, `GET /me` |
+| System and auth | `GET /health`, `GET /health/ready`, `GET /auth/config`, `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `POST /auth/password`, `GET /auth/personas`, `POST /auth/demo-login`, `GET /me` |
 | Exceptions | `GET /pay-period/current`, `GET /exceptions`, `GET /exceptions/{id}`, `POST /exceptions/{id}/drafts`, `POST /exceptions/{id}/attestation-requests` |
 | Drafts and decisions | `GET /drafts/{id}`, `POST /drafts/{id}/validate-edit`, `POST /drafts/{id}/decision`, `POST /drafts/bulk-approve` |
 | Workforce | `GET /timecards/{employee_id}`, `POST /simulate`, `GET /forecast/overtime`, `GET /me/actions`, `POST /attestations` |
@@ -377,12 +379,12 @@ make openapi
 
 | Check | Command | Covers |
 |---|---|---|
-| Backend tests | `cd backend && uv run pytest -q` | Unit, integration, API contract (Schemathesis and OpenAPI drift); 165 tests, coverage gated at 85% in CI |
+| Backend tests | `cd backend && uv run pytest -q` | Unit, integration, API contract (Schemathesis and OpenAPI drift); 168 tests, coverage gated at 85% in CI |
 | Lint and types | `make lint` and `make typecheck` | ruff, mypy (strict on engine, harness, contracts, retrieval), oxlint, tsc |
 | Deterministic evaluation | `cd backend && uv run python -m eval.run --providers scripted,rule_based --gate` | Detection, retrieval, corrections, 12-fault matrix, CI quality gates |
 | Real-model evaluation | `cd backend && uv run python -m eval.run --providers groq --limit 40` | gpt-oss-20b on a stratified subset (needs `GROQ_API_KEY`) |
 | Frontend unit | `cd frontend && npm test` | Components, formatters, boundary validation, guided tour |
-| End to end | `cd frontend && npx playwright test` | Nine journeys, including password sign-in, with WCAG 2 A/AA axe checks, on their own ports and database |
+| End to end | `cd frontend && npx playwright test` | Ten journeys, including registration and password sign-in, with WCAG 2 A/AA axe checks, on their own ports and database |
 | Everything | `make check` | All of the above except the real-model evaluation and end to end |
 
 CI (GitHub Actions) runs backend, evaluation, frontend, and secret-scan jobs on every push and pull request. Strategy and thresholds: `TESTING.md`, `TEST_PLAN.md`, `QUALITY_GATES.md`.

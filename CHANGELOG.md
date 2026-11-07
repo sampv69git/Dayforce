@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format follows Keep a C
 ## [Unreleased]
 
 ### Added
+- Registration for new users (`POST /auth/register` and a `/register` page): name, email, site, and a password checked live against the policy. A new account is a manager for one site; after registering, the sign-in page opens with the email filled in. Duplicate emails are refused, registration can be switched off, and the rules are part of the API contract. End-to-end journey J8 covers register-then-sign-in.
 - Email and password sign-in: scrypt password hashing, generic failures with equal timing, account lockout with `Retry-After`, revocable sessions (`jti` and sign-out), password change that ends other sessions, sign-in audit events, and a switch to turn persona sign-in off. New endpoints `/auth/config`, `/auth/login`, `/auth/logout`, `/auth/password`; migration 0002; credentials backfilled for existing seeded users.
 - Sign-in page with demo-account fill-in, show password, Caps Lock warning, and lockout messages; protected routes redirect to sign-in and return afterwards; change-password dialog; sign-out revokes the session on the server.
 - Tests: password hashing and policy, ten sign-in integration tests, and end-to-end journey J7.
@@ -25,6 +26,13 @@ All notable changes to this project are documented here. Format follows Keep a C
 - README screenshots regenerated from the live app with gpt-oss-20b on Groq.
 
 ### Fixed
+- Landing navigation items no longer wrap onto two lines at any width; lower-priority labels collapse to icons on narrow screens, and the app header stays on one line.
+- Sign-in explains when the API cannot be reached instead of showing a generic server error.
+
+### Removed
+- The challenge badge above the landing-page headline.
+
+### Fixed (earlier)
 - Reassignment drafts in the queue showed the colleague's employee ID instead of their name.
 - Queue rows nested the bulk-approval checkbox inside a row with a button role; rows now use a real button with the checkbox beside it.
 - Accessibility findings from an axe scan of every page in light and dark themes, including an older low-contrast previous-hash label in the audit table.
