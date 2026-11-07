@@ -40,3 +40,6 @@ Thumbs.db
 *.db-journal
 *.tmp.mjs
 *.log
+
+# Demo video build output (frames and rendered video)
+demo-video/out/
