@@ -50,6 +50,7 @@ Enforced by FastAPI dependencies on every route (deny by default), with tests fo
 
 | Control | Implementation |
 |---|---|
+| Registration | `POST /api/v1/auth/register` with name, email, site, and password creates a manager account for that site (never payroll or employee, which an administrator provisions). The contract enforces the email shape and password rules, so valid input is never refused; duplicate emails get 409. Registration does not sign in. Disable with `REGISTRATION_ENABLED=false`. Registered accounts never appear in the persona list. |
 | Password sign-in | `POST /api/v1/auth/login` with email and password. Emails are matched case-insensitively. |
 | Password storage | scrypt from the Python standard library (N=2^14, r=8, p=1, 16-byte random salt, 32-byte key); parameters are stored with each hash so they can be raised later. Verification is constant time. |
 | Generic failures | Wrong password and unknown email return the same 401 detail ("Email or password is incorrect"); an unknown email still runs a full hash check so timing does not reveal which accounts exist. |
@@ -58,7 +59,7 @@ Enforced by FastAPI dependencies on every route (deny by default), with tests fo
 | Sign-out | `POST /api/v1/auth/logout` records the `jti` as revoked; the token is refused until it would have expired. Expired revocations are pruned. |
 | Password change | `POST /api/v1/auth/password` requires the current password and a new one that meets the policy (at least 10 characters, a letter and a number, not based on the email). Every session issued before the change is refused; the caller receives a fresh token. |
 | Persona sign-in | `POST /api/v1/auth/demo-login` stays available for the demo and can be turned off with `DEMO_LOGIN_ENABLED=false`, which also empties the persona list. |
-| Audit | Successful sign-ins, failures (unknown emails stored only as a truncated SHA-256), lockouts, sign-outs, and password changes are appended to the hash-chained audit log. |
+| Audit | Registrations, successful sign-ins, failures (unknown emails stored only as a truncated SHA-256), lockouts, sign-outs, and password changes are appended to the hash-chained audit log. |
 | Frontend | Protected routes redirect to `/login?next=...` (same-site paths only). Any 401 ends the local session and explains why. |
 
 Seeded synthetic accounts share the password in `SEED_USER_PASSWORD` (default documented in README) so the demo is usable; change it, and disable persona sign-in, anywhere real. Remaining production work: per-IP rate limiting at the edge, single sign-on (OIDC or SAML) with MFA, refresh-token rotation, and storing the token in an HTTP-only cookie instead of local storage.
