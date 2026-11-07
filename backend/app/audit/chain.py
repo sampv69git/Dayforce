@@ -1,4 +1,4 @@
-"""Hash-chained, append-only audit log (HARNESS.md section 9)."""
+"""Hash-chained, append-only audit log."""
 
 from __future__ import annotations
 

@@ -2,8 +2,8 @@
 
 Everything here is synthetic. Names are invented combinations; any resemblance to real people is
 coincidental. The generator produces two weeks (26 Oct to 8 Nov 2026) of schedules, punches, badge
-and scanner events, employee notes, and attestations, then plants the demo scenarios listed in
-DATA_SOURCES.md. The same seed always yields the same dataset.
+and scanner events, employee notes, and attestations, then plants the demo scenarios. The same
+seed always yields the same dataset.
 """
 
 from __future__ import annotations

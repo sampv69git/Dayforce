@@ -1,4 +1,4 @@
-"""The governed drafting pipeline (HARNESS.md section 6).
+"""The governed drafting pipeline.
 
 context -> retrieve -> sanitise -> generate -> validate -> [repair once] -> route -> persist + audit
 """
