@@ -1,4 +1,4 @@
-"""Validation gates G1 to G10 (HARNESS.md section 5).
+"""Validation gates G1 to G10.
 
 Every gate runs whenever its inputs exist, so the report is complete even after an early failure.
 """

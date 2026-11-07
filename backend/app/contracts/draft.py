@@ -1,4 +1,4 @@
-"""DraftResolution: the strict output contract for the drafting model (HARNESS.md section 1.3)."""
+"""DraftResolution: the strict output contract for the drafting model."""
 
 from __future__ import annotations
 

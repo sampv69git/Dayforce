@@ -1,5 +1,5 @@
 """Sign-in: email and password with lockout and revocable sessions, plus optional persona sign-in
-for the demo. Tokens are short-lived signed JWTs; see SECURITY.md for the threat model."""
+for the demo. Tokens are short-lived signed JWTs, checked against a revocation list."""
 
 from __future__ import annotations
 
