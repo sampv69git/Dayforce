@@ -8,6 +8,8 @@ A scripted, reproducible pipeline for the Countersign product demo: it drives th
 | `record.mjs` | Prepares the demo data, pre-generates the model drafts, then records each scene with a visible cursor, smooth scrolling, and camera zooms; marks the moment each narration line starts |
 | `cards/card.html` | Animated title, chapter, architecture, and closing cards |
 | `compose.py` | Frames each scene on a branded background, joins scenes with cross-fades, times subtitles to the marks, and writes the outputs |
+| `voice.py` | Lays a recorded voice-over under the video, places each spoken line on its moment, and burns word-by-word captions |
+| `voiceover.txt` | What the narrator actually says, one row per narration line; the caption text |
 
 ## Regenerate
 
@@ -38,4 +40,20 @@ Outputs land in `demo-video/out/` (not committed):
 
 1. Open `narration-script.md` and play `countersign-demo.mp4`.
 2. Read each line as its subtitle appears. Each one has room to finish at a calm pace.
-3. Record the voice as one take or line by line, then lay it under `countersign-demo.mp4` (subtitles burned in) in any editor. To keep subtitles switchable instead, use `countersign-demo-clean.mp4` and attach `countersign-demo.srt` as captions on YouTube.
+3. Record the voice as one take, then let `voice.py` lay it under the video (below).
+
+## Adding the recorded voice
+
+`voice.py` turns one continuous voice recording into the final video:
+
+```bash
+uv run --no-project --with faster-whisper --with imageio-ffmpeg --with pillow --with numpy \
+    python demo-video/voice.py path/to/voice.wav            # transcribe, build, burn
+```
+
+- **Transcribe.** faster-whisper (`medium.en`, on the CPU) gives every spoken word a time.
+- **Place.** Each word is assigned to its narration line. Each spoken line then moves so its first word lands on the moment its scene shows, keeping the narrator's own pacing inside the line. The recording is gated, so the pauses between lines are silent and moving lines leaves no audible cut.
+- **Caption.** `voiceover.txt` holds what the narrator actually says, one row per narration line, with recognition slips corrected and numbers written as they appear on screen. Captions show short phrases, and each word fades in as it is spoken.
+- **Output.** `out/countersign-demo-voice.mp4` (voice and captions), `out/countersign-demo-voice-clean.mp4` (voice only), `out/countersign-demo-voice.srt`, and `out/voice/placement.txt` (where every line landed, what was heard, and what is shown).
+
+If the narration is re-recorded, transcribe first (`... voice.py voice.wav transcribe`), adjust `voiceover.txt` to the new wording, then run `build` and `burn`.

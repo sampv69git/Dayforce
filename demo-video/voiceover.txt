@@ -1,0 +1,64 @@
+Introducing Countersign, where artificial intelligence does the drafting, deterministic rules ensure accuracy, and human judgement makes the final call.
+Every week, before payroll closes, managers must clear timecard exceptions by hand.
+Missed punches, surprise overtime, schedule conflicts, and policy breaches.
+Get one wrong, and someone is underpaid, or the company is exposed.
+Countersign is a timecard exception agent built for exactly that moment.
+Rules detect the problem, and an open-weight model drafts the fix.
+Ten deterministic gates verify it, and nothing changes until a manager countersigns.
+We built it around the challenge brief, line by line.
+Missed punches, overtime risks, schedule conflicts, policy breaches.
+Each one is detected by deterministic rules and answered with a compliant correction.
+The harness is visible from the first screen. Hover any gate to see exactly what it checks.
+And first-time visitors get a guided tour, so nobody gets lost.
+A new manager registers with a name, an email, and the site they run.
+Password rules are checked live, and passwords are stored with scrypt hashing.
+Then they sign in. Sessions are revocable, and repeated failures lock the account.
+This is the queue, ranked by risk, with the payroll cutoff counting down.
+Across the top are the four problems from the brief, with live counts.
+The cutoff briefing is computed from the queue, never written by the model.
+It shows what is ready, what is escalated, and which single fix clears the most.
+Triage is keyboard first. J and K to move, A to approve, E to edit, and R to reject.
+Drafts come from gpt-oss-20b, an Apache-licensed open-weight model, served on Groq.
+Here is the top item. Two missed punches joined Diego's Tuesday and Wednesday into one 32.5-hour shift.
+That single root cause created two more exceptions: daily overtime and a late meal.
+The timeline shows the recorded span. Badge events at 3:29 and 7:02 are independent evidence.
+Switch to the correction, and the span splits back into real shifts.
+Pay impact is computed by code: 23.47 hours of phantom overtime disappear.
+The model's draft cites the policy word for word. Open a clause to read it in context.
+Then the harness checks everything: schema, citations, quotes, evidence, re-simulation, and guardrails.
+All ten gates pass. Evidence strength comes from the evidence, never from the model's own confidence.
+The manager approves with a single key press.
+One countersignature resolves all three exceptions, recorded in a hash-chained audit log.
+Priya worked six and a half hours in California without a meal break.
+The tempting fix is to edit the break. Countersign will not: a guardrail blocks it.
+The compliant correction is one hour of meal premium, owed to the employee.
+Kai's note tries to instruct the AI to approve 12 hours of overtime.
+Employee text is untrusted data. The injection is flagged, and the draft ignores it.
+Even if a model were fooled, the gates on actions, evidence, and numbers would block the result.
+Overtime is cheaper to prevent than to pay.
+The forecast adds worked hours to the remaining schedule. Priya is heading for 46.3 hours.
+Colleagues are ranked by eight rule checks for both employees. Marcus can take Saturday and stay under 40.
+Schedule conflicts are caught before anyone works them.
+Grace closes Friday at 11 and is scheduled to open Saturday at 6. That is seven hours of rest against a ten-hour minimum.
+The draft moves the shift to Marcus, and the same fix clears her projected overtime.
+Arjun runs payroll across the three sites: Fremont, Austin, and Bangalore.
+Readiness rings show what still stands between each site and the cutoff.
+Sam's case is escalated. The badge says 3:10, the scanner says 5:20, so the harness refused to guess.
+Every pipeline run is traced, step by step.
+Context, retrieval, the exact prompt, the raw model output, and every gate result.
+Now we inject a fault. The model cites a policy clause that does not exist.
+Gates three and four fail. The harness tries one guided repair, then falls back to a rule-based draft, and labels it.
+Fallbacks are never silent.
+Employees confirm missed punches from their phones.
+Diego sees the badge exit at 3:31 and confirms it with one tap.
+His confirmation becomes strong evidence. His note stays untrusted.
+Every number here comes from committed evaluation runs on 128 hand-labelled cases.
+Detection precision and recall of one, and hybrid retrieval finds the governing clause every time.
+144 of 144 injected faults caught, and zero unsafe drafts reached a manager.
+With gpt-oss-20b, almost one in four drafts would have been unsafe without the harness. That is why it exists.
+Outcomes are measured live from the decisions made in this session.
+And the audit chain verifies end to end. Any edit to the history would break it.
+Under the hood: a pure Python rules engine, hybrid policy retrieval, and a ten-gate harness.
+FastAPI, PostgreSQL with pgvector, React 19, an OpenAPI contract, and over 190 tests.
+It runs with one command, with a local offline model, or with no model at all.
+Countersign. Nothing changes a timecard without a human countersignature.
