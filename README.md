@@ -432,6 +432,7 @@ Full log with alternatives and trade-offs: `claude-code/DECISION.md`.
 | `DATA_SOURCES.md`, `PRIVACY.md`, `SECURITY.md`, `THIRD_PARTY.md` | Data, privacy, security, licences |
 | `TESTING.md`, `TEST_PLAN.md`, `QUALITY_GATES.md` | Test strategy, cases, thresholds |
 | `DEMO_SCRIPT.md`, `PRESENTATION.md` | Demo plan and slide content |
+| `demo-video/` | Reproducible demo video pipeline: storyboard, scripted recording of the live app, composition with subtitles |
 | `CHANGELOG.md`, `RELEASE_CHECKLIST.md`, `HANDOFF.md` | Changes, release steps, handoff notes |
 | `claude-code/` | Build instructions, UI prototype spec, 10-step plan, decisions, handoff |
 

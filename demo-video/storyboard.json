@@ -1,0 +1,273 @@
+{
+  "title": "Countersign: product demo",
+  "words_per_second": 2.35,
+  "scenes": [
+    {
+      "id": "title",
+      "kind": "card",
+      "card": {
+        "type": "title",
+        "kicker": "Timecard exception resolution",
+        "title": "Countersign",
+        "subtitle": "The model drafts. The rules verify. A manager countersigns."
+      },
+      "lines": [
+        "Countersign. The model drafts, the rules verify, and a manager countersigns."
+      ]
+    },
+    {
+      "id": "problem",
+      "kind": "app",
+      "chapter": "The problem",
+      "lines": [
+        "Every week, before payroll closes, managers must clear timecard exceptions by hand.",
+        "Missed punches, surprise overtime, schedule conflicts, and policy breaches.",
+        "Get one wrong, and someone is underpaid, or the company is exposed.",
+        "Countersign is a timecard exception agent built for exactly that moment.",
+        "Rules detect the problem. An open-weight model drafts the fix.",
+        "Ten deterministic gates verify it, and nothing changes until a manager countersigns."
+      ]
+    },
+    {
+      "id": "brief",
+      "kind": "app",
+      "lines": [
+        "We built it around the challenge brief, line by line.",
+        "Missed punches. Overtime risks. Schedule conflicts. Policy breaches.",
+        "Each one is detected by deterministic rules and answered with a compliant correction.",
+        "The harness is visible from the first screen. Hover any gate to see exactly what it checks.",
+        "And first-time visitors get a guided tour, so nobody gets lost."
+      ]
+    },
+    {
+      "id": "ch-auth",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "01",
+        "title": "Create an account, then sign in"
+      },
+      "lines": []
+    },
+    {
+      "id": "register",
+      "kind": "app",
+      "lines": [
+        "A new manager registers with a name, an email, and the site they run.",
+        "Password rules are checked live, and passwords are stored with scrypt hashing.",
+        "Then they sign in. Sessions are revocable, and repeated failures lock the account."
+      ]
+    },
+    {
+      "id": "ch-queue",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "02",
+        "title": "The manager's queue"
+      },
+      "lines": []
+    },
+    {
+      "id": "queue",
+      "kind": "app",
+      "lines": [
+        "This is the queue, ranked by risk, with the payroll cutoff counting down.",
+        "Across the top are the four problems from the brief, with live counts.",
+        "The cutoff briefing is computed from the queue, never written by the model.",
+        "It shows what is ready, what is escalated, and which single fix clears the most.",
+        "Triage is keyboard first: J and K to move, A to approve, E to edit, and R to reject.",
+        "Drafts come from gpt-oss-20b, an Apache-licensed open-weight model, served on Groq."
+      ]
+    },
+    {
+      "id": "ch-root",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "03",
+        "title": "One decision, three fixes"
+      },
+      "lines": []
+    },
+    {
+      "id": "root",
+      "kind": "app",
+      "lines": [
+        "Here is the top item. Two missed punches joined Diego's Tuesday and Wednesday into one 32.5-hour shift.",
+        "That single root cause created two more exceptions: daily overtime and a late meal.",
+        "The timeline shows the recorded span. Badge events at 15:29 and 07:02 are independent evidence.",
+        "Switch to the correction, and the span splits back into two real shifts.",
+        "Pay impact is computed by code: 23.47 hours of phantom overtime disappear.",
+        "The model's draft cites the policy word for word. Open a clause to read it in context.",
+        "Then the harness checks everything: schema, citations, quotes, evidence, re-simulation, and guardrails.",
+        "All ten gates pass. Evidence strength comes from the evidence, never from the model's own confidence."
+      ]
+    },
+    {
+      "id": "approve",
+      "kind": "app",
+      "lines": [
+        "The manager approves with a single key press.",
+        "One countersignature resolves all three exceptions, recorded in a hash-chained audit log."
+      ]
+    },
+    {
+      "id": "ch-compliant",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "04",
+        "title": "Compliant by construction"
+      },
+      "lines": []
+    },
+    {
+      "id": "meal",
+      "kind": "app",
+      "lines": [
+        "Priya worked six and a half hours in California without a meal break.",
+        "The tempting fix is to edit the break. Countersign will not: a guardrail blocks it.",
+        "The compliant correction is one hour of meal premium, owed to the employee."
+      ]
+    },
+    {
+      "id": "injection",
+      "kind": "app",
+      "lines": [
+        "Kai's note tries to instruct the AI to approve twelve hours of overtime.",
+        "Employee text is untrusted data. The injection is flagged, and the draft ignores it.",
+        "Even if a model were fooled, the gates on actions, evidence, and numbers would block the result."
+      ]
+    },
+    {
+      "id": "ch-prevent",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "05",
+        "title": "Prevent, don't pay"
+      },
+      "lines": []
+    },
+    {
+      "id": "forecast",
+      "kind": "app",
+      "lines": [
+        "Overtime is cheaper to prevent than to pay.",
+        "The forecast adds worked hours to the remaining schedule. Priya is heading for 46.3 hours.",
+        "Colleagues are ranked by eight rule checks for both employees. Marcus can take Saturday and stay under 40."
+      ]
+    },
+    {
+      "id": "conflict",
+      "kind": "app",
+      "lines": [
+        "Schedule conflicts are caught before anyone works them.",
+        "Grace closes Friday at 23:00 and is scheduled to open Saturday at 06:00. That is seven hours of rest against a ten-hour minimum.",
+        "The draft moves the shift to Marcus, and the same fix clears her projected overtime."
+      ]
+    },
+    {
+      "id": "ch-payroll",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "06",
+        "title": "Payroll and the harness"
+      },
+      "lines": []
+    },
+    {
+      "id": "payroll",
+      "kind": "app",
+      "lines": [
+        "Arjun runs payroll across three sites: Fremont, Austin, and Bengaluru.",
+        "Readiness rings show what still stands between each site and the cutoff.",
+        "Sam's case is escalated. The badge says 15:10, the scanner says 17:20, so the harness refused to guess."
+      ]
+    },
+    {
+      "id": "inspector",
+      "kind": "app",
+      "lines": [
+        "Every pipeline run is traced, step by step.",
+        "Context, retrieval, the exact prompt, the raw model output, and every gate result.",
+        "Now we inject a fault: the model cites a policy clause that does not exist.",
+        "Gates three and four fail. The harness tries one guided repair, then falls back to a rule-based draft, and labels it.",
+        "Fallbacks are never silent."
+      ]
+    },
+    {
+      "id": "ch-employee",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "07",
+        "title": "The employee"
+      },
+      "lines": []
+    },
+    {
+      "id": "mobile",
+      "kind": "app",
+      "lines": [
+        "Employees confirm missed punches from their phone.",
+        "Diego sees the badge exit at 15:31 and confirms it with one tap.",
+        "His confirmation becomes strong evidence. His note stays untrusted."
+      ]
+    },
+    {
+      "id": "ch-proof",
+      "kind": "card",
+      "card": {
+        "type": "chapter",
+        "index": "08",
+        "title": "Proof, not promises"
+      },
+      "lines": []
+    },
+    {
+      "id": "evaluation",
+      "kind": "app",
+      "lines": [
+        "Every number here comes from committed evaluation runs on 128 hand-labelled cases.",
+        "Detection precision and recall of 1.0, and hybrid retrieval finds the governing clause every time.",
+        "144 of 144 injected faults caught, and zero unsafe drafts reached a manager.",
+        "With gpt-oss-20b, almost one in four first drafts would have been unsafe without the harness. That is why it exists."
+      ]
+    },
+    {
+      "id": "audit",
+      "kind": "app",
+      "lines": [
+        "Outcomes are measured live from the decisions made in this session.",
+        "And the audit chain verifies end to end. Any edit to the history would break it."
+      ]
+    },
+    {
+      "id": "architecture",
+      "kind": "card",
+      "card": {
+        "type": "architecture"
+      },
+      "lines": [
+        "Under the hood: a pure Python rules engine, hybrid policy retrieval, and a ten-gate harness.",
+        "FastAPI, PostgreSQL with pgvector, React 19, an OpenAPI contract, and over 190 automated tests.",
+        "It runs with one command, with a local offline model, or with no model at all."
+      ]
+    },
+    {
+      "id": "closing",
+      "kind": "card",
+      "card": {
+        "type": "closing",
+        "title": "Countersign",
+        "subtitle": "The model drafts. The rules verify. A manager countersigns."
+      },
+      "lines": [
+        "Countersign. Nothing changes a timecard without a human countersignature."
+      ]
+    }
+  ]
+}
