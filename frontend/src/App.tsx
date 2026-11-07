@@ -10,6 +10,7 @@ import { Queue } from '@/pages/Queue'
 
 const Landing = lazy(() => import('@/pages/Landing').then((m) => ({ default: m.Landing })))
 const Login = lazy(() => import('@/pages/Login'))
+const Register = lazy(() => import('@/pages/Register'))
 const Forecast = lazy(() => import('@/pages/Forecast'))
 const Inspector = lazy(() => import('@/pages/Inspector'))
 const Outcomes = lazy(() => import('@/pages/Outcomes'))
@@ -63,6 +64,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/me" element={<Guard roles={['employee']}><Me /></Guard>} />
                 <Route element={<Guard roles={['manager', 'payroll_admin']}><AppShell /></Guard>}>
                   <Route path="/queue" element={<Queue />} />

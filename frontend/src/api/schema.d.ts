@@ -64,6 +64,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register
+         * @description Create an account (a manager for one site), then sign in with it.
+         */
+        post: operations["register_api_v1_auth_register_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -755,6 +775,11 @@ export interface components {
              * @default true
              */
             password_login: boolean;
+            /**
+             * Registration
+             * @default true
+             */
+            registration: boolean;
             /** Demo Login */
             demo_login: boolean;
             /** Min Password Length */
@@ -1578,6 +1603,45 @@ export interface components {
             embeddings: "ok" | "error" | "disabled";
             provider: components["schemas"]["ProviderHealth"];
         };
+        /** RegisterRequest */
+        RegisterRequest: {
+            /**
+             * Display Name
+             * @example Alex Morgan
+             */
+            display_name: string;
+            /**
+             * Email
+             * @example alex.morgan@example.com
+             */
+            email: string;
+            /**
+             * Password
+             * @description At least 10 characters with a letter and a number
+             */
+            password: string;
+            /**
+             * Site
+             * @enum {string}
+             */
+            site: "FRE" | "AUS" | "BLR";
+        };
+        /** Registered */
+        Registered: {
+            /** User Id */
+            user_id: string;
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "employee" | "manager" | "payroll_admin";
+            /** Site Scope */
+            site_scope: string[];
+        };
         /** ReplayRequest */
         ReplayRequest: {
             /** Exception Id */
@@ -2070,6 +2134,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuthConfig"];
+                };
+            };
+            /** @description Malformed request body */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                    "application/json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                    "application/json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Outside your role or site scope */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                    "application/json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                    "application/json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Conflict with the current state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                    "application/json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Validation failed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                    "application/json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    register_api_v1_auth_register_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Registered"];
                 };
             };
             /** @description Malformed request body */

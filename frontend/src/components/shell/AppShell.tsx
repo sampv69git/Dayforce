@@ -86,7 +86,7 @@ function ProviderPill() {
   const tone = !p ? 'bg-line-strong' : !p.available ? 'bg-crit' : p.provider === 'rule_based' ? 'bg-warn' : p.provider === 'ollama' ? 'bg-model' : 'bg-ok'
   const label = !p ? 'Checking model' : p.provider === 'rule_based' ? 'Rule-based mode' : `${p.model_id.replace('openai/', '')} · ${p.provider === 'groq' ? 'Groq' : 'Ollama'}`
   const pill = (
-    <button data-tour="provider" className="flex h-8 items-center gap-2 rounded-full border border-line bg-surface px-3 text-caption font-medium text-ink-2 shadow-card hover:border-line-strong">
+    <button data-tour="provider" className="flex h-8 shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-3 text-caption font-medium whitespace-nowrap text-ink-2 shadow-card hover:border-line-strong">
       <span className="relative flex">
         <Dot className={cn(tone, 'size-2')} />
         {p?.available && p.provider !== 'rule_based' && <Dot className={cn(tone, 'absolute size-2 animate-ping opacity-60')} />}
@@ -135,9 +135,9 @@ function Cutoff() {
   const tone = ms < 4 * 3600e3 ? 'text-crit' : ms < 24 * 3600e3 ? 'text-warn' : 'text-ink'
   return (
     <Tip content="Payroll cutoff Mon 9 Nov, 12:00 PT. Measured from the simulated clock.">
-      <div className="flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-small shadow-card">
+      <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-small whitespace-nowrap shadow-card">
         <Timer size={13} className="text-ink-3" />
-        <span className="text-ink-3">Cutoff in</span>
+        <span className="hidden text-ink-3 xl:inline">Cutoff in</span>
         <span className={cn('tabular font-mono font-semibold', tone)}>{relativeDuration(ms)}</span>
       </div>
     </Tip>
@@ -183,9 +183,9 @@ function PersonaMenu() {
       </Tip>
       <Dropdown.Root>
         <Dropdown.Trigger asChild>
-          <button className="flex h-8 items-center gap-2 rounded-full border border-line bg-surface pr-2.5 pl-0.5 shadow-card hover:border-line-strong">
+          <button aria-label={`Account menu for ${user.display_name}`} className="flex h-8 shrink-0 items-center gap-2 rounded-full border border-line bg-surface pr-2.5 pl-0.5 whitespace-nowrap shadow-card hover:border-line-strong">
             <Avatar name={user.display_name} size={26} />
-            <span className="hidden text-small font-medium text-ink sm:block">{user.display_name}</span>
+            <span className="hidden text-small font-medium text-ink xl:block">{user.display_name}</span>
             <ChevronDown size={12} className="text-ink-3" />
           </button>
         </Dropdown.Trigger>
@@ -392,8 +392,8 @@ export function AppShell() {
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="glass sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line px-5">
-          <div className="flex items-center gap-3" data-tour="cutoff">
+        <header className="glass sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line px-5 whitespace-nowrap">
+          <div className="flex min-w-0 shrink-0 items-center gap-3" data-tour="cutoff">
             {now && (
               <Tip content="Simulated demo clock (not real time). All exceptions are evaluated as of this moment.">
                 <div className="flex items-center gap-1.5 text-small text-ink-2">
@@ -402,17 +402,17 @@ export function AppShell() {
                     <Activity size={13} className="relative text-ok" />
                   </span>
                   <span className="font-medium text-ink">Fri 6 Nov, 11:00 PT</span>
-                  <span className="text-ink-3">simulated</span>
+                  <span className="hidden text-ink-3 2xl:inline">simulated</span>
                 </div>
               </Tip>
             )}
             <Cutoff />
           </div>
-          <div className="ml-auto flex items-center gap-2.5">
-            <button onClick={() => setTour(true)} className="hidden h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-caption font-medium text-ink-2 shadow-card hover:border-line-strong hover:text-ink md:inline-flex">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <button onClick={() => setTour(true)} className="hidden h-8 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-caption font-medium text-ink-2 shadow-card hover:border-line-strong hover:text-ink xl:inline-flex">
               <Compass size={13} className="text-accent" /> Tour
             </button>
-            <Hatch className="hidden xl:inline-flex">Synthetic data</Hatch>
+            <Hatch className="hidden shrink-0 2xl:inline-flex">Synthetic data</Hatch>
             <ProviderPill />
             <PersonaMenu />
           </div>
