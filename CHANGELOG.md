@@ -24,20 +24,18 @@ All notable changes to this project are documented here. Format follows Keep a C
 - End-to-end journeys run with reduced motion so animated pages are deterministic for the axe checks.
 - The landing page is lazy-loaded; no production chunk exceeds 500 kB.
 - README screenshots regenerated from the live app with gpt-oss-20b on Groq.
+- `--ink-3` darkened to #5F6470 to meet WCAG AA on tinted surfaces.
+- Dense retrieval on PostgreSQL uses an explicit pgvector `<=>` query (verified on an embedded PostgreSQL).
 
 ### Fixed
 - Landing navigation items no longer wrap onto two lines at any width; lower-priority labels collapse to icons on narrow screens, and the app header stays on one line.
 - Sign-in explains when the API cannot be reached instead of showing a generic server error.
-
-### Removed
-- The challenge badge above the landing-page headline.
-
-### Fixed (earlier)
 - Reassignment drafts in the queue showed the colleague's employee ID instead of their name.
 - Queue rows nested the bulk-approval checkbox inside a row with a button role; rows now use a real button with the checkbox beside it.
 - Accessibility findings from an axe scan of every page in light and dark themes, including an older low-contrast previous-hash label in the audit table.
-- `--ink-3` darkened to #5F6470 to meet WCAG AA on tinted surfaces.
-- Dense retrieval on PostgreSQL uses an explicit pgvector `<=>` query (verified on an embedded PostgreSQL).
+
+### Removed
+- The challenge badge above the landing-page headline.
 
 ## [0.9.0] - 2026-11-06
 
