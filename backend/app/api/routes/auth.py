@@ -4,6 +4,7 @@ for the demo. Tokens are short-lived signed JWTs; see SECURITY.md for the threat
 from __future__ import annotations
 
 import hashlib
+import uuid
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter
@@ -11,7 +12,14 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import SessionDep, UserDep, issue_token, token_ttl_seconds
-from app.api.errors import Forbidden, NotFound, TooManyAttempts, Unauthorized, Unprocessable
+from app.api.errors import (
+    Conflict,
+    Forbidden,
+    NotFound,
+    TooManyAttempts,
+    Unauthorized,
+    Unprocessable,
+)
 from app.audit import chain
 from app.auth.passwords import (
     DUMMY_HASH,
@@ -27,6 +35,8 @@ from app.domain import models as m
 router = APIRouter(tags=["auth"])
 
 INVALID = "Email or password is incorrect"
+# Seeded personas sort below this; self-registered accounts sort above and stay off the persona list.
+REGISTERED_SORT = 1000
 
 
 def _now() -> datetime:
@@ -63,9 +73,57 @@ def auth_config() -> api.AuthConfig:
     """Which sign-in methods are available, for the sign-in screen."""
     s = get_settings()
     return api.AuthConfig(
+        registration=s.registration_enabled,
         demo_login=s.demo_login_enabled,
         min_password_length=MIN_LENGTH,
         lockout_after_attempts=s.login_max_attempts,
+    )
+
+
+@router.post("/auth/register", response_model=api.Registered, status_code=201)
+def register(req: api.RegisterRequest, session: SessionDep) -> api.Registered:
+    """Create an account (a manager for one site), then sign in with it."""
+    if not get_settings().registration_enabled:
+        raise Forbidden("Registration is disabled on this server")
+    # Shape rules (email, name, password length and characters) are enforced by the contract.
+    email = req.email.strip().lower()
+    name = " ".join(req.display_name.split()) or req.display_name.strip() or req.display_name
+    problems = policy_problems(req.password, email)
+    if problems:
+        raise Unprocessable(" ".join(problems))
+    if session.scalars(select(m.UserCredential).where(m.UserCredential.email == email)).first():
+        raise Conflict("An account with this email already exists. Sign in instead.")
+    site = session.get(m.Site, req.site)
+    if site is None:
+        raise Unprocessable("Choose a site.")
+    user = m.User(
+        id=f"u-{uuid.uuid4().hex[:12]}",
+        display_name=name,
+        role="manager",
+        title=f"Operations manager, {site.name}",
+        site_scope=[site.code],
+        employee_id=None,
+        sort_order=REGISTERED_SORT,
+    )
+    session.add(user)
+    session.flush()
+    session.add(
+        m.UserCredential(
+            user_id=user.id,
+            email=email,
+            password_hash=hash_password(req.password),
+            failed_attempts=0,
+            password_changed_at=_now().replace(microsecond=0),
+        )
+    )
+    _audit(session, user.id, user.role, "auth.register", {"site": site.code})
+    session.commit()
+    return api.Registered(
+        user_id=user.id,
+        display_name=user.display_name,
+        email=email,
+        role="manager",
+        site_scope=[site.code],
     )
 
 
@@ -191,7 +249,8 @@ def personas(session: SessionDep) -> list[api.Persona]:
     out: list[api.Persona] = []
     if not get_settings().demo_login_enabled:
         return out
-    for u in session.scalars(select(m.User).order_by(m.User.sort_order)):
+    seeded = select(m.User).where(m.User.sort_order < REGISTERED_SORT).order_by(m.User.sort_order)
+    for u in session.scalars(seeded):
         active = ("open", "suggested", "awaiting_employee", "escalated")
         q = select(func.count(m.ExceptionRecord.id)).join(
             m.Employee, m.Employee.id == m.ExceptionRecord.employee_id

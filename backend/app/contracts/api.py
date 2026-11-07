@@ -104,8 +104,40 @@ class ChangePasswordRequest(Input):
     new_password: str = Field(min_length=1, max_length=128)
 
 
+class RegisterRequest(Input):
+    # The contract states the same rules the server enforces, so valid input is never refused.
+    display_name: str = Field(
+        min_length=2,
+        max_length=80,
+        pattern=r"[^ \t\r\n][\s\S]*[^ \t\r\n]",
+        examples=["Alex Morgan"],
+    )
+    email: str = Field(
+        min_length=3,
+        max_length=254,
+        pattern=r"^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$",
+        examples=["alex.morgan@example.com"],
+    )
+    password: str = Field(
+        min_length=10,
+        max_length=128,
+        pattern=r"([A-Za-z][\s\S]*[0-9]|[0-9][\s\S]*[A-Za-z])",
+        description="At least 10 characters with a letter and a number",
+    )
+    site: Literal["FRE", "AUS", "BLR"]
+
+
+class Registered(Model):
+    user_id: str
+    display_name: str
+    email: str
+    role: Role
+    site_scope: list[str]
+
+
 class AuthConfig(Model):
     password_login: bool = True
+    registration: bool = True
     demo_login: bool
     min_password_length: int
     lockout_after_attempts: int

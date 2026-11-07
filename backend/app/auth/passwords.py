@@ -59,6 +59,7 @@ def policy_problems(password: str, email: str | None = None) -> list[str]:
         problems.append(f"Use at most {MAX_LENGTH} characters.")
     if not any(c.isalpha() for c in password) or not any(c.isdigit() for c in password):
         problems.append("Include at least one letter and one number.")
-    if email and email.split("@")[0].lower() in password.lower():
+    name = email.split("@")[0].lower() if email else ""
+    if len(name) >= 4 and name in password.lower():
         problems.append("Do not include your email name.")
     return problems
