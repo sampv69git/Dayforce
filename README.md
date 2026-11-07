@@ -4,7 +4,7 @@
 
 Countersign is a timecard exception resolution agent for the Dayforce AI Innovation Challenge, Use Case 5 (Time & Attendance). A deterministic rules engine detects missed punches, overtime risks, schedule conflicts, and policy breaches. An open-weight LLM drafts a compliant correction grounded in retrieved policy and independent evidence. Ten deterministic gates verify every draft, and nothing changes a timecard until a manager countersigns it.
 
-> **Demo video:** _link to be added_ · All people, companies, and data are synthetic. The policy pack is fictional and not legal advice.
+> **Demo video:** https://drive.google.com/file/d/1w5eJb8_-sl48w52mSOP0ZjDSUaadHyZj/view?usp=sharing
 
 [![CI](https://github.com/sampv69git/Dayforce/actions/workflows/ci.yml/badge.svg)](https://github.com/sampv69git/Dayforce/actions/workflows/ci.yml)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
